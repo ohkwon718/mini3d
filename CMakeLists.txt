@@ -8,32 +8,71 @@ project(
 
 find_package (Eigen3 REQUIRED NO_MODULE)
 
+enable_testing()
+add_test(
+    NAME transform_test
+    COMMAND transform_test
+)
+
+
 add_library(
     mini3d_core
     src/Transform/Transform.cpp
+    src/Scene/SceneObject.cpp
 )
-
-target_compile_features(
-    mini3d_core    
-    PUBLIC cxx_std_20
-)
-
+target_compile_features(mini3d_core PRIVATE cxx_std_20)
 target_include_directories(
     mini3d_core 
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-
 target_link_libraries(
     mini3d_core
     PUBLIC Eigen3::Eigen
+)
+target_compile_options(
+    mini3d_core
+    PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wconversion
+        -Wsign-conversion
 )
 
 add_executable(
     mini3d
     src/main.cpp
 )
-
+target_compile_features(mini3d PRIVATE cxx_std_20)
 target_link_libraries(
     mini3d    
     PRIVATE mini3d_core
+)
+target_compile_options(
+    mini3d
+    PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wconversion
+        -Wsign-conversion
+)
+
+add_executable(
+    transform_test
+    tests/TransformTest.cpp    
+)
+target_compile_features(transform_test PRIVATE cxx_std_20)
+target_link_libraries(
+    transform_test    
+    PRIVATE mini3d_core
+)
+target_compile_options(       
+    transform_test 
+    PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wconversion
+        -Wsign-conversion
 )
