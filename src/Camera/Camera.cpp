@@ -1,4 +1,6 @@
 #include "Camera.hpp"
+#include <stdexcept>
+
 
 Camera::Camera(float verticalFov,
     float aspectRatio,
@@ -10,7 +12,20 @@ Camera::Camera(float verticalFov,
       aspectRatio_(aspectRatio),
       nearPlane_(nearPlane),
       farPlane_(farPlane)
-{
+{    
+    if ( verticalFov <= 0.0f || verticalFov >= std::numbers::pi_v<float> ) {
+        throw std::invalid_argument( "received invalid vertical field of view" );
+    }
+    if ( aspectRatio <= 0.0f ) {
+        throw std::invalid_argument( "received invalid aspect ratio" );
+    }
+    if ( nearPlane <= 0.0f ) {
+        throw std::invalid_argument( "received invalid near plane" );
+    }
+    if ( farPlane <= nearPlane ) {
+        throw std::invalid_argument( "received invalid far plane" );
+    }
+
 }
 
 Eigen::Vector3f Camera::position() const

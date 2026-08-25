@@ -17,6 +17,10 @@ add_test(
     NAME camera_test
     COMMAND camera_test
 )
+add_test(
+    NAME scene_test
+    COMMAND scene_test
+)
 
 
 add_library(
@@ -24,6 +28,7 @@ add_library(
     src/Transform/Transform.cpp
     src/Scene/SceneObject.cpp
     src/Camera/Camera.cpp
+    src/Geometry/Mesh.cpp
 )
 target_compile_features(mini3d_core PRIVATE cxx_std_20)
 target_include_directories(
@@ -93,6 +98,26 @@ target_link_libraries(
 )
 target_compile_options(       
     camera_test 
+    PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wconversion
+        -Wsign-conversion
+)
+
+
+add_executable(
+    scene_test
+    tests/SceneTest.cpp    
+)
+target_compile_features(scene_test PRIVATE cxx_std_20)
+target_link_libraries(
+    scene_test    
+    PRIVATE mini3d_core
+)
+target_compile_options(       
+    scene_test 
     PRIVATE
         -Wall
         -Wextra
