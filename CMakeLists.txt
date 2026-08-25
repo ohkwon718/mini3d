@@ -7,6 +7,8 @@ project(
 )
 
 find_package (Eigen3 REQUIRED NO_MODULE)
+find_package (OpenGL REQUIRED)
+find_package (glfw3 REQUIRED)
 
 enable_testing()
 add_test(
@@ -56,7 +58,10 @@ add_executable(
 target_compile_features(mini3d PRIVATE cxx_std_20)
 target_link_libraries(
     mini3d    
-    PRIVATE mini3d_core
+    PRIVATE 
+        mini3d_core
+        glfw
+        OpenGL::GL
 )
 target_compile_options(
     mini3d

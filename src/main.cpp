@@ -1,22 +1,44 @@
 #include <iostream>
-#include "Transform/Transform.hpp"
-#include "Scene/SceneObject.hpp"
-#include "Geometry/Mesh.hpp"
 
-int main() {
+#include <GLFW/glfw3.h>
 
-    auto mesh = std::make_shared<Mesh>(
-        std::vector<Vertex>{
-            {Eigen::Vector3f(0.0f, 0.0f, 0.0f)},
-            {Eigen::Vector3f(1.0f, 0.0f, 0.0f)},
-            {Eigen::Vector3f(0.0f, 1.0f, 0.0f)}
-        },
-        std::vector<std::uint32_t>{0, 1, 2}
+int main()
+{
+    if (!glfwInit()) {
+        std::cerr << "Failed to initialize GLFW\n";
+        return 1;
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    GLFWwindow* window = glfwCreateWindow(
+        800,
+        600,
+        "mini3d",
+        nullptr,
+        nullptr
     );
 
-    SceneObject obj1("Triangle1", mesh);
-    SceneObject obj2("Triangle2", mesh);
+    if (!window) {
+        std::cerr << "Failed to create GLFW window\n";
+        glfwTerminate();
+        return 1;
+    }
 
+    glfwMakeContextCurrent(window);
+
+    while (!glfwWindowShouldClose(window)) {
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
 
     return 0;
 }
