@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.28)
 project(
     mini3d
     VERSION 0.1.0
-    LANGUAGES CXX
+    LANGUAGES C CXX
 )
 
 find_package (Eigen3 REQUIRED NO_MODULE)
@@ -22,6 +22,24 @@ add_test(
 add_test(
     NAME scene_test
     COMMAND scene_test
+)
+
+include(FetchContent)
+
+FetchContent_Declare(
+    glad
+    GIT_REPOSITORY https://github.com/Dav1dde/glad.git
+    GIT_TAG v2.0.8
+    SOURCE_SUBDIR cmake
+)
+
+FetchContent_MakeAvailable(glad)
+
+glad_add_library(
+    glad_gl_core_33
+    STATIC
+    REPRODUCIBLE
+    API gl:core=3.3
 )
 
 
@@ -63,6 +81,7 @@ target_link_libraries(
         mini3d_core
         glfw
         OpenGL::GL
+        glad_gl_core_33
 )
 target_compile_options(
     mini3d

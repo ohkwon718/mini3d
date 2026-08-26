@@ -1,6 +1,7 @@
 #pragma once
 
-#include "GLFW/glfw3.h"
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 #include <memory>
 
 struct GLFWWindowDeleter

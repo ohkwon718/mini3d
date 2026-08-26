@@ -1,7 +1,6 @@
-#include <iostream>
-
 #include "Platform/GlfwRuntime.hpp"
-#include "GLFW/glfw3.h"
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
 
 int main()
 {
