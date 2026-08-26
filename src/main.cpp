@@ -1,6 +1,6 @@
-#include "Platform/GlfwRuntime.hpp"
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
+#include "Platform/GlfwRuntime.hpp"
 
 int main()
 {
@@ -18,6 +18,10 @@ int main()
         return 1;
     }
     glfwMakeContextCurrent(window.get());
+
+    if (!gladLoadGL(glfwGetProcAddress)) {
+        return 1;
+    }    
 
     while (!glfwWindowShouldClose(window.get())) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
