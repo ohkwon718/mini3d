@@ -30,7 +30,7 @@ add_library(
     src/Transform/Transform.cpp
     src/Scene/SceneObject.cpp
     src/Camera/Camera.cpp
-    src/Geometry/Mesh.cpp
+    src/Geometry/Mesh.cpp    
 )
 target_compile_features(mini3d_core PRIVATE cxx_std_20)
 target_include_directories(
@@ -54,6 +54,7 @@ target_compile_options(
 add_executable(
     mini3d
     src/main.cpp
+    src/Platform/GlfwRuntime.cpp
 )
 target_compile_features(mini3d PRIVATE cxx_std_20)
 target_link_libraries(
