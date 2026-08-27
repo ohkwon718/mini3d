@@ -74,7 +74,8 @@ add_executable(
     src/main.cpp
     src/Platform/GlfwRuntime.cpp
     src/Render/VertexBuffer.cpp
-    src/Render/VertexArray.cpp
+    src/Render/VertexArray.cpp    
+    src/Render/ShaderProgram.cpp
 )
 target_compile_features(mini3d PRIVATE cxx_std_20)
 target_link_libraries(
