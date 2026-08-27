@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 class VertexBuffer 
 {
 public:
@@ -13,6 +15,8 @@ public:
     VertexBuffer& operator=(VertexBuffer&& other) noexcept;
 
     unsigned int id() const;
+
+    void upload(const void* data, std::size_t sizeBytes);
 
 private:
     unsigned int id_{0};    

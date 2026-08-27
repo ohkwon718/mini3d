@@ -33,3 +33,19 @@ VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept
 
     return *this;
 }
+
+unsigned int VertexBuffer::id() const
+{
+    return id_;
+}
+
+void VertexBuffer::upload(const void* data, std::size_t sizeBytes)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, id_);
+    glBufferData(
+        GL_ARRAY_BUFFER, 
+        static_cast<GLsizeiptr>(sizeBytes), 
+        data, 
+        GL_STATIC_DRAW
+    );
+}
