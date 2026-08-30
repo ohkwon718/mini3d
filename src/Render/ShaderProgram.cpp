@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <string>
 
+
 namespace {
 
     class ShaderHandle
@@ -159,5 +160,18 @@ ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept
 void ShaderProgram::use() const
 {
     glUseProgram(id_);
+}
+
+void ShaderProgram::setMat4(const char* name, const Eigen::Matrix4f& matrix) const
+{
+    GLint location = glGetUniformLocation(id_, name);
+
+    glUniformMatrix4fv(
+        location,
+        1,
+        GL_FALSE,
+        matrix.data()
+    );
+
 }
 

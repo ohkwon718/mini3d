@@ -5,6 +5,8 @@
 #include "Render/VertexBuffer.hpp"
 #include "Render/VertexArray.hpp"
 #include "Render/ShaderProgram.hpp"
+#include "Transform/Transform.hpp"
+#include "Camera/Camera.hpp"
 
 int main()
 {
@@ -54,11 +56,20 @@ int main()
 
     const char* vertexSource = R"(
     #version 330 core
+
     layout(location = 0) in vec3 aPosition;
+
+    uniform mat4 uModel;
+    uniform mat4 uView;
+    uniform mat4 uProjection;
 
     void main()
     {
-        gl_Position = vec4(aPosition, 1.0);
+        gl_Position =
+            uProjection *
+            uView *
+            uModel *
+            vec4(aPosition, 1.0);
     }
     )";
 
@@ -74,6 +85,17 @@ int main()
 
     ShaderProgram shader(vertexSource, fragmentSource);
 
+    Transform transform;
+
+    Camera camera(
+        std::numbers::pi_v<float> / 4.0f,
+        800.0f / 600.0f,
+        0.1f,
+        100.0f
+    );
+
+    camera.setPosition(Eigen::Vector3f(0.0f, 0.0f, 3.0f));
+
     while (!glfwWindowShouldClose(window.get())) {
         // glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         // glClear(GL_COLOR_BUFFER_BIT);
@@ -83,6 +105,9 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.use();
+        shader.setMat4("uModel", transform.matrix());
+        shader.setMat4("uView", camera.viewMatrix());
+        shader.setMat4("uProjection", camera.projectionMatrix());
         vao.bind();
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
