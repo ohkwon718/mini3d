@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(
     mini3d
@@ -76,6 +77,7 @@ add_executable(
     src/Render/VertexBuffer.cpp
     src/Render/VertexArray.cpp    
     src/Render/ShaderProgram.cpp
+    src/Render/GpuMesh.cpp
 )
 target_compile_features(mini3d PRIVATE cxx_std_20)
 target_link_libraries(

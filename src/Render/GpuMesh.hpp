@@ -1,0 +1,19 @@
+#pragma once
+
+#include "VertexArray.hpp"
+#include "VertexBuffer.hpp"
+#include "Geometry/Mesh.hpp"
+
+class GpuMesh
+{
+public:
+    explicit GpuMesh(const Mesh& mesh);
+
+    void draw() const;
+
+private:
+    VertexArray vao_;
+    VertexBuffer vbo_;
+
+    std::size_t vertexCount_;
+};

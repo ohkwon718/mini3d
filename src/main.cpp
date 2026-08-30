@@ -1,12 +1,13 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <vector>
+#include <numbers>
 #include "Platform/GlfwRuntime.hpp"
-#include "Render/VertexBuffer.hpp"
-#include "Render/VertexArray.hpp"
+#include "Render/GpuMesh.hpp"
 #include "Render/ShaderProgram.hpp"
 #include "Transform/Transform.hpp"
 #include "Camera/Camera.hpp"
+
 
 int main()
 {
@@ -27,32 +28,18 @@ int main()
 
     if (!gladLoadGL(glfwGetProcAddress)) {
         return 1;
-    }    
+    }        
 
-    VertexArray vao;
-    vao.bind();
-    VertexBuffer vbo;
-
-    std::vector<float> vertices{
-        0.0f, 0.5f, 0.0f,
-        -0.5f,-0.5f, 0.0f,
-        0.5f,-0.5f, 0.0f
-    };
-    vbo.upload(
-        vertices.data(),
-        vertices.size() * sizeof(float)
+    ///////////////////////////////////////////
+    Mesh mesh(
+        std::vector<Vertex>{
+            {Eigen::Vector3f(0.0f,  0.5f, 0.0f)},
+            {Eigen::Vector3f(-0.5f, -0.5f, 0.0f)},
+            {Eigen::Vector3f(0.5f, -0.5f, 0.0f)}
+        },
+        std::vector<std::uint32_t>{0, 1, 2}
     );
-    glVertexAttribPointer(
-        0,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        3 * sizeof(float),
-        nullptr
-    );
-    glEnableVertexAttribArray(0);
-
-    VertexArray::unbind();
+    GpuMesh gpuMesh(mesh);
 
     const char* vertexSource = R"(
     #version 330 core
@@ -97,20 +84,13 @@ int main()
     camera.setPosition(Eigen::Vector3f(0.0f, 0.0f, 3.0f));
 
     while (!glfwWindowShouldClose(window.get())) {
-        // glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        // glClear(GL_COLOR_BUFFER_BIT);
-
-        // glfwSwapBuffers(window.get());
-        // glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.use();
         shader.setMat4("uModel", transform.matrix());
         shader.setMat4("uView", camera.viewMatrix());
-        shader.setMat4("uProjection", camera.projectionMatrix());
-        vao.bind();
-
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        shader.setMat4("uProjection", camera.projectionMatrix());        
+        gpuMesh.draw();
 
         glfwSwapBuffers(window.get());
         glfwPollEvents();
