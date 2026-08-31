@@ -2,10 +2,12 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <numbers>
+#include <cstdint>
+#include <memory>
 #include "Platform/GlfwRuntime.hpp"
-#include "Render/GpuMesh.hpp"
 #include "Render/ShaderProgram.hpp"
-#include "Transform/Transform.hpp"
+#include "Render/Renderer.hpp"
+#include "Scene/SceneObject.hpp"
 #include "Camera/Camera.hpp"
 
 
@@ -31,15 +33,6 @@ int main()
     }        
 
     ///////////////////////////////////////////
-    Mesh mesh(
-        std::vector<Vertex>{
-            {Eigen::Vector3f(0.0f,  0.5f, 0.0f)},
-            {Eigen::Vector3f(-0.5f, -0.5f, 0.0f)},
-            {Eigen::Vector3f(0.5f, -0.5f, 0.0f)}
-        },
-        std::vector<std::uint32_t>{0, 1, 2}
-    );
-    GpuMesh gpuMesh(mesh);
 
     const char* vertexSource = R"(
     #version 330 core
@@ -70,10 +63,25 @@ int main()
     }
     )";
 
+
+    auto mesh = std::make_shared<const Mesh>(
+        std::vector<Vertex>{
+            {Eigen::Vector3f(0.0f,  0.5f, 0.0f)},
+            {Eigen::Vector3f(-0.5f, -0.5f, 0.0f)},
+            {Eigen::Vector3f(0.5f, -0.5f, 0.0f)}
+        },
+        std::vector<std::uint32_t>{0, 1, 2}
+    );
+    
+    SceneObject object("Triangle", mesh);
+    object.transform().setTranslation(
+        Eigen::Vector3f(0.5f, 0.0f, 0.0f)
+    );
+
+    Renderer renderer;
+
     ShaderProgram shader(vertexSource, fragmentSource);
-
-    Transform transform;
-
+    
     Camera camera(
         std::numbers::pi_v<float> / 4.0f,
         800.0f / 600.0f,
@@ -86,11 +94,7 @@ int main()
     while (!glfwWindowShouldClose(window.get())) {
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shader.use();
-        shader.setMat4("uModel", transform.matrix());
-        shader.setMat4("uView", camera.viewMatrix());
-        shader.setMat4("uProjection", camera.projectionMatrix());        
-        gpuMesh.draw();
+        renderer.draw(object, camera, shader);
 
         glfwSwapBuffers(window.get());
         glfwPollEvents();
