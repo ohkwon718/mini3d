@@ -48,6 +48,7 @@ add_library(
     mini3d_core
     src/Transform/Transform.cpp
     src/Scene/SceneObject.cpp
+    src/Scene/Scene.cpp
     src/Camera/Camera.cpp
     src/Geometry/Mesh.cpp    
 )
@@ -75,7 +76,8 @@ add_executable(
     src/main.cpp
     src/Platform/GlfwRuntime.cpp
     src/Render/VertexBuffer.cpp
-    src/Render/VertexArray.cpp    
+    src/Render/VertexArray.cpp  
+    src/Render/IndexBuffer.cpp  
     src/Render/ShaderProgram.cpp
     src/Render/GpuMesh.cpp
     src/Render/Renderer.cpp

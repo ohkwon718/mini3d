@@ -3,13 +3,18 @@
 #include <glad/gl.h>
 
 GpuMesh::GpuMesh(const Mesh& mesh)
-    : vertexCount_(mesh.vertices().size())
+    : indexCount_(mesh.indices().size())
 {
     vao_.bind();
 
     vbo_.upload(
         mesh.vertices().data(),
         mesh.vertices().size() * sizeof(Vertex)
+    );
+
+    ebo_.upload(
+        mesh.indices().data(), 
+        mesh.indices().size()
     );
 
     glVertexAttribPointer(
@@ -30,10 +35,11 @@ GpuMesh::GpuMesh(const Mesh& mesh)
 void GpuMesh::draw() const
 {
     vao_.bind();
-    glDrawArrays(
+    glDrawElements(
         GL_TRIANGLES,
-        0,
-        static_cast<GLsizei>(vertexCount_)
+        static_cast<GLsizei>(indexCount_),
+        GL_UNSIGNED_INT,
+        nullptr
     );
 }
 

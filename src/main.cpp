@@ -8,6 +8,7 @@
 #include "Render/ShaderProgram.hpp"
 #include "Render/Renderer.hpp"
 #include "Scene/SceneObject.hpp"
+#include "Scene/Scene.hpp"
 #include "Camera/Camera.hpp"
 
 
@@ -31,6 +32,9 @@ int main()
     if (!gladLoadGL(glfwGetProcAddress)) {
         return 1;
     }        
+
+    ///////////////////////////////////////////
+    glEnable(GL_DEPTH_TEST);
 
     ///////////////////////////////////////////
 
@@ -62,21 +66,43 @@ int main()
         FragColor = vec4(1.0, 0.5, 0.2, 1.0);
     }
     )";
-
-
-    auto mesh = std::make_shared<const Mesh>(
-        std::vector<Vertex>{
-            {Eigen::Vector3f(0.0f,  0.5f, 0.0f)},
-            {Eigen::Vector3f(-0.5f, -0.5f, 0.0f)},
-            {Eigen::Vector3f(0.5f, -0.5f, 0.0f)}
-        },
-        std::vector<std::uint32_t>{0, 1, 2}
-    );
     
-    SceneObject object("Triangle", mesh);
+    auto cube = std::make_shared<const Mesh>(
+        std::vector<Vertex>{
+            {Eigen::Vector3f(-1.0f, -1.0f, -1.0f)},
+            {Eigen::Vector3f(-1.0f, -1.0f, 1.0f)},
+            {Eigen::Vector3f(-1.0f, 1.0f, -1.0f)},
+            {Eigen::Vector3f(-1.0f, 1.0f, 1.0f)},
+            {Eigen::Vector3f(1.0f, -1.0f, -1.0f)},
+            {Eigen::Vector3f(1.0f, -1.0f, 1.0f)},
+            {Eigen::Vector3f(1.0f, 1.0f, -1.0f)},
+            {Eigen::Vector3f(1.0f, 1.0f, 1.0f)}            
+        },
+        std::vector<std::uint32_t>{
+            0, 1, 2,
+            3, 1, 2,
+            4, 5, 6,
+            7, 5, 6,
+            0, 1, 4,
+            5, 1, 4,
+            2, 3, 6,
+            7, 3, 6,
+            0, 2, 4,
+            6, 2, 4,
+            1, 3, 5,
+            7, 3, 5            
+        }
+    );    
+
+    Scene scene;
+    SceneObject object("Cube", cube);
     object.transform().setTranslation(
-        Eigen::Vector3f(0.5f, 0.0f, 0.0f)
+        Eigen::Vector3f(0.0f, 0.0f, -10.0f)
+    );    
+    object.transform().setRotation(
+        Eigen::Quaternionf(0.5f, 0.5f, 0.5f, 1.0f)
     );
+    scene.addObject(std::move(object));
 
     Renderer renderer;
 
@@ -91,10 +117,10 @@ int main()
 
     camera.setPosition(Eigen::Vector3f(0.0f, 0.0f, 3.0f));
 
-    while (!glfwWindowShouldClose(window.get())) {
-        glClear(GL_COLOR_BUFFER_BIT);
+    while (!glfwWindowShouldClose(window.get())) {        
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        renderer.draw(object, camera, shader);
+        renderer.draw(scene, camera, shader);
 
         glfwSwapBuffers(window.get());
         glfwPollEvents();

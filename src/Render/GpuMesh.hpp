@@ -2,6 +2,7 @@
 
 #include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
 #include "Geometry/Mesh.hpp"
 
 class GpuMesh
@@ -14,6 +15,6 @@ public:
 private:
     VertexArray vao_;
     VertexBuffer vbo_;
-
-    std::size_t vertexCount_;
+    IndexBuffer ebo_;
+    std::size_t indexCount_{0};
 };

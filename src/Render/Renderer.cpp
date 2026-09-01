@@ -16,3 +16,14 @@ void Renderer::draw(const SceneObject& object,
 
     it->second.draw();
 }
+
+
+void Renderer::draw(const Scene& scene,
+                    const Camera& camera,
+                    ShaderProgram& shader)
+{   
+    for (std::size_t i = 0; i < scene.size(); ++i) {
+        draw(scene.object(i), camera, shader);
+    }
+}
+

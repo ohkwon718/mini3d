@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene/SceneObject.hpp"
+#include "Scene/Scene.hpp"
 #include "Camera/Camera.hpp"
 #include "ShaderProgram.hpp"
 #include "GpuMesh.hpp"
@@ -12,6 +13,13 @@ public:
     void draw(const SceneObject& object,
               const Camera& camera,
               ShaderProgram& shader);
+
+    void draw(const Scene& scene,
+              const Camera& camera,
+              ShaderProgram& shader);
+   
+
+
 
 private:
     std::unordered_map<
