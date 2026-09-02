@@ -1,12 +1,13 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include "Transform/Transform.hpp"
 #include "Geometry/Mesh.hpp"
 
+
 class SceneObject {
 public:    
-    SceneObject(std::string name);    
     SceneObject(std::string name, std::shared_ptr<const Mesh> mesh);
 
     const std::string& name() const;

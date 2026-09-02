@@ -1,10 +1,6 @@
 #include "SceneObject.hpp"
 #include <utility>
 
-SceneObject::SceneObject(std::string name)
-    : name_(std::move(name))
-{
-}
 
 SceneObject::SceneObject(std::string name, std::shared_ptr<const Mesh> mesh)
     : name_(std::move(name)),

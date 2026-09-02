@@ -1,6 +1,6 @@
 #include "Transform.hpp"
 #include <iostream>
-
+#include <limits>
 
 Transform::Transform()
     : translation_(Eigen::Vector3f::Zero()),
@@ -16,7 +16,11 @@ void Transform::setTranslation(const Eigen::Vector3f &translation)
 
 void Transform::setRotation(const Eigen::Quaternionf &rotation)
 {
-    rotation_ = rotation;
+    const float norm = rotation.norm();
+    if (!std::isfinite(norm) || norm < 1e-6f) {
+        throw std::invalid_argument("Quaternion must have a non-zero finite norm");
+    }
+    rotation_ = rotation.normalized();
 }
 
 void Transform::setScale(const Eigen::Vector3f &scale)

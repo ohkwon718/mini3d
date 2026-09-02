@@ -1,6 +1,7 @@
 #include "Camera.hpp"
 #include <stdexcept>
-
+#include <cmath>
+#include <numbers>
 
 Camera::Camera(float verticalFov,
     float aspectRatio,
@@ -45,9 +46,12 @@ void Camera::setPosition(const Eigen::Vector3f& position)
 
 void Camera::setRotation(const Eigen::Quaternionf& rotation)
 {
-    orientation_ = rotation;
+    const float norm = rotation.norm();
+    if (!std::isfinite(norm) || norm < 1e-6f) {
+        throw std::invalid_argument("Quaternion must have a non-zero finite norm");
+    }
+    orientation_ = rotation.normalized();
 }
-
 
 Eigen::Matrix4f Camera::viewMatrix() const
 {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <cstddef>
 #include "SceneObject.hpp"
 
 class Scene {

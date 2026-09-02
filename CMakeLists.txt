@@ -71,23 +71,49 @@ target_compile_options(
         -Wsign-conversion
 )
 
-add_executable(
-    mini3d
-    src/main.cpp
-    src/Platform/GlfwRuntime.cpp
+add_library(
+    mini3d_render
     src/Render/VertexBuffer.cpp
-    src/Render/VertexArray.cpp  
-    src/Render/IndexBuffer.cpp  
+    src/Render/VertexArray.cpp
+    src/Render/IndexBuffer.cpp
     src/Render/ShaderProgram.cpp
     src/Render/GpuMesh.cpp
     src/Render/Renderer.cpp
-    src/Render/RenderTarget.cpp    
+    src/Render/RenderTarget.cpp
+)
+target_compile_features(mini3d_render PRIVATE cxx_std_20)
+target_include_directories(
+    mini3d_render 
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_link_libraries(
+    mini3d_render
+    PUBLIC 
+        Eigen3::Eigen
+        OpenGL::GL
+        glad_gl_core_33
+)
+target_compile_options(
+    mini3d_render
+    PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wconversion
+        -Wsign-conversion
+)
+
+add_executable(
+    mini3d
+    src/main.cpp
+    src/Platform/GlfwRuntime.cpp 
 )
 target_compile_features(mini3d PRIVATE cxx_std_20)
 target_link_libraries(
     mini3d    
     PRIVATE 
         mini3d_core
+        mini3d_render
         glfw
         OpenGL::GL
         glad_gl_core_33
