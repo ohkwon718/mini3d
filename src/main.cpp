@@ -7,6 +7,7 @@
 #include "Platform/GlfwRuntime.hpp"
 #include "Render/ShaderProgram.hpp"
 #include "Render/Renderer.hpp"
+#include "Render/RenderTarget.hpp"
 #include "Scene/SceneObject.hpp"
 #include "Scene/Scene.hpp"
 #include "Camera/Camera.hpp"
@@ -116,6 +117,19 @@ int main()
     );
 
     camera.setPosition(Eigen::Vector3f(0.0f, 0.0f, 3.0f));
+
+    RenderTarget target(640, 480);
+    target.bind();
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    renderer.draw(scene, camera, shader);
+
+    auto rgb = target.readRgb();
+    auto depth = target.readDepth();
+    assert(rgb.size() == 640 * 480 * 3);
+    assert(depth.size() == 640 * 480);
+
+    RenderTarget::bindDefault(800, 600);
 
     while (!glfwWindowShouldClose(window.get())) {        
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

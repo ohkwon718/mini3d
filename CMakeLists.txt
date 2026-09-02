@@ -81,6 +81,7 @@ add_executable(
     src/Render/ShaderProgram.cpp
     src/Render/GpuMesh.cpp
     src/Render/Renderer.cpp
+    src/Render/RenderTarget.cpp    
 )
 target_compile_features(mini3d PRIVATE cxx_std_20)
 target_link_libraries(
