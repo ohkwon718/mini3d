@@ -1,6 +1,6 @@
 #include "Transform.hpp"
-#include <iostream>
-#include <limits>
+#include <cmath>
+#include <stdexcept>
 
 Transform::Transform()
     : translation_(Eigen::Vector3f::Zero()),

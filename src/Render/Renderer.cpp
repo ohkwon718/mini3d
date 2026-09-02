@@ -2,12 +2,11 @@
 
 void Renderer::draw(const SceneObject& object,
                     const Camera& camera,
-                    ShaderProgram& shader)
+                    const ShaderProgram& shader)
 {   
     const auto& mesh = object.mesh();
 
-    auto [it, inserted] =
-        gpuMeshes_.try_emplace(mesh, *mesh);
+    auto it = gpuMeshes_.try_emplace(mesh, *mesh).first;
 
     shader.use();
     shader.setMat4("uModel", object.transform().matrix());
@@ -20,7 +19,7 @@ void Renderer::draw(const SceneObject& object,
 
 void Renderer::draw(const Scene& scene,
                     const Camera& camera,
-                    ShaderProgram& shader)
+                    const ShaderProgram& shader)
 {   
     for (std::size_t i = 0; i < scene.size(); ++i) {
         draw(scene.object(i), camera, shader);

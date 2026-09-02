@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"

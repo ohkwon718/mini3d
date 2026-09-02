@@ -1,11 +1,14 @@
 #include "SceneObject.hpp"
 #include <utility>
-
+#include <stdexcept>
 
 SceneObject::SceneObject(std::string name, std::shared_ptr<const Mesh> mesh)
     : name_(std::move(name)),
       mesh_(std::move(mesh))
 {
+    if (!mesh_) {
+        throw std::invalid_argument("SceneObject requires a mesh");
+    }
 }
 
 
@@ -24,7 +27,7 @@ const Transform& SceneObject::transform() const
     return transform_;
 }
 
-std::shared_ptr<const Mesh> SceneObject::mesh() const
+const std::shared_ptr<const Mesh>& SceneObject::mesh() const
 {
     return mesh_;
 }

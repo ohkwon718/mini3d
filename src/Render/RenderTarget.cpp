@@ -121,13 +121,18 @@ void RenderTarget::bind() const
 }
 
 std::vector<std::uint8_t> RenderTarget::readRgb() const
-{    
+{
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_);
     std::vector<std::uint8_t> pixels(
         static_cast<std::size_t>(width_) *
         static_cast<std::size_t>(height_) *
         3
     );
+
+    GLint previousAlignment;
+    glGetIntegerv(GL_PACK_ALIGNMENT, &previousAlignment);    
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
     glReadPixels(
         0,
         0,
@@ -137,7 +142,9 @@ std::vector<std::uint8_t> RenderTarget::readRgb() const
         GL_UNSIGNED_BYTE,
         pixels.data()
     );
-    
+
+    glPixelStorei(GL_PACK_ALIGNMENT, previousAlignment);
+
     return pixels;
 }
 

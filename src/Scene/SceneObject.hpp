@@ -14,8 +14,8 @@ public:
 
     Transform& transform();
     const Transform& transform() const;
-
-    std::shared_ptr<const Mesh> mesh() const;
+        
+    const std::shared_ptr<const Mesh>& mesh() const;
 
 private:
     std::string name_;

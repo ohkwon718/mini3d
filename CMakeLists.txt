@@ -88,10 +88,12 @@ target_include_directories(
 )
 target_link_libraries(
     mini3d_render
-    PUBLIC 
+    PUBLIC
+        mini3d_core
         Eigen3::Eigen
-        OpenGL::GL
         glad_gl_core_33
+    PRIVATE
+        OpenGL::GL
 )
 target_compile_options(
     mini3d_render
@@ -112,7 +114,6 @@ target_compile_features(mini3d PRIVATE cxx_std_20)
 target_link_libraries(
     mini3d    
     PRIVATE 
-        mini3d_core
         mini3d_render
         glfw
         OpenGL::GL

@@ -4,6 +4,7 @@
 #include <numbers>
 #include <cstdint>
 #include <memory>
+#include <cassert>
 #include "Platform/GlfwRuntime.hpp"
 #include "Render/ShaderProgram.hpp"
 #include "Render/Renderer.hpp"
