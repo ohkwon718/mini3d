@@ -7,6 +7,7 @@
 struct Vertex
 {
     Eigen::Vector3f position;
+    Eigen::Vector3f normal;
 };
 
 class Mesh 
