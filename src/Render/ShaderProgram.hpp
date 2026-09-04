@@ -19,6 +19,7 @@ public:
     void use() const;
 
     void setMat4(const char* name, const Eigen::Matrix4f& matrix) const;
+    void setVec3(const char* name, const Eigen::Vector3f& value) const;
 
 private:
     unsigned int id_{0};

@@ -44,6 +44,8 @@ int main()
     #version 330 core
 
     layout(location = 0) in vec3 aPosition;
+    layout(location = 1) in vec3 aNormal;
+    out vec3 vNormal;
 
     uniform mat4 uModel;
     uniform mat4 uView;
@@ -51,53 +53,87 @@ int main()
 
     void main()
     {
-        gl_Position =
-            uProjection *
-            uView *
-            uModel *
-            vec4(aPosition, 1.0);
+        gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);        
+        vNormal = normalize( mat3(transpose(inverse(uModel))) * aNormal );
     }
     )";
 
     const char* fragmentSource = R"(
     #version 330 core
+
+    in vec3 vNormal;        
     out vec4 FragColor;
 
+    uniform vec3 uLightDirection;
+    uniform vec3 uBaseColor;
+    
+
     void main()
-    {
-        FragColor = vec4(1.0, 0.5, 0.2, 1.0);
+    {   
+        vec3 N = normalize(vNormal);
+        float diffuse = max(dot(N, uLightDirection), 0.0);
+        float ambient = 0.15;
+        float brightness = ambient + diffuse;
+        
+        FragColor = vec4(uBaseColor * brightness, 1.0);
     }
     )";
-    
-    auto cube = std::make_shared<const Mesh>(
-        std::vector<Vertex>{
-            {Eigen::Vector3f(-1.0f, -1.0f, -1.0f)},
-            {Eigen::Vector3f(-1.0f, -1.0f, 1.0f)},
-            {Eigen::Vector3f(-1.0f, 1.0f, -1.0f)},
-            {Eigen::Vector3f(-1.0f, 1.0f, 1.0f)},
-            {Eigen::Vector3f(1.0f, -1.0f, -1.0f)},
-            {Eigen::Vector3f(1.0f, -1.0f, 1.0f)},
-            {Eigen::Vector3f(1.0f, 1.0f, -1.0f)},
-            {Eigen::Vector3f(1.0f, 1.0f, 1.0f)}            
-        },
-        std::vector<std::uint32_t>{
-            0, 1, 2,
-            3, 1, 2,
-            4, 5, 6,
-            7, 5, 6,
-            0, 1, 4,
-            5, 1, 4,
-            2, 3, 6,
-            7, 3, 6,
-            0, 2, 4,
-            6, 2, 4,
-            1, 3, 5,
-            7, 3, 5            
-        }
-    );    
+     
+
+    std::vector<Vertex> vertices = {
+        // Front (+Z)
+        {Eigen::Vector3f(-1.0f, -1.0f,  1.0f), Eigen::Vector3f( 0.0f,  0.0f,  1.0f)},
+        {Eigen::Vector3f( 1.0f, -1.0f,  1.0f), Eigen::Vector3f( 0.0f,  0.0f,  1.0f)},
+        {Eigen::Vector3f( 1.0f,  1.0f,  1.0f), Eigen::Vector3f( 0.0f,  0.0f,  1.0f)},
+        {Eigen::Vector3f(-1.0f,  1.0f,  1.0f), Eigen::Vector3f( 0.0f,  0.0f,  1.0f)},
+
+        // Back (-Z)
+        {Eigen::Vector3f( 1.0f, -1.0f, -1.0f), Eigen::Vector3f( 0.0f,  0.0f, -1.0f)},
+        {Eigen::Vector3f(-1.0f, -1.0f, -1.0f), Eigen::Vector3f( 0.0f,  0.0f, -1.0f)},
+        {Eigen::Vector3f(-1.0f,  1.0f, -1.0f), Eigen::Vector3f( 0.0f,  0.0f, -1.0f)},
+        {Eigen::Vector3f( 1.0f,  1.0f, -1.0f), Eigen::Vector3f( 0.0f,  0.0f, -1.0f)},
+
+        // Left (-X)
+        {Eigen::Vector3f(-1.0f, -1.0f, -1.0f), Eigen::Vector3f(-1.0f,  0.0f,  0.0f)},
+        {Eigen::Vector3f(-1.0f, -1.0f,  1.0f), Eigen::Vector3f(-1.0f,  0.0f,  0.0f)},
+        {Eigen::Vector3f(-1.0f,  1.0f,  1.0f), Eigen::Vector3f(-1.0f,  0.0f,  0.0f)},
+        {Eigen::Vector3f(-1.0f,  1.0f, -1.0f), Eigen::Vector3f(-1.0f,  0.0f,  0.0f)},
+
+        // Right (+X)
+        {Eigen::Vector3f( 1.0f, -1.0f,  1.0f), Eigen::Vector3f( 1.0f,  0.0f,  0.0f)},
+        {Eigen::Vector3f( 1.0f, -1.0f, -1.0f), Eigen::Vector3f( 1.0f,  0.0f,  0.0f)},
+        {Eigen::Vector3f( 1.0f,  1.0f, -1.0f), Eigen::Vector3f( 1.0f,  0.0f,  0.0f)},
+        {Eigen::Vector3f( 1.0f,  1.0f,  1.0f), Eigen::Vector3f( 1.0f,  0.0f,  0.0f)},
+
+        // Top (+Y)
+        {Eigen::Vector3f(-1.0f,  1.0f,  1.0f), Eigen::Vector3f( 0.0f,  1.0f,  0.0f)},
+        {Eigen::Vector3f( 1.0f,  1.0f,  1.0f), Eigen::Vector3f( 0.0f,  1.0f,  0.0f)},
+        {Eigen::Vector3f( 1.0f,  1.0f, -1.0f), Eigen::Vector3f( 0.0f,  1.0f,  0.0f)},
+        {Eigen::Vector3f(-1.0f,  1.0f, -1.0f), Eigen::Vector3f( 0.0f,  1.0f,  0.0f)},
+
+        // Bottom (-Y)
+        {Eigen::Vector3f(-1.0f, -1.0f, -1.0f), Eigen::Vector3f( 0.0f, -1.0f,  0.0f)},
+        {Eigen::Vector3f( 1.0f, -1.0f, -1.0f), Eigen::Vector3f( 0.0f, -1.0f,  0.0f)},
+        {Eigen::Vector3f( 1.0f, -1.0f,  1.0f), Eigen::Vector3f( 0.0f, -1.0f,  0.0f)},
+        {Eigen::Vector3f(-1.0f, -1.0f,  1.0f), Eigen::Vector3f( 0.0f, -1.0f,  0.0f)},
+    };
+
+    std::vector<std::uint32_t> indices = {
+        0,  1,  2,   2,  3,  0,   // Front
+        4,  5,  6,   6,  7,  4,   // Back
+        8,  9, 10,  10, 11,  8,   // Left
+        12, 13, 14,  14, 15, 12,   // Right
+        16, 17, 18,  18, 19, 16,   // Top
+        20, 21, 22,  22, 23, 20    // Bottom
+    };
+
+    auto cubeMesh = std::make_shared<Mesh>(
+        std::move(vertices),
+        std::move(indices)
+    );
 
     Scene scene;
-    SceneObject object("Cube", cube);
+    SceneObject object("Cube", cubeMesh);
     object.transform().setTranslation(
         Eigen::Vector3f(0.0f, 0.0f, -10.0f)
     );    

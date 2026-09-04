@@ -175,3 +175,9 @@ void ShaderProgram::setMat4(const char* name, const Eigen::Matrix4f& matrix) con
 
 }
 
+void ShaderProgram::setVec3(const char* name, const Eigen::Vector3f& value) const
+{
+    GLint location = glGetUniformLocation(id_, name);
+
+    glUniform3f(location, value.x(), value.y(), value.z());
+}
