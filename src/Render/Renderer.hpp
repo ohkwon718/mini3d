@@ -12,13 +12,19 @@
 class Renderer
 {
 public:
-    void draw(const SceneObject& object,
-              const Camera& camera,
-              const ShaderProgram& shader);
+    void draw(
+        const SceneObject& object,
+        const Camera& camera,
+        const ShaderProgram& shader,
+        const Eigen::Vector3f& lightDirection,
+        const Eigen::Vector3f& baseColor
+    );
 
     void draw(const Scene& scene,
               const Camera& camera,
-              const ShaderProgram& shader);
+              const ShaderProgram& shader,
+              const Eigen::Vector3f& lightDirection,
+              const Eigen::Vector3f& baseColor);
 
 private:
     std::unordered_map<

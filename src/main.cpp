@@ -71,7 +71,8 @@ int main()
     void main()
     {   
         vec3 N = normalize(vNormal);
-        float diffuse = max(dot(N, uLightDirection), 0.0);
+        vec3 L = normalize(uLightDirection);
+        float diffuse = max(dot(N, L), 0.0);
         float ambient = 0.15;
         float brightness = ambient + diffuse;
         
@@ -79,6 +80,8 @@ int main()
     }
     )";
      
+    Eigen::Vector3f lightDirection(-0.5f, -1.0f, -0.3f);
+    Eigen::Vector3f baseColor(1.0f, 0.5f, 0.3f);
 
     std::vector<Vertex> vertices = {
         // Front (+Z)
@@ -159,7 +162,7 @@ int main()
     target.bind();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    renderer.draw(scene, camera, shader);
+    renderer.draw(scene, camera, shader, lightDirection, baseColor);
 
     auto rgb = target.readRgb();
     auto depth = target.readDepth();
@@ -171,7 +174,7 @@ int main()
     while (!glfwWindowShouldClose(window.get())) {        
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        renderer.draw(scene, camera, shader);
+        renderer.draw(scene, camera, shader, lightDirection, baseColor);
 
         glfwSwapBuffers(window.get());
         glfwPollEvents();
