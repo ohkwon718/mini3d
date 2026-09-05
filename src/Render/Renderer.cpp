@@ -3,8 +3,7 @@
 void Renderer::draw(const SceneObject& object,
                     const Camera& camera,
                     const ShaderProgram& shader,
-                    const Eigen::Vector3f& lightDirection,
-                    const Eigen::Vector3f& baseColor)
+                    const Eigen::Vector3f& lightDirection)
 {   
     const auto& mesh = object.mesh();
 
@@ -15,7 +14,7 @@ void Renderer::draw(const SceneObject& object,
     shader.setMat4("uView", camera.viewMatrix());
     shader.setMat4("uProjection", camera.projectionMatrix());
     shader.setVec3("uLightDirection", lightDirection);
-    shader.setVec3("uBaseColor", baseColor);
+    shader.setVec3("uBaseColor", object.material().baseColor);
 
     it->second.draw();
 }
@@ -24,11 +23,10 @@ void Renderer::draw(const SceneObject& object,
 void Renderer::draw(const Scene& scene,
                     const Camera& camera,
                     const ShaderProgram& shader,
-                    const Eigen::Vector3f& lightDirection,
-                    const Eigen::Vector3f& baseColor)
+                    const Eigen::Vector3f& lightDirection)
 {   
     for (std::size_t i = 0; i < scene.size(); ++i) {
-        draw(scene.object(i), camera, shader, lightDirection, baseColor);
+        draw(scene.object(i), camera, shader, lightDirection);
     }
 }
 

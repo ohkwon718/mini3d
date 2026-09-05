@@ -16,15 +16,15 @@ public:
         const SceneObject& object,
         const Camera& camera,
         const ShaderProgram& shader,
-        const Eigen::Vector3f& lightDirection,
-        const Eigen::Vector3f& baseColor
+        const Eigen::Vector3f& lightDirection        
     );
 
-    void draw(const Scene& scene,
-              const Camera& camera,
-              const ShaderProgram& shader,
-              const Eigen::Vector3f& lightDirection,
-              const Eigen::Vector3f& baseColor);
+    void draw(
+        const Scene& scene,
+        const Camera& camera,
+        const ShaderProgram& shader,
+        const Eigen::Vector3f& lightDirection
+    );
 
 private:
     std::unordered_map<

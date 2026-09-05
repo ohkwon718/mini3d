@@ -2,9 +2,14 @@
 #include <utility>
 #include <stdexcept>
 
-SceneObject::SceneObject(std::string name, std::shared_ptr<const Mesh> mesh)
+SceneObject::SceneObject(
+        std::string name, 
+        std::shared_ptr<const Mesh> mesh, 
+        Material material
+    )
     : name_(std::move(name)),
-      mesh_(std::move(mesh))
+      mesh_(std::move(mesh)),
+      material_{std::move(material)}
 {
     if (!mesh_) {
         throw std::invalid_argument("SceneObject requires a mesh");
@@ -30,4 +35,9 @@ const Transform& SceneObject::transform() const
 const std::shared_ptr<const Mesh>& SceneObject::mesh() const
 {
     return mesh_;
+}
+
+const Material& SceneObject::material() const
+{
+    return material_;
 }

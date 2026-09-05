@@ -10,9 +10,18 @@ int main() {
 
     auto mesh = std::make_shared<const Mesh>(
         std::vector<Vertex>{
-            {Eigen::Vector3f(0.0f, 0.0f, 0.0f)},
-            {Eigen::Vector3f(1.0f, 0.0f, 0.0f)},
-            {Eigen::Vector3f(0.0f, 1.0f, 0.0f)}
+            {
+                Eigen::Vector3f(0.0f, 0.0f, 0.0f),
+                Eigen::Vector3f(0.0f, 0.0f, 1.0f)
+            },
+            {
+                Eigen::Vector3f(1.0f, 0.0f, 0.0f),
+                Eigen::Vector3f(0.0f, 0.0f, 1.0f)
+            },
+            {
+                Eigen::Vector3f(0.0f, 1.0f, 0.0f),
+                Eigen::Vector3f(0.0f, 0.0f, 1.0f)
+            }
         },
         std::vector<std::uint32_t>{0, 1, 2}
     );

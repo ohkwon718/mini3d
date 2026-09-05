@@ -81,7 +81,6 @@ int main()
     )";
      
     Eigen::Vector3f lightDirection(-0.5f, -1.0f, -0.3f);
-    Eigen::Vector3f baseColor(1.0f, 0.5f, 0.3f);
 
     std::vector<Vertex> vertices = {
         // Front (+Z)
@@ -135,8 +134,8 @@ int main()
         std::move(indices)
     );
 
-    Scene scene;
-    SceneObject object("Cube", cubeMesh);
+    Scene scene;    
+    SceneObject object("Cube", cubeMesh, {1.0f, 0.5f, 0.3f});
     object.transform().setTranslation(
         Eigen::Vector3f(0.0f, 0.0f, -10.0f)
     );    
@@ -162,7 +161,7 @@ int main()
     target.bind();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    renderer.draw(scene, camera, shader, lightDirection, baseColor);
+    renderer.draw(scene, camera, shader, lightDirection);
 
     auto rgb = target.readRgb();
     auto depth = target.readDepth();
@@ -174,7 +173,7 @@ int main()
     while (!glfwWindowShouldClose(window.get())) {        
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        renderer.draw(scene, camera, shader, lightDirection, baseColor);
+        renderer.draw(scene, camera, shader, lightDirection);
 
         glfwSwapBuffers(window.get());
         glfwPollEvents();
