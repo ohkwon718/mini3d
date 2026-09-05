@@ -135,14 +135,33 @@ int main()
     );
 
     Scene scene;    
-    SceneObject object("Cube", cubeMesh, {1.0f, 0.5f, 0.3f});
-    object.transform().setTranslation(
+    SceneObject CubeCenter("Cube", cubeMesh, {1.0f, 0.3f, 0.3f});
+    CubeCenter.transform().setTranslation(
         Eigen::Vector3f(0.0f, 0.0f, -10.0f)
     );    
-    object.transform().setRotation(
+    CubeCenter.transform().setRotation(
         Eigen::Quaternionf(0.5f, 0.5f, 0.5f, 1.0f)
     );
-    scene.addObject(std::move(object));
+    
+    SceneObject CubeLeft("Cube", cubeMesh, {0.3f, 1.0f, 0.3f});
+    CubeLeft.transform().setTranslation(
+        Eigen::Vector3f(-3.0f, 0.0f, -10.0f)
+    );    
+    CubeLeft.transform().setRotation(
+        Eigen::Quaternionf(0.5f, 0.5f, 0.1f, 1.0f)
+    );    
+
+    SceneObject CubeRight("Cube", cubeMesh, {0.3f, 0.3f, 1.0f});
+    CubeRight.transform().setTranslation(
+        Eigen::Vector3f(3.0f, 0.0f, -10.0f)
+    );    
+    CubeRight.transform().setRotation(
+        Eigen::Quaternionf(0.5f, 0.5f, 0.9f, 1.0f)
+    );
+    
+    scene.addObject(std::move(CubeCenter));
+    scene.addObject(std::move(CubeLeft));
+    scene.addObject(std::move(CubeRight));
 
     Renderer renderer;
 
