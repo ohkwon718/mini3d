@@ -53,6 +53,14 @@ void Camera::setRotation(const Eigen::Quaternionf& rotation)
     orientation_ = rotation.normalized();
 }
 
+void Camera::setAspectRatio(float aspectRatio)
+{
+    if ( aspectRatio <= 0.0f ) {
+        throw std::invalid_argument( "received invalid aspect ratio" );
+    }
+    aspectRatio_ = aspectRatio;
+}
+
 Eigen::Matrix4f Camera::viewMatrix() const
 {
     Eigen::Matrix4f view = Eigen::Matrix4f::Identity();

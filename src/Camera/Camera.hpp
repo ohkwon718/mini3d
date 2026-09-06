@@ -16,6 +16,8 @@ public:
     void setPosition(const Eigen::Vector3f&);
     void setRotation(const Eigen::Quaternionf&);
 
+    void setAspectRatio(float aspectRatio);
+
     Eigen::Matrix4f viewMatrix() const;
     Eigen::Matrix4f projectionMatrix() const;
 

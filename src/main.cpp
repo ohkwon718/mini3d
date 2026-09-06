@@ -176,7 +176,7 @@ int main()
     camera.setPosition(Eigen::Vector3f(0.0f, 0.0f, 3.0f));
 
     RenderTarget target(640, 480);
-    target.bind();
+    target.bind();    
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderer.draw(scene, camera, shader, lightDirection);
@@ -197,6 +197,7 @@ int main()
     double previousTime = glfwGetTime();
     while (!glfwWindowShouldClose(window.get())) {        
         glfwPollEvents();
+
         double currentTime = glfwGetTime();
         double deltaTime = currentTime - previousTime;
         previousTime = currentTime;
@@ -268,8 +269,25 @@ int main()
         }
         if (glfwGetKey(window.get(), GLFW_KEY_E) == GLFW_PRESS) {
             camera.setPosition(camera.position() + up * distance);
+        }     
+
+        int framebufferWidth;
+        int framebufferHeight;
+        
+        glfwGetFramebufferSize(
+            window.get(),
+            &framebufferWidth,
+            &framebufferHeight
+        );
+
+        if (framebufferWidth > 0 && framebufferHeight > 0) {
+            RenderTarget::bindDefault(framebufferWidth, framebufferHeight);
+            camera.setAspectRatio(
+                static_cast<float>(framebufferWidth) / 
+                static_cast<float>(framebufferHeight)
+            );
         }
-     
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         renderer.draw(scene, camera, shader, lightDirection);
