@@ -190,6 +190,10 @@ int main()
 
 
     float speed = 5.0f;
+    const float mouseSensitivity = 0.002f;
+    double previousMouseX = 0.0;
+    double previousMouseY = 0.0;
+    bool firstMouseSample = true;
     double previousTime = glfwGetTime();
     while (!glfwWindowShouldClose(window.get())) {        
         glfwPollEvents();
@@ -199,6 +203,45 @@ int main()
 
         if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             glfwSetWindowShouldClose(window.get(), GLFW_TRUE);
+        }
+
+        if (glfwGetMouseButton(window.get(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+            double mouseX;
+            double mouseY;
+
+            glfwGetCursorPos(window.get(), &mouseX, &mouseY);
+
+            if (firstMouseSample) {
+                firstMouseSample = false;
+                previousMouseX = mouseX;
+                previousMouseY = mouseY;
+            }
+            else {
+                double deltaX = mouseX - previousMouseX;
+                double deltaY = mouseY - previousMouseY;
+                
+                const float yawAngle = -static_cast<float>(deltaX) * mouseSensitivity;
+                const float pitchAngle = -static_cast<float>(deltaY) * mouseSensitivity;
+
+                Eigen::Quaternionf orientation = camera.rotation();
+                const Eigen::Quaternionf yawRotation(
+                    Eigen::AngleAxisf(yawAngle, Eigen::Vector3f::UnitY())
+                );
+                orientation = yawRotation * orientation;
+                const Eigen::Vector3f right = orientation * Eigen::Vector3f::UnitX();
+                const Eigen::Quaternionf pitchRotation(
+                    Eigen::AngleAxisf(pitchAngle, right)
+                );
+                orientation = pitchRotation * orientation;
+                camera.setRotation(orientation);
+
+
+                previousMouseX = mouseX;
+                previousMouseY = mouseY;
+            }            
+        }
+        else {
+            firstMouseSample = true;
         }
 
         const float distance = speed * static_cast<float>(deltaTime);
@@ -226,9 +269,7 @@ int main()
         if (glfwGetKey(window.get(), GLFW_KEY_E) == GLFW_PRESS) {
             camera.setPosition(camera.position() + up * distance);
         }
-
-
-
+     
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         renderer.draw(scene, camera, shader, lightDirection);
