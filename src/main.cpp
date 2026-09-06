@@ -13,7 +13,6 @@
 #include "Scene/Scene.hpp"
 #include "Camera/Camera.hpp"
 
-
 int main()
 {
     GlfwRuntime glfw;
@@ -189,13 +188,52 @@ int main()
 
     RenderTarget::bindDefault(800, 600);
 
+
+    float speed = 5.0f;
+    double previousTime = glfwGetTime();
     while (!glfwWindowShouldClose(window.get())) {        
+        glfwPollEvents();
+        double currentTime = glfwGetTime();
+        double deltaTime = currentTime - previousTime;
+        previousTime = currentTime;
+
+        if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+            glfwSetWindowShouldClose(window.get(), GLFW_TRUE);
+        }
+
+        const float distance = speed * static_cast<float>(deltaTime);
+
+        const Eigen::Vector3f forward = camera.rotation() * Eigen::Vector3f(0.0f, 0.0f, -1.0f);
+        if (glfwGetKey(window.get(), GLFW_KEY_W) == GLFW_PRESS) {
+            camera.setPosition(camera.position() + forward * distance);
+        }
+        if (glfwGetKey(window.get(), GLFW_KEY_S) == GLFW_PRESS) {
+            camera.setPosition(camera.position() - forward * distance);
+        }
+
+        const Eigen::Vector3f right = camera.rotation() * Eigen::Vector3f(1.0f, 0.0f, 0.0f);
+        if (glfwGetKey(window.get(), GLFW_KEY_A) == GLFW_PRESS) {
+            camera.setPosition(camera.position() - right * distance);
+        }
+        if (glfwGetKey(window.get(), GLFW_KEY_D) == GLFW_PRESS) {
+            camera.setPosition(camera.position() + right * distance);
+        }
+
+        const Eigen::Vector3f up = camera.rotation() * Eigen::Vector3f(0.0f, 1.0f, 0.0f);
+        if (glfwGetKey(window.get(), GLFW_KEY_Q) == GLFW_PRESS) {
+            camera.setPosition(camera.position() - up * distance);
+        }
+        if (glfwGetKey(window.get(), GLFW_KEY_E) == GLFW_PRESS) {
+            camera.setPosition(camera.position() + up * distance);
+        }
+
+
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         renderer.draw(scene, camera, shader, lightDirection);
 
         glfwSwapBuffers(window.get());
-        glfwPollEvents();
     }
 
 
