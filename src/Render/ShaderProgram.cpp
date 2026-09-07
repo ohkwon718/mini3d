@@ -181,3 +181,10 @@ void ShaderProgram::setVec3(const char* name, const Eigen::Vector3f& value) cons
 
     glUniform3f(location, value.x(), value.y(), value.z());
 }
+
+void ShaderProgram::setFloat(const char* name, float value) const
+{
+    GLint location = glGetUniformLocation(id_, name);
+
+    glUniform1f(location, value);    
+}

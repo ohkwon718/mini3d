@@ -70,8 +70,9 @@ int main()
 
     uniform vec3 uLightDirection;
     uniform vec3 uBaseColor;
-    uniform vec3 uCameraPosition;
-    float shininess = 32.0;
+    uniform vec3 uCameraPosition;    
+    uniform float uShininess;
+    uniform float uSpecularStrength;
 
     void main()
     {   
@@ -83,12 +84,15 @@ int main()
         float diffuse = max(dot(N, L), 0.0);
         float specular = 0.0;
         if (diffuse > 0.0) {
-            specular = pow(max(dot(N, H), 0.0), shininess);
+            specular = pow(max(dot(N, H), 0.0), uShininess);
         }        
         float ambient = 0.15;
         float brightness = ambient + diffuse;        
 
-        FragColor = vec4(uBaseColor * brightness + specular * vec3(0.5, 0.5, 0.5), 1.0);        
+        FragColor = vec4(
+            uBaseColor * brightness + uSpecularStrength * specular * vec3(1.0), 
+            1.0
+        );
     }
     )";
      
@@ -118,9 +122,14 @@ int main()
     scene.addObject(std::move(CubeLeft));
     scene.addObject(std::move(CubeRight));
 
-    SceneObject sphere("Sphere", sphereMesh, {0.8f, 0.8f, 0.8f});
-    sphere.transform().setTranslation({0.0f, 3.0f, -10.0f});
-    scene.addObject(std::move(sphere));
+    SceneObject sphereLeft("Sphere", sphereMesh, {1.0f, 0.3f, 0.3f, 8.0f, 0.1f});
+    sphereLeft.transform().setTranslation({-3.0f, 3.0f, -10.0f});
+    scene.addObject(std::move(sphereLeft));
+    
+
+    SceneObject sphereRight("Sphere", sphereMesh, {0.8f, 0.8f, 0.8f, 128.0f, 1.0f});
+    sphereRight.transform().setTranslation({3.0f, 3.0f, -10.0f});
+    scene.addObject(std::move(sphereRight));
 
 
     Renderer renderer;

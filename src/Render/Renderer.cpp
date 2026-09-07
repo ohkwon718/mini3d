@@ -16,6 +16,8 @@ void Renderer::draw(const SceneObject& object,
     shader.setVec3("uLightDirection", lightDirection);
     shader.setVec3("uBaseColor", object.material().baseColor);
     shader.setVec3("uCameraPosition", camera.position());
+    shader.setFloat("uShininess", object.material().shininess);
+    shader.setFloat("uSpecularStrength", object.material().specularStrength);
    
 
     it->second.draw();

@@ -5,11 +5,17 @@
 struct Material
 {
     Eigen::Vector3f baseColor{1.0f, 1.0f, 1.0f};
+    float shininess{32.0f};
+    float specularStrength{0.5f};
 
     Material() = default;
 
-    Material(float r, float g, float b)
-        : baseColor(r, g, b)
+    Material(float r, float g, float b, 
+        float shininessValue = 32.0f,
+        float specularStrengthValue = 0.5f)
+        : baseColor(r, g, b),
+        shininess(shininessValue),
+        specularStrength(specularStrengthValue)
     {
     }
 };
