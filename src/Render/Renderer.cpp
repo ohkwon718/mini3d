@@ -15,6 +15,8 @@ void Renderer::draw(const SceneObject& object,
     shader.setMat4("uProjection", camera.projectionMatrix());
     shader.setVec3("uLightDirection", lightDirection);
     shader.setVec3("uBaseColor", object.material().baseColor);
+    shader.setVec3("uCameraPosition", camera.position());
+   
 
     it->second.draw();
 }
