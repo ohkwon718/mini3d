@@ -5,40 +5,40 @@ Mesh createCubeMesh(float halfExtent)
     const float h = halfExtent;
     std::vector<Vertex> vertices = {
         // Front (+Z)
-        {Eigen::Vector3f(-h, -h,  h), Eigen::Vector3f( 0.0f,  0.0f,  h)},
-        {Eigen::Vector3f( h, -h,  h), Eigen::Vector3f( 0.0f,  0.0f,  h)},
-        {Eigen::Vector3f( h,  h,  h), Eigen::Vector3f( 0.0f,  0.0f,  h)},
-        {Eigen::Vector3f(-h,  h,  h), Eigen::Vector3f( 0.0f,  0.0f,  h)},
+        {Eigen::Vector3f(-h, -h,  h), Eigen::Vector3f( 0.0f,  0.0f,  1.0f)},
+        {Eigen::Vector3f( h, -h,  h), Eigen::Vector3f( 0.0f,  0.0f,  1.0f)},
+        {Eigen::Vector3f( h,  h,  h), Eigen::Vector3f( 0.0f,  0.0f,  1.0f)},
+        {Eigen::Vector3f(-h,  h,  h), Eigen::Vector3f( 0.0f,  0.0f,  1.0f)},
 
         // Back (-Z)
-        {Eigen::Vector3f( h, -h, -h), Eigen::Vector3f( 0.0f,  0.0f, -h)},
-        {Eigen::Vector3f(-h, -h, -h), Eigen::Vector3f( 0.0f,  0.0f, -h)},
-        {Eigen::Vector3f(-h,  h, -h), Eigen::Vector3f( 0.0f,  0.0f, -h)},
-        {Eigen::Vector3f( h,  h, -h), Eigen::Vector3f( 0.0f,  0.0f, -h)},
+        {Eigen::Vector3f( h, -h, -h), Eigen::Vector3f( 0.0f,  0.0f, -1.0f)},
+        {Eigen::Vector3f(-h, -h, -h), Eigen::Vector3f( 0.0f,  0.0f, -1.0f)},
+        {Eigen::Vector3f(-h,  h, -h), Eigen::Vector3f( 0.0f,  0.0f, -1.0f)},
+        {Eigen::Vector3f( h,  h, -h), Eigen::Vector3f( 0.0f,  0.0f, -1.0f)},
 
         // Left (-X)
-        {Eigen::Vector3f(-h, -h, -h), Eigen::Vector3f(-h,  0.0f,  0.0f)},
-        {Eigen::Vector3f(-h, -h,  h), Eigen::Vector3f(-h,  0.0f,  0.0f)},
-        {Eigen::Vector3f(-h,  h,  h), Eigen::Vector3f(-h,  0.0f,  0.0f)},
-        {Eigen::Vector3f(-h,  h, -h), Eigen::Vector3f(-h,  0.0f,  0.0f)},
+        {Eigen::Vector3f(-h, -h, -h), Eigen::Vector3f(-1.0f,  0.0f,  0.0f)},
+        {Eigen::Vector3f(-h, -h,  h), Eigen::Vector3f(-1.0f,  0.0f,  0.0f)},
+        {Eigen::Vector3f(-h,  h,  h), Eigen::Vector3f(-1.0f,  0.0f,  0.0f)},
+        {Eigen::Vector3f(-h,  h, -h), Eigen::Vector3f(-1.0f,  0.0f,  0.0f)},
 
         // Right (+X)
-        {Eigen::Vector3f( h, -h,  h), Eigen::Vector3f( h,  0.0f,  0.0f)},
-        {Eigen::Vector3f( h, -h, -h), Eigen::Vector3f( h,  0.0f,  0.0f)},
-        {Eigen::Vector3f( h,  h, -h), Eigen::Vector3f( h,  0.0f,  0.0f)},
-        {Eigen::Vector3f( h,  h,  h), Eigen::Vector3f( h,  0.0f,  0.0f)},
+        {Eigen::Vector3f( h, -h,  h), Eigen::Vector3f( 1.0f,  0.0f,  0.0f)},
+        {Eigen::Vector3f( h, -h, -h), Eigen::Vector3f( 1.0f,  0.0f,  0.0f)},
+        {Eigen::Vector3f( h,  h, -h), Eigen::Vector3f( 1.0f,  0.0f,  0.0f)},
+        {Eigen::Vector3f( h,  h,  h), Eigen::Vector3f( 1.0f,  0.0f,  0.0f)},
 
         // Top (+Y)
-        {Eigen::Vector3f(-h,  h,  h), Eigen::Vector3f( 0.0f,  h,  0.0f)},
-        {Eigen::Vector3f( h,  h,  h), Eigen::Vector3f( 0.0f,  h,  0.0f)},
-        {Eigen::Vector3f( h,  h, -h), Eigen::Vector3f( 0.0f,  h,  0.0f)},
-        {Eigen::Vector3f(-h,  h, -h), Eigen::Vector3f( 0.0f,  h,  0.0f)},
+        {Eigen::Vector3f(-h,  h,  h), Eigen::Vector3f( 0.0f,  1.0f,  0.0f)},
+        {Eigen::Vector3f( h,  h,  h), Eigen::Vector3f( 0.0f,  1.0f,  0.0f)},
+        {Eigen::Vector3f( h,  h, -h), Eigen::Vector3f( 0.0f,  1.0f,  0.0f)},
+        {Eigen::Vector3f(-h,  h, -h), Eigen::Vector3f( 0.0f,  1.0f,  0.0f)},
 
         // Bottom (-Y)
-        {Eigen::Vector3f(-h, -h, -h), Eigen::Vector3f( 0.0f, -h,  0.0f)},
-        {Eigen::Vector3f( h, -h, -h), Eigen::Vector3f( 0.0f, -h,  0.0f)},
-        {Eigen::Vector3f( h, -h,  h), Eigen::Vector3f( 0.0f, -h,  0.0f)},
-        {Eigen::Vector3f(-h, -h,  h), Eigen::Vector3f( 0.0f, -h,  0.0f)},
+        {Eigen::Vector3f(-h, -h, -h), Eigen::Vector3f( 0.0f, -1.0f,  0.0f)},
+        {Eigen::Vector3f( h, -h, -h), Eigen::Vector3f( 0.0f, -1.0f,  0.0f)},
+        {Eigen::Vector3f( h, -h,  h), Eigen::Vector3f( 0.0f, -1.0f,  0.0f)},
+        {Eigen::Vector3f(-h, -h,  h), Eigen::Vector3f( 0.0f, -1.0f,  0.0f)},
     };
 
     std::vector<std::uint32_t> indices = {
