@@ -13,6 +13,7 @@
 #include "Scene/SceneObject.hpp"
 #include "Scene/Scene.hpp"
 #include "Camera/Camera.hpp"
+#include "Geometry/PrimitiveMeshes.hpp"
 
 int main()
 {
@@ -94,56 +95,8 @@ int main()
      
     Eigen::Vector3f lightDirection(-0.5f, -1.0f, -0.3f);
 
-    std::vector<Vertex> vertices = {
-        // Front (+Z)
-        {Eigen::Vector3f(-1.0f, -1.0f,  1.0f), Eigen::Vector3f( 0.0f,  0.0f,  1.0f)},
-        {Eigen::Vector3f( 1.0f, -1.0f,  1.0f), Eigen::Vector3f( 0.0f,  0.0f,  1.0f)},
-        {Eigen::Vector3f( 1.0f,  1.0f,  1.0f), Eigen::Vector3f( 0.0f,  0.0f,  1.0f)},
-        {Eigen::Vector3f(-1.0f,  1.0f,  1.0f), Eigen::Vector3f( 0.0f,  0.0f,  1.0f)},
-
-        // Back (-Z)
-        {Eigen::Vector3f( 1.0f, -1.0f, -1.0f), Eigen::Vector3f( 0.0f,  0.0f, -1.0f)},
-        {Eigen::Vector3f(-1.0f, -1.0f, -1.0f), Eigen::Vector3f( 0.0f,  0.0f, -1.0f)},
-        {Eigen::Vector3f(-1.0f,  1.0f, -1.0f), Eigen::Vector3f( 0.0f,  0.0f, -1.0f)},
-        {Eigen::Vector3f( 1.0f,  1.0f, -1.0f), Eigen::Vector3f( 0.0f,  0.0f, -1.0f)},
-
-        // Left (-X)
-        {Eigen::Vector3f(-1.0f, -1.0f, -1.0f), Eigen::Vector3f(-1.0f,  0.0f,  0.0f)},
-        {Eigen::Vector3f(-1.0f, -1.0f,  1.0f), Eigen::Vector3f(-1.0f,  0.0f,  0.0f)},
-        {Eigen::Vector3f(-1.0f,  1.0f,  1.0f), Eigen::Vector3f(-1.0f,  0.0f,  0.0f)},
-        {Eigen::Vector3f(-1.0f,  1.0f, -1.0f), Eigen::Vector3f(-1.0f,  0.0f,  0.0f)},
-
-        // Right (+X)
-        {Eigen::Vector3f( 1.0f, -1.0f,  1.0f), Eigen::Vector3f( 1.0f,  0.0f,  0.0f)},
-        {Eigen::Vector3f( 1.0f, -1.0f, -1.0f), Eigen::Vector3f( 1.0f,  0.0f,  0.0f)},
-        {Eigen::Vector3f( 1.0f,  1.0f, -1.0f), Eigen::Vector3f( 1.0f,  0.0f,  0.0f)},
-        {Eigen::Vector3f( 1.0f,  1.0f,  1.0f), Eigen::Vector3f( 1.0f,  0.0f,  0.0f)},
-
-        // Top (+Y)
-        {Eigen::Vector3f(-1.0f,  1.0f,  1.0f), Eigen::Vector3f( 0.0f,  1.0f,  0.0f)},
-        {Eigen::Vector3f( 1.0f,  1.0f,  1.0f), Eigen::Vector3f( 0.0f,  1.0f,  0.0f)},
-        {Eigen::Vector3f( 1.0f,  1.0f, -1.0f), Eigen::Vector3f( 0.0f,  1.0f,  0.0f)},
-        {Eigen::Vector3f(-1.0f,  1.0f, -1.0f), Eigen::Vector3f( 0.0f,  1.0f,  0.0f)},
-
-        // Bottom (-Y)
-        {Eigen::Vector3f(-1.0f, -1.0f, -1.0f), Eigen::Vector3f( 0.0f, -1.0f,  0.0f)},
-        {Eigen::Vector3f( 1.0f, -1.0f, -1.0f), Eigen::Vector3f( 0.0f, -1.0f,  0.0f)},
-        {Eigen::Vector3f( 1.0f, -1.0f,  1.0f), Eigen::Vector3f( 0.0f, -1.0f,  0.0f)},
-        {Eigen::Vector3f(-1.0f, -1.0f,  1.0f), Eigen::Vector3f( 0.0f, -1.0f,  0.0f)},
-    };
-
-    std::vector<std::uint32_t> indices = {
-        0,  1,  2,   2,  3,  0,   // Front
-        4,  5,  6,   6,  7,  4,   // Back
-        8,  9, 10,  10, 11,  8,   // Left
-        12, 13, 14,  14, 15, 12,   // Right
-        16, 17, 18,  18, 19, 16,   // Top
-        20, 21, 22,  22, 23, 20    // Bottom
-    };
-
-    auto cubeMesh = std::make_shared<Mesh>(
-        std::move(vertices),
-        std::move(indices)
+    auto cubeMesh = std::make_shared<const Mesh>(
+        createCubeMesh()
     );
 
     Scene scene;    

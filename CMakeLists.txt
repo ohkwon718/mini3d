@@ -50,7 +50,8 @@ add_library(
     src/Scene/SceneObject.cpp
     src/Scene/Scene.cpp
     src/Camera/Camera.cpp
-    src/Geometry/Mesh.cpp    
+    src/Geometry/Mesh.cpp
+    src/Geometry/PrimitiveMeshes.cpp
 )
 target_compile_features(mini3d_core PRIVATE cxx_std_20)
 target_include_directories(
