@@ -6,6 +6,7 @@
 #include <memory>
 #include <cassert>
 #include "Platform/GlfwRuntime.hpp"
+#include "Platform/FreeCameraController.hpp"
 #include "Render/ShaderProgram.hpp"
 #include "Render/Renderer.hpp"
 #include "Render/RenderTarget.hpp"
@@ -199,13 +200,8 @@ int main()
     assert(depth.size() == 640 * 480);
 
     RenderTarget::bindDefault(800, 600);
+    FreeCameraController controller(5.0f, 0.002f);
 
-
-    float speed = 5.0f;
-    const float mouseSensitivity = 0.002f;
-    double previousMouseX = 0.0;
-    double previousMouseY = 0.0;
-    bool firstMouseSample = true;
     double previousTime = glfwGetTime();
     while (!glfwWindowShouldClose(window.get())) {        
         glfwPollEvents();
@@ -213,92 +209,11 @@ int main()
         double currentTime = glfwGetTime();
         double deltaTime = currentTime - previousTime;
         previousTime = currentTime;
-
-        if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-            glfwSetWindowShouldClose(window.get(), GLFW_TRUE);
-        }
-
-        if (glfwGetMouseButton(window.get(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-            double mouseX;
-            double mouseY;
-
-            glfwGetCursorPos(window.get(), &mouseX, &mouseY);
-
-            if (firstMouseSample) {
-                firstMouseSample = false;
-                previousMouseX = mouseX;
-                previousMouseY = mouseY;
-            }
-            else {
-                double deltaX = mouseX - previousMouseX;
-                double deltaY = mouseY - previousMouseY;
-                
-                const float yawAngle = -static_cast<float>(deltaX) * mouseSensitivity;
-                const float pitchAngle = -static_cast<float>(deltaY) * mouseSensitivity;
-
-                Eigen::Quaternionf orientation = camera.rotation();
-                const Eigen::Quaternionf yawRotation(
-                    Eigen::AngleAxisf(yawAngle, Eigen::Vector3f::UnitY())
-                );
-                orientation = yawRotation * orientation;
-                const Eigen::Vector3f right = orientation * Eigen::Vector3f::UnitX();
-                const Eigen::Quaternionf pitchRotation(
-                    Eigen::AngleAxisf(pitchAngle, right)
-                );
-                orientation = pitchRotation * orientation;
-                camera.setRotation(orientation);
-
-
-                previousMouseX = mouseX;
-                previousMouseY = mouseY;
-            }            
-        }
-        else {
-            firstMouseSample = true;
-        }
-
-        const float distance = speed * static_cast<float>(deltaTime);
-
-        const Eigen::Vector3f forward = camera.rotation() * Eigen::Vector3f(0.0f, 0.0f, -1.0f);
-        if (glfwGetKey(window.get(), GLFW_KEY_W) == GLFW_PRESS) {
-            camera.setPosition(camera.position() + forward * distance);
-        }
-        if (glfwGetKey(window.get(), GLFW_KEY_S) == GLFW_PRESS) {
-            camera.setPosition(camera.position() - forward * distance);
-        }
-
-        const Eigen::Vector3f right = camera.rotation() * Eigen::Vector3f(1.0f, 0.0f, 0.0f);
-        if (glfwGetKey(window.get(), GLFW_KEY_A) == GLFW_PRESS) {
-            camera.setPosition(camera.position() - right * distance);
-        }
-        if (glfwGetKey(window.get(), GLFW_KEY_D) == GLFW_PRESS) {
-            camera.setPosition(camera.position() + right * distance);
-        }
-
-        const Eigen::Vector3f up = camera.rotation() * Eigen::Vector3f(0.0f, 1.0f, 0.0f);
-        if (glfwGetKey(window.get(), GLFW_KEY_Q) == GLFW_PRESS) {
-            camera.setPosition(camera.position() - up * distance);
-        }
-        if (glfwGetKey(window.get(), GLFW_KEY_E) == GLFW_PRESS) {
-            camera.setPosition(camera.position() + up * distance);
-        }     
-
-        int framebufferWidth;
-        int framebufferHeight;
-        
-        glfwGetFramebufferSize(
+        controller.update(
             window.get(),
-            &framebufferWidth,
-            &framebufferHeight
+            camera,
+            static_cast<float>(deltaTime)
         );
-
-        if (framebufferWidth > 0 && framebufferHeight > 0) {
-            RenderTarget::bindDefault(framebufferWidth, framebufferHeight);
-            camera.setAspectRatio(
-                static_cast<float>(framebufferWidth) / 
-                static_cast<float>(framebufferHeight)
-            );
-        }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

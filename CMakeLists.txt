@@ -109,6 +109,7 @@ add_executable(
     mini3d
     src/main.cpp
     src/Platform/GlfwRuntime.cpp 
+    src/Platform/FreeCameraController.cpp
 )
 target_compile_features(mini3d PRIVATE cxx_std_20)
 target_link_libraries(
