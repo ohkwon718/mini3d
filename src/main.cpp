@@ -88,8 +88,7 @@ int main()
         float ambient = 0.15;
         float brightness = ambient + diffuse;        
 
-        // FragColor = vec4(uBaseColor * brightness + specular * vec3(0.5, 0.5, 0.5), 1.0);
-        FragColor = vec4(uBaseColor * brightness, 1.0);
+        FragColor = vec4(uBaseColor * brightness + specular * vec3(0.5, 0.5, 0.5), 1.0);        
     }
     )";
      
@@ -98,35 +97,31 @@ int main()
     auto cubeMesh = std::make_shared<const Mesh>(
         createCubeMesh()
     );
+    auto sphereMesh = std::make_shared<const Mesh>(
+        createUvSphereMesh(1.0f, 32, 64)
+    );
 
     Scene scene;    
     SceneObject CubeCenter("Cube", cubeMesh, {1.0f, 0.3f, 0.3f});
-    CubeCenter.transform().setTranslation(
-        Eigen::Vector3f(0.0f, 0.0f, -10.0f)
-    );    
-    CubeCenter.transform().setRotation(
-        Eigen::Quaternionf(0.5f, 0.5f, 0.5f, 1.0f)
-    );
+    CubeCenter.transform().setTranslation({0.0f, 0.0f, -10.0f});    
+    CubeCenter.transform().setRotation({0.5f, 0.5f, 0.5f, 1.0f});
     
     SceneObject CubeLeft("Cube", cubeMesh, {0.3f, 1.0f, 0.3f});
-    CubeLeft.transform().setTranslation(
-        Eigen::Vector3f(-3.0f, 0.0f, -10.0f)
-    );    
-    CubeLeft.transform().setRotation(
-        Eigen::Quaternionf(0.5f, 0.5f, 0.1f, 1.0f)
-    );    
+    CubeLeft.transform().setTranslation({-3.0f, 0.0f, -10.0f});    
+    CubeLeft.transform().setRotation({0.5f, 0.5f, 0.1f, 1.0f});    
 
     SceneObject CubeRight("Cube", cubeMesh, {0.3f, 0.3f, 1.0f});
-    CubeRight.transform().setTranslation(
-        Eigen::Vector3f(3.0f, 0.0f, -10.0f)
-    );    
-    CubeRight.transform().setRotation(
-        Eigen::Quaternionf(0.5f, 0.5f, 0.9f, 1.0f)
-    );
+    CubeRight.transform().setTranslation({3.0f, 0.0f, -10.0f});    
+    CubeRight.transform().setRotation({0.5f, 0.5f, 0.9f, 1.0f});
     
     scene.addObject(std::move(CubeCenter));
     scene.addObject(std::move(CubeLeft));
     scene.addObject(std::move(CubeRight));
+
+    SceneObject sphere("Sphere", sphereMesh, {0.8f, 0.8f, 0.8f});
+    sphere.transform().setTranslation({0.0f, 3.0f, -10.0f});
+    scene.addObject(std::move(sphere));
+
 
     Renderer renderer;
 
