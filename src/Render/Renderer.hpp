@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "Scene/SceneObject.hpp"
 #include "Scene/Scene.hpp"
+#include "Scene/DirectionalLight.hpp"
 #include "Camera/Camera.hpp"
 #include "ShaderProgram.hpp"
 #include "GpuMesh.hpp"
@@ -16,14 +17,14 @@ public:
         const SceneObject& object,
         const Camera& camera,
         const ShaderProgram& shader,
-        const Eigen::Vector3f& lightDirection        
+        const DirectionalLight& lightDirection        
     );
 
     void draw(
         const Scene& scene,
         const Camera& camera,
         const ShaderProgram& shader,
-        const Eigen::Vector3f& lightDirection
+        const DirectionalLight& lightDirection
     );
 
 private:

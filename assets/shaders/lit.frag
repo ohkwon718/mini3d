@@ -5,6 +5,8 @@ in vec3 vWorldPosition;
 out vec4 FragColor;
 
 uniform vec3 uLightDirection;
+uniform vec3 uLightColor;
+uniform float uLightIntensity;
 uniform vec3 uBaseColor;
 uniform vec3 uCameraPosition;
 uniform float uShininess;
@@ -23,10 +25,11 @@ void main()
         specular = pow(max(dot(N, H), 0.0), uShininess);
     }
     float ambient = 0.15;
-    float brightness = ambient + diffuse;
-
+    vec3 ambientContribution = uBaseColor * ambient;
+    vec3 diffuseContribution = uBaseColor * diffuse * uLightColor * uLightIntensity;
+    vec3 specularContribution = specular * uSpecularStrength * uLightColor * uLightIntensity;
     FragColor = vec4(
-        uBaseColor * brightness + uSpecularStrength * specular * vec3(1.0), 
+        ambientContribution + diffuseContribution + specularContribution, 
         1.0
     );
 }
