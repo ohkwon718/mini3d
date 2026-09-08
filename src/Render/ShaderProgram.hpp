@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <Eigen/Dense>
 
 class ShaderProgram
@@ -7,6 +8,11 @@ class ShaderProgram
 public:
     ShaderProgram(const char* vertexSource,
                   const char* fragmentSource);
+
+    static ShaderProgram fromFiles(
+        const std::filesystem::path& vertexPath,
+        const std::filesystem::path& fragmentPath
+    );
 
     ~ShaderProgram();
 

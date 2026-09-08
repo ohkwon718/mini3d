@@ -2,7 +2,10 @@
 #include <glad/gl.h>
 #include <stdexcept>
 #include <string>
-
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <filesystem>
 
 namespace {
 
@@ -127,6 +130,36 @@ ShaderProgram::ShaderProgram(const char* vertexSource,
     
     id_ = program.release();
 
+}
+
+
+std::string readTextFile(const std::filesystem::path& path)
+{
+    std::ifstream file(path);
+
+    if (!file) {
+        throw std::runtime_error(
+            "Failed to open file: " + path.string()
+        );
+    }
+
+    std::ostringstream buffer;
+    buffer << file.rdbuf();
+
+    return buffer.str();
+}
+
+ShaderProgram ShaderProgram::fromFiles(
+    const std::filesystem::path& vertexPath,
+    const std::filesystem::path& fragmentPath)
+{    
+    std::string vertexSource = readTextFile(vertexPath);
+    std::string fragmentSource = readTextFile(fragmentPath);
+
+    return ShaderProgram(
+        vertexSource.c_str(),
+        fragmentSource.c_str()
+    );
 }
 
 ShaderProgram::~ShaderProgram()

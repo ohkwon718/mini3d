@@ -188,3 +188,11 @@ target_compile_options(
         -Wconversion
         -Wsign-conversion
 )
+
+add_custom_target(copy_assets ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/assets"
+        "${CMAKE_BINARY_DIR}/assets"
+)
+
+add_dependencies(mini3d copy_assets)
