@@ -1,6 +1,8 @@
 #pragma once
 
 #include <filesystem>
+#include <string>
+#include <unordered_map>
 #include <Eigen/Dense>
 
 class ShaderProgram
@@ -29,6 +31,10 @@ public:
     void setFloat(const char* name, float value) const;
 
 private:
+    int uniformLocation(const char* name) const;
+    
+    mutable std::unordered_map<std::string, int> uniformLocations_;
+
     unsigned int id_{0};
 
 };

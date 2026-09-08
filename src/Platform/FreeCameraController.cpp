@@ -1,5 +1,6 @@
 #include "FreeCameraController.hpp"
-#include "Render/RenderTarget.hpp"
+#include <GLFW/glfw3.h>
+#include "Camera/Camera.hpp"
 
 FreeCameraController::FreeCameraController( float movementSpeed,
                                             float mouseSensitivity)
@@ -12,10 +13,6 @@ void FreeCameraController::update(  GLFWwindow* window,
                                     Camera& camera,
                                     float deltaTime)
 {
-
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
         double mouseX;
@@ -81,23 +78,5 @@ void FreeCameraController::update(  GLFWwindow* window,
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
         camera.setPosition(camera.position() + up * distance);
     }     
-
-    int framebufferWidth;
-    int framebufferHeight;
-    
-    glfwGetFramebufferSize(
-        window,
-        &framebufferWidth,
-        &framebufferHeight
-    );
-
-    if (framebufferWidth > 0 && framebufferHeight > 0) {
-        RenderTarget::bindDefault(framebufferWidth, framebufferHeight);
-        camera.setAspectRatio(
-            static_cast<float>(framebufferWidth) / 
-            static_cast<float>(framebufferHeight)
-        );
-    }
-
 
 }

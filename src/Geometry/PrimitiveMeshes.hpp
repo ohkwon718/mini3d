@@ -12,3 +12,5 @@ Mesh createUvSphereMesh(
     std::uint32_t latitudeSegments,
     std::uint32_t longitudeSegments
 );
+
+Mesh createPlaneMesh(float halfExtent);

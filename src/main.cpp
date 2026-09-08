@@ -39,11 +39,13 @@ int main()
 
     ///////////////////////////////////////////
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 
     ///////////////////////////////////////////
 
-    // Eigen::Vector3f lightDirection(-0.5f, -1.0f, -0.3f);
-    const DirectionalLight& light{
+    const DirectionalLight light{
         {-0.5f, -1.0f, -0.3f},
         {1.0f, 0.2f, 0.2f},
         0.2f
@@ -54,6 +56,9 @@ int main()
     );
     auto sphereMesh = std::make_shared<const Mesh>(
         createUvSphereMesh(1.0f, 32, 64)
+    );
+    auto planeMesh = std::make_shared<const Mesh>(
+        createPlaneMesh(15.0f)
     );
 
     Scene scene;    
@@ -75,13 +80,19 @@ int main()
 
     SceneObject sphereLeft("Sphere", sphereMesh, {1.0f, 0.3f, 0.3f, 8.0f, 0.1f});
     sphereLeft.transform().setTranslation({-3.0f, 3.0f, -10.0f});
-    scene.addObject(std::move(sphereLeft));
-    
+    scene.addObject(std::move(sphereLeft));    
 
     SceneObject sphereRight("Sphere", sphereMesh, {0.8f, 0.8f, 0.8f, 128.0f, 1.0f});
     sphereRight.transform().setTranslation({3.0f, 3.0f, -10.0f});
     scene.addObject(std::move(sphereRight));
 
+    SceneObject ground(
+        "Ground",
+        planeMesh,
+        {0.35f, 0.35f, 0.35f, 16.0f, 0.1f}
+    );
+    ground.transform().setTranslation({0.0f, -1.5f, -10.0f});
+    scene.addObject(std::move(ground));
 
     Renderer renderer;
 
@@ -115,6 +126,25 @@ int main()
     double previousTime = glfwGetTime();
     while (!glfwWindowShouldClose(window.get())) {        
         glfwPollEvents();
+        if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+            glfwSetWindowShouldClose(window.get(), GLFW_TRUE);
+        }
+        int framebufferWidth;
+        int framebufferHeight;
+        
+        glfwGetFramebufferSize(
+            window.get(),
+            &framebufferWidth,
+            &framebufferHeight
+        );
+
+        if (framebufferWidth > 0 && framebufferHeight > 0) {
+            RenderTarget::bindDefault(framebufferWidth, framebufferHeight);
+            camera.setAspectRatio(
+                static_cast<float>(framebufferWidth) / 
+                static_cast<float>(framebufferHeight)
+            );
+        }
 
         double currentTime = glfwGetTime();
         double deltaTime = currentTime - previousTime;

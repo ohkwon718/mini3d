@@ -119,3 +119,26 @@ Mesh createUvSphereMesh(float radius,
 
     return Mesh(std::move(vertices), std::move(indices));   
 }
+
+
+Mesh createPlaneMesh(float halfExtent)
+{
+    if (halfExtent <= 0.0f) {
+        throw std::invalid_argument("halfExtent must be positive");
+    }
+    const float h = halfExtent;
+
+    std::vector<Vertex> vertices{
+        {{-h, 0.0f, -h}, {0.0f, 1.0f, 0.0f}},
+        {{-h, 0.0f,  h}, {0.0f, 1.0f, 0.0f}},
+        {{ h, 0.0f,  h}, {0.0f, 1.0f, 0.0f}},
+        {{ h, 0.0f, -h}, {0.0f, 1.0f, 0.0f}}
+    };
+
+    std::vector<std::uint32_t> indices{
+        0, 1, 2,
+        2, 3, 0
+    };
+
+    return Mesh(std::move(vertices), std::move(indices));
+}

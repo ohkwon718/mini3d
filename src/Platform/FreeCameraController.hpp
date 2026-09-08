@@ -1,10 +1,7 @@
 #pragma once
 
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
-
-#include "Camera/Camera.hpp"
-
+struct GLFWwindow;
+class Camera;
 
 class FreeCameraController
 {

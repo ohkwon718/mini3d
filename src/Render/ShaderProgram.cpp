@@ -4,7 +4,6 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <string>
 #include <filesystem>
 
 namespace {
@@ -101,6 +100,22 @@ namespace {
         GLuint id_{0};
     };
 
+    std::string readTextFile(const std::filesystem::path& path)
+    {
+        std::ifstream file(path);
+
+        if (!file) {
+            throw std::runtime_error(
+                "Failed to open file: " + path.string()
+            );
+        }
+
+        std::ostringstream buffer;
+        buffer << file.rdbuf();
+
+        return buffer.str();
+    }
+
 } // namespace
 
 ShaderProgram::ShaderProgram(const char* vertexSource,
@@ -132,23 +147,6 @@ ShaderProgram::ShaderProgram(const char* vertexSource,
 
 }
 
-
-std::string readTextFile(const std::filesystem::path& path)
-{
-    std::ifstream file(path);
-
-    if (!file) {
-        throw std::runtime_error(
-            "Failed to open file: " + path.string()
-        );
-    }
-
-    std::ostringstream buffer;
-    buffer << file.rdbuf();
-
-    return buffer.str();
-}
-
 ShaderProgram ShaderProgram::fromFiles(
     const std::filesystem::path& vertexPath,
     const std::filesystem::path& fragmentPath)
@@ -172,7 +170,7 @@ ShaderProgram::~ShaderProgram()
 ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept
     : id_(other.id_)
 {
-    other.id_ = 0;
+    other.id_ = 0;    
 }
 
 ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept
@@ -186,6 +184,7 @@ ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept
     }
     id_ = other.id_;
     other.id_ = 0;
+    uniformLocations_.clear();
 
     return *this;
 }
@@ -197,7 +196,7 @@ void ShaderProgram::use() const
 
 void ShaderProgram::setMat4(const char* name, const Eigen::Matrix4f& matrix) const
 {
-    GLint location = glGetUniformLocation(id_, name);
+    GLint location = uniformLocation(name);
 
     glUniformMatrix4fv(
         location,
@@ -210,14 +209,25 @@ void ShaderProgram::setMat4(const char* name, const Eigen::Matrix4f& matrix) con
 
 void ShaderProgram::setVec3(const char* name, const Eigen::Vector3f& value) const
 {
-    GLint location = glGetUniformLocation(id_, name);
+    GLint location = uniformLocation(name);
 
     glUniform3f(location, value.x(), value.y(), value.z());
 }
 
 void ShaderProgram::setFloat(const char* name, float value) const
 {
-    GLint location = glGetUniformLocation(id_, name);
+    GLint location = uniformLocation(name);
 
     glUniform1f(location, value);    
+}
+
+int ShaderProgram::uniformLocation(const char* name) const
+{
+    auto it = uniformLocations_.find(name);    
+    if (it != uniformLocations_.end()) {
+        return it->second;
+    }
+    GLint location = glGetUniformLocation(id_, name);
+    uniformLocations_[name] = location;
+    return location;
 }

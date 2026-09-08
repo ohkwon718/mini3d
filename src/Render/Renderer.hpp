@@ -12,14 +12,7 @@
 
 class Renderer
 {
-public:
-    void draw(
-        const SceneObject& object,
-        const Camera& camera,
-        const ShaderProgram& shader,
-        const DirectionalLight& lightDirection        
-    );
-
+public:    
     void draw(
         const Scene& scene,
         const Camera& camera,
@@ -28,6 +21,11 @@ public:
     );
 
 private:
+    void drawObject(
+        const SceneObject& object,
+        const ShaderProgram& shader        
+    );
+
     std::unordered_map<
         std::shared_ptr<const Mesh>,
         GpuMesh
