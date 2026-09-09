@@ -13,6 +13,7 @@ void Renderer::draw(const Scene& scene,
     shader.setVec3("uLightDirection", light.direction);
     shader.setVec3("uLightColor", light.color);
     shader.setFloat("uLightIntensity", light.intensity);
+    shader.setInt("uTexture", 0);
 
     for (std::size_t i = 0; i < scene.size(); ++i) {
         drawObject(scene.object(i), shader);
@@ -31,7 +32,10 @@ void Renderer::drawObject(const SceneObject& object,
     shader.setVec3("uBaseColor", object.material().baseColor);    
     shader.setFloat("uShininess", object.material().shininess);
     shader.setFloat("uSpecularStrength", object.material().specularStrength);   
-
+    shader.setInt(
+        "uUseTexture",
+        object.material().useTexture ? 1 : 0
+    );
     it->second.draw();
 }
 

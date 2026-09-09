@@ -221,6 +221,14 @@ void ShaderProgram::setFloat(const char* name, float value) const
     glUniform1f(location, value);    
 }
 
+void ShaderProgram::setInt(const char* name, int value) const
+{
+    GLint location = uniformLocation(name);
+
+    glUniform1i(location, value);  
+
+}
+
 int ShaderProgram::uniformLocation(const char* name) const
 {
     auto it = uniformLocations_.find(name);    

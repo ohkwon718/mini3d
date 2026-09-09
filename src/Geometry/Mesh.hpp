@@ -8,6 +8,7 @@ struct Vertex
 {
     Eigen::Vector3f position;
     Eigen::Vector3f normal;
+    Eigen::Vector2f texCoord{0.0f, 0.0f};
 };
 
 class Mesh 

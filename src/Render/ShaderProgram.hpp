@@ -29,6 +29,7 @@ public:
     void setMat4(const char* name, const Eigen::Matrix4f& matrix) const;
     void setVec3(const char* name, const Eigen::Vector3f& value) const;
     void setFloat(const char* name, float value) const;
+    void setInt(const char* name, int value) const;
 
 private:
     int uniformLocation(const char* name) const;

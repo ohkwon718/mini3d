@@ -81,6 +81,7 @@ add_library(
     src/Render/GpuMesh.cpp
     src/Render/Renderer.cpp
     src/Render/RenderTarget.cpp
+    src/Render/Texture2D.cpp
 )
 target_compile_features(mini3d_render PRIVATE cxx_std_20)
 target_include_directories(

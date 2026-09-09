@@ -10,6 +10,7 @@
 #include "Render/ShaderProgram.hpp"
 #include "Render/Renderer.hpp"
 #include "Render/RenderTarget.hpp"
+#include "Render/Texture2D.hpp"
 #include "Scene/SceneObject.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/DirectionalLight.hpp"
@@ -47,9 +48,15 @@ int main()
 
     const DirectionalLight light{
         {-0.5f, -1.0f, -0.3f},
-        {1.0f, 0.2f, 0.2f},
-        0.2f
+        {1.0f, 1.0f, 1.0f},
+        0.5f
     };
+
+    std::vector<unsigned char> pixels = {   
+          0,  0,  0,255, 255,255,255,255,
+        255,255,255,255,   0,  0,  0,255
+    };    
+    Texture2D texture(2, 2, pixels.data());
     
     auto cubeMesh = std::make_shared<const Mesh>(
         createCubeMesh()
@@ -89,7 +96,7 @@ int main()
     SceneObject ground(
         "Ground",
         planeMesh,
-        {0.35f, 0.35f, 0.35f, 16.0f, 0.1f}
+        {0.35f, 0.35f, 0.35f, 16.0f, 0.1f, true}
     );
     ground.transform().setTranslation({0.0f, -1.5f, -10.0f});
     scene.addObject(std::move(ground));
@@ -112,6 +119,7 @@ int main()
     RenderTarget target(640, 480);
     target.bind();    
 
+    texture.bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderer.draw(scene, camera, shader, light);
 
@@ -155,8 +163,8 @@ int main()
             static_cast<float>(deltaTime)
         );
 
+        texture.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         renderer.draw(scene, camera, shader, light);
 
         glfwSwapBuffers(window.get());

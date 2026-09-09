@@ -10,13 +10,16 @@ struct GpuVertex
 {
     float px, py, pz;
     float nx, ny, nz;
+    float u, v;
     GpuVertex(const Vertex& vertex)
     : px(vertex.position.x()),
         py(vertex.position.y()),
         pz(vertex.position.z()),
         nx(vertex.normal.x()),
         ny(vertex.normal.y()),
-        nz(vertex.normal.z())
+        nz(vertex.normal.z()),
+        u(vertex.texCoord.x()),
+        v(vertex.texCoord.y())
     {}    
 };
 }
@@ -63,6 +66,16 @@ GpuMesh::GpuMesh(const Mesh& mesh)
         reinterpret_cast<void*>(offsetof(GpuVertex, nx))
     );
     glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(
+        2,
+        2,
+        GL_FLOAT,
+        GL_FALSE,
+        static_cast<GLsizei>(sizeof(GpuVertex)),
+        reinterpret_cast<void*>(offsetof(GpuVertex, u))
+    );
+    glEnableVertexAttribArray(2);
 
     VertexArray::unbind();
 }
