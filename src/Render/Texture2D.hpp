@@ -1,6 +1,7 @@
 #pragma once
 
 #include <filesystem>
+#include "core/Image.hpp"
 
 class Texture2D
 {
@@ -10,6 +11,8 @@ public:
         int height,
         const unsigned char* pixels
     );
+
+    Texture2D(const Image& image);
 
     ~Texture2D();
 

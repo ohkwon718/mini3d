@@ -52,11 +52,18 @@ add_library(
     src/Camera/Camera.cpp
     src/Geometry/Mesh.cpp
     src/Geometry/PrimitiveMeshes.cpp
+    src/core/Image.cpp
+    src/core/ImageLoader.cpp
 )
 target_compile_features(mini3d_core PRIVATE cxx_std_20)
 target_include_directories(
     mini3d_core 
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_include_directories(
+    mini3d_core
+    SYSTEM PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb
 )
 target_link_libraries(
     mini3d_core
