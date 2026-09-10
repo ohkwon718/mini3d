@@ -47,16 +47,12 @@ int main()
     ///////////////////////////////////////////
 
     const DirectionalLight light{
-        {-0.5f, -1.0f, -0.3f},
+        {-0.5f, 1.0f, -0.3f},
         {1.0f, 1.0f, 1.0f},
         0.5f
     };
-
-    std::vector<unsigned char> pixels = {   
-          0,  0,  0,255, 255,255,255,255,
-        255,255,255,255,   0,  0,  0,255
-    };    
-    Texture2D texture(2, 2, pixels.data());
+        
+    Texture2D texture = Texture2D::fromFile("assets/textures/ground.png");
     
     auto cubeMesh = std::make_shared<const Mesh>(
         createCubeMesh()

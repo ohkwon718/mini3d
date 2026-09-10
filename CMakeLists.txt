@@ -86,7 +86,13 @@ add_library(
 target_compile_features(mini3d_render PRIVATE cxx_std_20)
 target_include_directories(
     mini3d_render 
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src    
+)
+target_include_directories(
+    mini3d_render
+    SYSTEM PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb
 )
 target_link_libraries(
     mini3d_render
@@ -105,6 +111,8 @@ target_compile_options(
         -Wpedantic
         -Wconversion
         -Wsign-conversion
+        -Wno-conversion
+        -Wno-sign-conversion
 )
 
 add_executable(

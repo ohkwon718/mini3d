@@ -1,6 +1,9 @@
 #include "Texture2D.hpp"
 #include <glad/gl.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 Texture2D::Texture2D(
     int width,
     int height,
@@ -66,4 +69,30 @@ void Texture2D::bind() const
 {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, id_);
+}
+
+
+Texture2D Texture2D::fromFile(
+    const std::filesystem::path& path
+)
+{   
+    int width;
+    int height;
+
+    auto deleter = [](unsigned char* ptr) {
+        stbi_image_free(ptr);
+    };
+
+    std::unique_ptr<unsigned char, decltype(deleter)> pixels{
+        stbi_load(path.c_str(), &width, &height, nullptr, STBI_rgb_alpha),
+        deleter
+    };
+
+    if (!pixels) {
+        throw std::runtime_error(
+            stbi_failure_reason()
+        );        
+    }
+    
+    return Texture2D(width, height, pixels.get());
 }
