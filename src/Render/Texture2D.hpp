@@ -23,11 +23,7 @@ public:
     Texture2D& operator=(Texture2D&& other) noexcept;
 
     void bind() const;
-
-    static Texture2D fromFile(
-        const std::filesystem::path& path
-    );
-
+    
 private:
     unsigned int id_{0};
 };

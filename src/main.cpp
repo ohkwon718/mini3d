@@ -16,6 +16,8 @@
 #include "Scene/DirectionalLight.hpp"
 #include "Camera/Camera.hpp"
 #include "Geometry/PrimitiveMeshes.hpp"
+#include "core/Image.hpp"
+#include "core/ImageLoader.hpp"
 
 int main()
 {
@@ -52,7 +54,8 @@ int main()
         0.5f
     };
         
-    Texture2D texture = Texture2D::fromFile("assets/textures/ground.png");
+    Image image = loadImage("assets/textures/ground.png");
+    Texture2D texture(image);
     
     auto cubeMesh = std::make_shared<const Mesh>(
         createCubeMesh()

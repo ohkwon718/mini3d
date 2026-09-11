@@ -9,6 +9,7 @@ struct Material
     float specularStrength{0.5f};
     bool useTexture{false};
 
+
     Material() = default;
 
     Material(
