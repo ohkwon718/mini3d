@@ -1,14 +1,15 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <utility>
+#include "core/Image.hpp"
 
 struct Material
 {
     Eigen::Vector3f baseColor{1.0f, 1.0f, 1.0f};
     float shininess{32.0f};
     float specularStrength{0.5f};
-    bool useTexture{false};
-
+    std::shared_ptr<const Image> image;
 
     Material() = default;
 
@@ -18,12 +19,13 @@ struct Material
         float b,
         float shininessValue = 32.0f,
         float specularStrengthValue = 0.5f,
-        bool useTextureValue = false
+        // bool useTextureValue = false
+        std::shared_ptr<const Image> imageValue = nullptr
     )
         : baseColor(r, g, b),
         shininess(shininessValue),
         specularStrength(specularStrengthValue),
-        useTexture(useTextureValue)
+        image(std::move(imageValue))
     {
     }
 };

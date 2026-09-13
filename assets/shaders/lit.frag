@@ -33,10 +33,8 @@ void main()
     vec3 albedo = uBaseColor;
     float alpha = 1;
 
-    if (uUseTexture) {
-        albedo *= texture(uTexture, vTexCoord).rgb;
-        alpha = texColor.a;
-    }
+    albedo *= texture(uTexture, vTexCoord).rgb;
+    alpha = texColor.a;    
 
     float ambient = 0.15;
     vec3 ambientContribution = albedo * ambient;

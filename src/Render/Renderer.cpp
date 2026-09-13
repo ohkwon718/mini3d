@@ -1,5 +1,6 @@
 #include "Renderer.hpp"
 
+#include <array>
 
 void Renderer::draw(const Scene& scene,
                     const Camera& camera,
@@ -17,25 +18,39 @@ void Renderer::draw(const Scene& scene,
 
     for (std::size_t i = 0; i < scene.size(); ++i) {
         drawObject(scene.object(i), shader);
-    }
+    }    
 }
 
 
-void Renderer::drawObject(const SceneObject& object,
-                    const ShaderProgram& shader)
+void Renderer::drawObject(
+    const SceneObject& object,
+    const ShaderProgram& shader)
 {   
     const auto& mesh = object.mesh();
-
     auto it = gpuMeshes_.try_emplace(mesh, *mesh).first;
+    
+    const auto& material = object.material();
+    const Texture2D& texture = textureFor(object.material().image);    
+
+    texture.bind();
 
     shader.setMat4("uModel", object.transform().matrix());
-    shader.setVec3("uBaseColor", object.material().baseColor);    
-    shader.setFloat("uShininess", object.material().shininess);
-    shader.setFloat("uSpecularStrength", object.material().specularStrength);   
-    shader.setInt(
-        "uUseTexture",
-        object.material().useTexture ? 1 : 0
-    );
+    shader.setVec3("uBaseColor", material.baseColor);    
+    shader.setFloat("uShininess", material.shininess);
+    shader.setFloat("uSpecularStrength", material.specularStrength);   
+
     it->second.draw();
 }
 
+const Texture2D& Renderer::textureFor(
+    const std::shared_ptr<const Image>& image)
+{
+    if (image) {
+        auto it = textureCache_.try_emplace(image, *image).first;
+        return it->second;
+    }
+         
+    auto it = textureCache_.try_emplace(image).first;
+    return it->second;
+    
+}

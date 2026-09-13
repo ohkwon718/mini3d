@@ -10,10 +10,10 @@
 #include "Render/ShaderProgram.hpp"
 #include "Render/Renderer.hpp"
 #include "Render/RenderTarget.hpp"
-#include "Render/Texture2D.hpp"
 #include "Scene/SceneObject.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/DirectionalLight.hpp"
+#include "Scene/Material.hpp"
 #include "Camera/Camera.hpp"
 #include "Geometry/PrimitiveMeshes.hpp"
 #include "core/Image.hpp"
@@ -53,9 +53,12 @@ int main()
         {1.0f, 1.0f, 1.0f},
         0.5f
     };
-        
-    Image image = loadImage("assets/textures/ground.png");
-    Texture2D texture(image);
+
+    auto groundImage =
+    std::make_shared<const Image>(
+        loadImage("assets/textures/ground.png")
+    ); 
+    
     
     auto cubeMesh = std::make_shared<const Mesh>(
         createCubeMesh()
@@ -95,7 +98,7 @@ int main()
     SceneObject ground(
         "Ground",
         planeMesh,
-        {0.35f, 0.35f, 0.35f, 16.0f, 0.1f, true}
+        {0.35f, 0.35f, 0.35f, 16.0f, 0.1f, groundImage}        
     );
     ground.transform().setTranslation({0.0f, -1.5f, -10.0f});
     scene.addObject(std::move(ground));
@@ -118,7 +121,6 @@ int main()
     RenderTarget target(640, 480);
     target.bind();    
 
-    texture.bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderer.draw(scene, camera, shader, light);
 
@@ -162,7 +164,6 @@ int main()
             static_cast<float>(deltaTime)
         );
 
-        texture.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderer.draw(scene, camera, shader, light);
 

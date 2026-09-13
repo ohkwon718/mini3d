@@ -1,5 +1,19 @@
 #include "Texture2D.hpp"
 #include <glad/gl.h>
+#include <array>
+
+namespace
+{
+constexpr std::array<unsigned char, 4> kWhitePixel{
+    255, 255, 255, 255
+};
+}
+
+Texture2D::Texture2D()
+: Texture2D(1, 1, kWhitePixel.data())
+{
+
+}
 
 Texture2D::Texture2D(
     int width,
