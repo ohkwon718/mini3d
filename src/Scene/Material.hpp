@@ -18,8 +18,7 @@ struct Material
         float g,
         float b,
         float shininessValue = 32.0f,
-        float specularStrengthValue = 0.5f,
-        // bool useTextureValue = false
+        float specularStrengthValue = 0.5f,        
         std::shared_ptr<const Image> imageValue = nullptr
     )
         : baseColor(r, g, b),

@@ -7,10 +7,6 @@ project(
     LANGUAGES C CXX
 )
 
-find_package (Eigen3 REQUIRED NO_MODULE)
-find_package (OpenGL REQUIRED)
-find_package (glfw3 REQUIRED)
-
 enable_testing()
 add_test(
     NAME transform_test
@@ -25,23 +21,32 @@ add_test(
     COMMAND scene_test
 )
 
-include(FetchContent)
+find_package (Eigen3 REQUIRED NO_MODULE)
+find_package (OpenGL REQUIRED)
+find_package (glfw3 REQUIRED)
 
+include(FetchContent)
 FetchContent_Declare(
     glad
     GIT_REPOSITORY https://github.com/Dav1dde/glad.git
     GIT_TAG v2.0.8
     SOURCE_SUBDIR cmake
 )
-
 FetchContent_MakeAvailable(glad)
-
 glad_add_library(
     glad_gl_core_33
     STATIC
     REPRODUCIBLE
     API gl:core=3.3
 )
+
+FetchContent_Declare(
+    fastgltf
+    GIT_REPOSITORY https://github.com/spnda/fastgltf.git
+    GIT_TAG v0.9.0
+)
+FetchContent_MakeAvailable(fastgltf)
+
 
 
 add_library(
@@ -96,11 +101,6 @@ target_include_directories(
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src    
 )
-target_include_directories(
-    mini3d_render
-    SYSTEM PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb
-)
 target_link_libraries(
     mini3d_render
     PUBLIC
@@ -117,10 +117,38 @@ target_compile_options(
         -Wextra
         -Wpedantic
         -Wconversion
+        -Wsign-conversion        
+)
+
+add_library(
+    mini3d_assets
+    src/Assets/GltfLoader.cpp    
+)
+target_compile_features(mini3d_assets PRIVATE cxx_std_20)
+target_include_directories(
+    mini3d_assets 
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src    
+)
+target_link_libraries(
+    mini3d_assets
+    PUBLIC
+        mini3d_core        
+    PRIVATE
+        fastgltf::fastgltf
+)
+target_compile_options(
+    mini3d_assets
+    PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wconversion
         -Wsign-conversion
         -Wno-conversion
         -Wno-sign-conversion
 )
+
 
 add_executable(
     mini3d
@@ -133,6 +161,7 @@ target_link_libraries(
     mini3d    
     PRIVATE 
         mini3d_render
+        mini3d_assets
         glfw
         OpenGL::GL
         glad_gl_core_33

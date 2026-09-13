@@ -18,6 +18,8 @@
 #include "Geometry/PrimitiveMeshes.hpp"
 #include "core/Image.hpp"
 #include "core/ImageLoader.hpp"
+#include "Assets/GltfLoader.hpp"
+#include <iostream>
 
 int main()
 {
@@ -102,6 +104,19 @@ int main()
     );
     ground.transform().setTranslation({0.0f, -1.5f, -10.0f});
     scene.addObject(std::move(ground));
+
+    
+
+    auto summary = inspectGltf("assets/models/DamagedHelmet.glb");
+
+    std::cout
+        << "Meshes: " << summary.meshes << '\n'
+        << "Materials: " << summary.materials << '\n'
+        << "Images: " << summary.images << '\n'
+        << "Nodes: " << summary.nodes << '\n';
+
+    ///////////////////////////////////////////
+
 
     Renderer renderer;
 
