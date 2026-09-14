@@ -72,6 +72,11 @@ int main()
         createPlaneMesh(15.0f)
     );
 
+
+    auto helmetMesh = std::make_shared<const Mesh>(
+        loadFirstMesh("assets/models/DamagedHelmet.glb")
+    );
+
     Scene scene;    
     SceneObject CubeCenter("Cube", cubeMesh, {1.0f, 0.3f, 0.3f});
     CubeCenter.transform().setTranslation({0.0f, 0.0f, -10.0f});    
@@ -103,21 +108,14 @@ int main()
         {0.35f, 0.35f, 0.35f, 16.0f, 0.1f, groundImage}        
     );
     ground.transform().setTranslation({0.0f, -1.5f, -10.0f});
-    scene.addObject(std::move(ground));
+    scene.addObject(std::move(ground));        
 
-    
-
-    Mesh imported = loadFirstMesh(
-            "assets/models/DamagedHelmet.glb"
-        );
-
-    std::cout
-        << "Vertices: "
-        << imported.vertices().size()
-        << '\n'
-        << "Indices: "
-        << imported.indices().size()
-        << '\n';
+    SceneObject helmet(
+        "Helmet",
+        helmetMesh,
+        {0.8f, 0.8f, 0.8f}
+    );
+    scene.addObject(std::move(helmet));
     ///////////////////////////////////////////
 
 
