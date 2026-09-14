@@ -11,6 +11,10 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <span>
+#include <type_traits>
+
+#include <core/ImageLoader.hpp>
 
 namespace
 {
@@ -54,6 +58,95 @@ fastgltf::Asset loadAsset(
     }
 
     return std::move(result.get());
+}
+
+std::span<const std::byte> bytesFromDataSource(
+    const fastgltf::Asset& asset,
+    const fastgltf::DataSource& data)
+{
+    return std::visit(
+        [&asset](const auto& source)
+            -> std::span<const std::byte>
+        {
+            using T =
+                std::decay_t<decltype(source)>;
+
+            if constexpr (
+                std::is_same_v<
+                    T,
+                    fastgltf::sources::Array>)
+            {
+                return {
+                    source.bytes.data(),
+                    source.bytes.size()
+                };
+            }
+            else if constexpr (
+                std::is_same_v<
+                    T,
+                    fastgltf::sources::Vector>)
+            {
+                return {
+                    source.bytes.data(),
+                    source.bytes.size()
+                };
+            }
+            else if constexpr (
+                std::is_same_v<
+                    T,
+                    fastgltf::sources::ByteView>)
+            {
+                return {
+                    source.bytes.data(),
+                    source.bytes.size()
+                };
+            }
+            else if constexpr (
+                std::is_same_v<
+                    T,
+                    fastgltf::sources::BufferView>)
+            {
+                const auto& bufferView =
+                    asset.bufferViews.at(
+                        source.bufferViewIndex
+                    );
+
+                const auto& buffer =
+                    asset.buffers.at(
+                        bufferView.bufferIndex
+                    );
+
+                auto bufferBytes =
+                    bytesFromDataSource(
+                        asset,
+                        buffer.data
+                    );
+
+                if (bufferView.byteOffset >
+                        bufferBytes.size() ||
+                    bufferView.byteLength >
+                        bufferBytes.size() -
+                            bufferView.byteOffset)
+                {
+                    throw std::runtime_error(
+                        "Invalid glTF image buffer view"
+                    );
+                }
+
+                return bufferBytes.subspan(
+                    bufferView.byteOffset,
+                    bufferView.byteLength
+                );
+            }
+            else
+            {
+                throw std::runtime_error(
+                    "Unsupported glTF image data source"
+                );
+            }
+        },
+        data
+    );
 }
 
 } // namespace
@@ -261,12 +354,19 @@ LoadedPrimitive loadFirstPrimitive(
                 const auto& gltfImage =
                     asset.images.at(*texture.imageIndex);
 
-                // Stop here for now.
+            auto encodedBytes =
+                bytesFromDataSource(
+                    asset,
+                    gltfImage.data
+                );
+
+            material.image =
+                std::make_shared<const Image>(
+                    loadImage(encodedBytes)
+                );
             }
         }
     }
-
-
 
     return {
         std::move(mesh),
