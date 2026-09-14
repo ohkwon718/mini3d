@@ -2,6 +2,7 @@
 
 #include <Eigen/Dense>
 #include <utility>
+#include <memory>
 #include "core/Image.hpp"
 
 struct Material

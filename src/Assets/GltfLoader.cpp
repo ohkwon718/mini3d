@@ -73,7 +73,7 @@ GltfSummary inspectGltf(
 }
 
 
-Mesh loadFirstMesh(
+LoadedPrimitive loadFirstPrimitive(
     const std::filesystem::path& path)
 {
     auto asset = loadAsset(path);
@@ -84,8 +84,7 @@ Mesh loadFirstMesh(
         );
     }
 
-    const auto& gltfMesh =
-        asset.meshes.front();
+    const auto& gltfMesh = asset.meshes.front();
 
     if (gltfMesh.primitives.empty()) {
         throw std::runtime_error(
@@ -231,8 +230,46 @@ Mesh loadFirstMesh(
         }
     );
 
-    return Mesh(
+    Mesh mesh(
         std::move(vertices),
         std::move(indices)
     );
+
+    Material material;
+
+    if (primitive.materialIndex) {
+        const auto& gltfMaterial =
+            asset.materials.at(*primitive.materialIndex);
+
+        const auto& baseColor =
+            gltfMaterial.pbrData.baseColorFactor;
+
+        material.baseColor = {
+            baseColor[0],
+            baseColor[1],
+            baseColor[2]
+        };
+
+        if (gltfMaterial.pbrData.baseColorTexture) {
+            const auto& textureInfo =
+                *gltfMaterial.pbrData.baseColorTexture;
+
+            const auto& texture =
+                asset.textures.at(textureInfo.textureIndex);
+
+            if (texture.imageIndex) {
+                const auto& gltfImage =
+                    asset.images.at(*texture.imageIndex);
+
+                // Stop here for now.
+            }
+        }
+    }
+
+
+
+    return {
+        std::move(mesh),
+        std::move(material)
+    };        
 }

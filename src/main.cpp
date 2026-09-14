@@ -56,11 +56,9 @@ int main()
         0.5f
     };
 
-    auto groundImage =
-    std::make_shared<const Image>(
+    auto groundImage = std::make_shared<const Image>(
         loadImage("assets/textures/ground.png")
-    ); 
-    
+    );     
     
     auto cubeMesh = std::make_shared<const Mesh>(
         createCubeMesh()
@@ -72,10 +70,14 @@ int main()
         createPlaneMesh(15.0f)
     );
 
-
-    auto helmetMesh = std::make_shared<const Mesh>(
-        loadFirstMesh("assets/models/DamagedHelmet.glb")
+    auto loaded = loadFirstPrimitive(
+        "assets/models/DamagedHelmet.glb"
     );
+
+    auto helmetMesh =
+        std::make_shared<const Mesh>(
+            std::move(loaded.mesh)
+        );
 
     Scene scene;    
     SceneObject CubeCenter("Cube", cubeMesh, {1.0f, 0.3f, 0.3f});
@@ -113,9 +115,11 @@ int main()
     SceneObject helmet(
         "Helmet",
         helmetMesh,
-        {0.8f, 0.8f, 0.8f}
+        std::move(loaded.material)
     );
     scene.addObject(std::move(helmet));
+
+
     ///////////////////////////////////////////
 
 
