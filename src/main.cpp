@@ -107,14 +107,17 @@ int main()
 
     
 
-    auto summary = inspectGltf("assets/models/DamagedHelmet.glb");
+    Mesh imported = loadFirstMesh(
+            "assets/models/DamagedHelmet.glb"
+        );
 
     std::cout
-        << "Meshes: " << summary.meshes << '\n'
-        << "Materials: " << summary.materials << '\n'
-        << "Images: " << summary.images << '\n'
-        << "Nodes: " << summary.nodes << '\n';
-
+        << "Vertices: "
+        << imported.vertices().size()
+        << '\n'
+        << "Indices: "
+        << imported.indices().size()
+        << '\n';
     ///////////////////////////////////////////
 
 
