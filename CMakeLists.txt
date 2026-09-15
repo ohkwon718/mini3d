@@ -44,6 +44,7 @@ FetchContent_Declare(
     fastgltf
     GIT_REPOSITORY https://github.com/spnda/fastgltf.git
     GIT_TAG v0.9.0
+    SYSTEM
 )
 FetchContent_MakeAvailable(fastgltf)
 
@@ -60,7 +61,7 @@ add_library(
     src/core/Image.cpp
     src/core/ImageLoader.cpp
 )
-target_compile_features(mini3d_core PRIVATE cxx_std_20)
+target_compile_features(mini3d_core PUBLIC cxx_std_20)
 target_include_directories(
     mini3d_core 
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -144,9 +145,7 @@ target_compile_options(
         -Wextra
         -Wpedantic
         -Wconversion
-        -Wsign-conversion
-        -Wno-conversion
-        -Wno-sign-conversion
+        -Wsign-conversion        
 )
 
 

@@ -89,7 +89,8 @@ Mesh createUvSphereMesh(float radius,
             const float z = std::sin(theta) * std::sin(phi);
             vertices.push_back({
                 Eigen::Vector3f(radius*x, radius*y, radius*z), 
-                Eigen::Vector3f(x, y, z)
+                Eigen::Vector3f(x, y, z),
+                Eigen::Vector2f(u, v)
             });
         }
     }

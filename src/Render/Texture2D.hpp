@@ -1,19 +1,12 @@
 #pragma once
 
-#include <filesystem>
 #include "core/Image.hpp"
 
 class Texture2D
 {
 public:
     Texture2D();
-    Texture2D(
-        int width,
-        int height,
-        const unsigned char* pixels
-    );
-
-    Texture2D(const Image& image);
+    explicit Texture2D(const Image& image);
 
     ~Texture2D();
 
@@ -26,5 +19,11 @@ public:
     void bind() const;
     
 private:
+    Texture2D(
+        int width,
+        int height,
+        const unsigned char* pixels
+    );
+
     unsigned int id_{0};
 };

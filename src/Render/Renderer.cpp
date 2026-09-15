@@ -1,7 +1,5 @@
 #include "Renderer.hpp"
 
-#include <array>
-
 void Renderer::draw(const Scene& scene,
                     const Camera& camera,
                     const ShaderProgram& shader,
@@ -30,7 +28,7 @@ void Renderer::drawObject(
     auto it = gpuMeshes_.try_emplace(mesh, *mesh).first;
     
     const auto& material = object.material();
-    const Texture2D& texture = textureFor(object.material().image);    
+    const Texture2D& texture = textureFor(material.baseColorImage);    
 
     texture.bind();
 

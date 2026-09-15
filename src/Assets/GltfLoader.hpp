@@ -1,10 +1,14 @@
 #pragma once
 
 #include "Geometry/Mesh.hpp"
+#include "Transform/Transform.hpp"
 #include "Scene/Material.hpp"
 
 #include <cstddef>
 #include <filesystem>
+#include <memory>
+#include <string>
+#include <vector>
 
 struct GltfSummary
 {
@@ -20,10 +24,20 @@ struct LoadedPrimitive
     Material material;
 };
 
+struct LoadedObject
+{
+    std::shared_ptr<const Mesh> mesh;
+    Material material;
+    Transform transform;
+    std::string name;
+};
+
+
+
 GltfSummary inspectGltf(
     const std::filesystem::path& path
 );
 
-LoadedPrimitive loadFirstPrimitive(
+std::vector<LoadedObject>  loadGltfObjects(
     const std::filesystem::path& path
 );

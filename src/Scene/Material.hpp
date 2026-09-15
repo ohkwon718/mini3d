@@ -10,7 +10,7 @@ struct Material
     Eigen::Vector3f baseColor{1.0f, 1.0f, 1.0f};
     float shininess{32.0f};
     float specularStrength{0.5f};
-    std::shared_ptr<const Image> image;
+    std::shared_ptr<const Image> baseColorImage;
 
     Material() = default;
 
@@ -20,12 +20,12 @@ struct Material
         float b,
         float shininessValue = 32.0f,
         float specularStrengthValue = 0.5f,        
-        std::shared_ptr<const Image> imageValue = nullptr
+        std::shared_ptr<const Image> baseColorImageValue = nullptr
     )
         : baseColor(r, g, b),
         shininess(shininessValue),
         specularStrength(specularStrengthValue),
-        image(std::move(imageValue))
+        baseColorImage(std::move(baseColorImageValue))
     {
     }
 };

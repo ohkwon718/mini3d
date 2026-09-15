@@ -12,7 +12,8 @@ public:
     SceneObject(
         std::string name, 
         std::shared_ptr<const Mesh> mesh, 
-        Material material = {}
+        Material material = {},
+        Transform transform = {}
     );
 
     const std::string& name() const;
@@ -25,8 +26,7 @@ public:
 
 private:
     std::string name_;
-    Transform transform_;
-    
+    Transform transform_;    
     std::shared_ptr<const Mesh> mesh_;
     Material material_;
 

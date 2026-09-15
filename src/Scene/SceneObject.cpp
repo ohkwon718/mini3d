@@ -5,11 +5,13 @@
 SceneObject::SceneObject(
         std::string name, 
         std::shared_ptr<const Mesh> mesh, 
-        Material material
+        Material material,
+        Transform transform
     )
     : name_(std::move(name)),
+      transform_{std::move(transform)},
       mesh_(std::move(mesh)),
-      material_{std::move(material)}
+      material_{std::move(material)}      
 {
     if (!mesh_) {
         throw std::invalid_argument("SceneObject requires a mesh");

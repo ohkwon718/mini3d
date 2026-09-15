@@ -55,46 +55,32 @@ int main()
         {1.0f, 1.0f, 1.0f},
         0.5f
     };
-
-    auto groundImage = std::make_shared<const Image>(
-        loadImage("assets/textures/ground.png")
-    );     
     
+    Scene scene;    
+
     auto cubeMesh = std::make_shared<const Mesh>(
         createCubeMesh()
     );
-    auto sphereMesh = std::make_shared<const Mesh>(
-        createUvSphereMesh(1.0f, 32, 64)
-    );
-    auto planeMesh = std::make_shared<const Mesh>(
-        createPlaneMesh(15.0f)
-    );
 
-    auto loaded = loadFirstPrimitive(
-        "assets/models/DamagedHelmet.glb"
-    );
-
-    auto helmetMesh =
-        std::make_shared<const Mesh>(
-            std::move(loaded.mesh)
-        );
-
-    Scene scene;    
     SceneObject CubeCenter("Cube", cubeMesh, {1.0f, 0.3f, 0.3f});
     CubeCenter.transform().setTranslation({0.0f, 0.0f, -10.0f});    
     CubeCenter.transform().setRotation({0.5f, 0.5f, 0.5f, 1.0f});
+    scene.addObject(std::move(CubeCenter));    
     
     SceneObject CubeLeft("Cube", cubeMesh, {0.3f, 1.0f, 0.3f});
     CubeLeft.transform().setTranslation({-3.0f, 0.0f, -10.0f});    
     CubeLeft.transform().setRotation({0.5f, 0.5f, 0.1f, 1.0f});    
+    scene.addObject(std::move(CubeLeft));
 
     SceneObject CubeRight("Cube", cubeMesh, {0.3f, 0.3f, 1.0f});
     CubeRight.transform().setTranslation({3.0f, 0.0f, -10.0f});    
     CubeRight.transform().setRotation({0.5f, 0.5f, 0.9f, 1.0f});
-    
-    scene.addObject(std::move(CubeCenter));
-    scene.addObject(std::move(CubeLeft));
     scene.addObject(std::move(CubeRight));
+
+    
+    auto sphereMesh = std::make_shared<const Mesh>(
+        createUvSphereMesh(1.0f, 32, 64)
+    );    
 
     SceneObject sphereLeft("Sphere", sphereMesh, {1.0f, 0.3f, 0.3f, 8.0f, 0.1f});
     sphereLeft.transform().setTranslation({-3.0f, 3.0f, -10.0f});
@@ -104,6 +90,14 @@ int main()
     sphereRight.transform().setTranslation({3.0f, 3.0f, -10.0f});
     scene.addObject(std::move(sphereRight));
 
+
+    auto planeMesh = std::make_shared<const Mesh>(
+        createPlaneMesh(15.0f)
+    );
+
+    auto groundImage = std::make_shared<const Image>(
+        loadImage("assets/textures/ground.png")
+    );         
     SceneObject ground(
         "Ground",
         planeMesh,
@@ -112,13 +106,21 @@ int main()
     ground.transform().setTranslation({0.0f, -1.5f, -10.0f});
     scene.addObject(std::move(ground));        
 
-    SceneObject helmet(
-        "Helmet",
-        helmetMesh,
-        std::move(loaded.material)
+    
+    auto loadedObjects = loadGltfObjects(
+    //     "assets/models/DamagedHelmet.glb"
+        "assets/models/CesiumMilkTruck.glb"
     );
-    scene.addObject(std::move(helmet));
-
+    for (auto& loaded : loadedObjects) {
+        scene.addObject(
+            SceneObject(
+                std::move(loaded.name),
+                std::move(loaded.mesh),
+                std::move(loaded.material),
+                std::move(loaded.transform)
+            )
+        );
+    }
 
     ///////////////////////////////////////////
 
