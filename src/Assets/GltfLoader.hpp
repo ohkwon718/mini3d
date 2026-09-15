@@ -18,12 +18,6 @@ struct GltfSummary
     std::size_t nodes;
 };
 
-struct LoadedPrimitive
-{
-    Mesh mesh;
-    Material material;
-};
-
 struct LoadedObject
 {
     std::shared_ptr<const Mesh> mesh;
@@ -31,7 +25,6 @@ struct LoadedObject
     Transform transform;
     std::string name;
 };
-
 
 
 GltfSummary inspectGltf(

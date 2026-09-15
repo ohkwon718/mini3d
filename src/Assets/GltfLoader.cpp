@@ -215,11 +215,24 @@ std::vector<LoadedObject> loadGltfObjects(const std::filesystem::path& path)
         );
     }
         
-    if (asset.meshes.empty()) {
-        throw std::runtime_error("glTF contains no meshes");
+    std::vector<
+        std::vector<std::shared_ptr<const Mesh>>
+    > meshCache(asset.meshes.size());
+
+    for (std::size_t i = 0;
+        i < asset.meshes.size();
+        ++i) {
+        meshCache[i].resize(
+            asset.meshes[i].primitives.size()
+        );
     }
 
-    std::vector<LoadedObject>  loaded;
+    std::vector<
+        std::shared_ptr<const Image>
+    > imageCache(asset.images.size());
+
+
+    std::vector<LoadedObject> loaded;
 
     if (asset.scenes.empty()) {
         throw std::runtime_error(
@@ -240,154 +253,168 @@ std::vector<LoadedObject> loadGltfObjects(const std::filesystem::path& path)
                 return;
             }
 
+            const std::size_t meshIndex =
+                *node.meshIndex;
+
             const auto& gltfMesh =
-                asset.meshes.at(*node.meshIndex);
+                asset.meshes.at(meshIndex);
 
             for (std::size_t primitiveIndex = 0;
                 primitiveIndex < gltfMesh.primitives.size();
                 ++primitiveIndex)
             {
                 const auto& primitive =
-                    gltfMesh.primitives[primitiveIndex];                
-
-                if (primitive.type !=
-                    fastgltf::PrimitiveType::Triangles) {
-                    throw std::runtime_error(
-                        "Only triangle primitives are supported"
-                    );
-                }
-
-                const auto* positionIt =
-                    primitive.findAttribute("POSITION");
-
-                const auto* normalIt =
-                    primitive.findAttribute("NORMAL");
-
+                    gltfMesh.primitives[primitiveIndex];
+                
                 const auto* texCoordIt =
                     primitive.findAttribute("TEXCOORD_0");
 
-                if (positionIt == primitive.attributes.end()) {
-                    throw std::runtime_error(
-                        "Primitive has no POSITION attribute"
-                    );
-                }
 
-                if (normalIt == primitive.attributes.end()) {
-                    throw std::runtime_error(
-                        "Primitive has no NORMAL attribute"
-                    );
-                }
-
-                if (!primitive.indicesAccessor) {
-                    throw std::runtime_error(
-                        "Primitive has no index accessor"
-                    );
-                }
-
-                const auto& positionAccessor =
-                    asset.accessors.at(
-                        positionIt->accessorIndex
-                    );
-
-                const auto& normalAccessor =
-                    asset.accessors.at(
-                        normalIt->accessorIndex
-                    );
-
-                const auto& indexAccessor =
-                    asset.accessors.at(
-                        *primitive.indicesAccessor
-                    );
-
-                if (normalAccessor.count != positionAccessor.count) {
-                    throw std::runtime_error(
-                        "Normal count does not match position count"
-                    );
-                }
-
-                std::vector<Vertex> vertices(
-                    positionAccessor.count
-                );
-
-                fastgltf::iterateAccessorWithIndex<
-                    fastgltf::math::fvec3>(
-                    asset,
-                    positionAccessor,
-                    [&vertices](fastgltf::math::fvec3 position,
-                        std::size_t index)
-                    {
-                        vertices[index].position =
-                            Eigen::Vector3f(
-                                position.x(),
-                                position.y(),
-                                position.z()
-                            );
-                    }
-                );
-
-                fastgltf::iterateAccessorWithIndex<
-                    fastgltf::math::fvec3>(
-                    asset,
-                    normalAccessor,
-                    [&vertices](fastgltf::math::fvec3 normal,
-                        std::size_t index)
-                    {
-                        vertices[index].normal =
-                            Eigen::Vector3f(
-                                normal.x(),
-                                normal.y(),
-                                normal.z()
-                            );
-                    }
-                );
-
-                if (texCoordIt != primitive.attributes.end()) {
-                    const auto& texCoordAccessor =
-                        asset.accessors.at(
-                            texCoordIt->accessorIndex
-                        );
-
-                    if (texCoordAccessor.count != positionAccessor.count) {
+                auto& meshPtr =
+                    meshCache[meshIndex][primitiveIndex];
+                
+                if (!meshPtr)
+                {
+                    if (primitive.type !=
+                        fastgltf::PrimitiveType::Triangles) {
                         throw std::runtime_error(
-                            "Texture coordinate count does not match position count"
+                            "Only triangle primitives are supported"
                         );
                     }
+
+                    const auto* positionIt =
+                        primitive.findAttribute("POSITION");
+
+                    const auto* normalIt =
+                        primitive.findAttribute("NORMAL");
+                    
+                    if (positionIt == primitive.attributes.end()) {
+                        throw std::runtime_error(
+                            "Primitive has no POSITION attribute"
+                        );
+                    }
+
+                    if (normalIt == primitive.attributes.end()) {
+                        throw std::runtime_error(
+                            "Primitive has no NORMAL attribute"
+                        );
+                    }
+
+                    if (!primitive.indicesAccessor) {
+                        throw std::runtime_error(
+                            "Primitive has no index accessor"
+                        );
+                    }
+
+                    const auto& positionAccessor =
+                        asset.accessors.at(
+                            positionIt->accessorIndex
+                        );
+
+                    const auto& normalAccessor =
+                        asset.accessors.at(
+                            normalIt->accessorIndex
+                        );
+
+                    const auto& indexAccessor =
+                        asset.accessors.at(
+                            *primitive.indicesAccessor
+                        );
+
+                    if (normalAccessor.count != positionAccessor.count) {
+                        throw std::runtime_error(
+                            "Normal count does not match position count"
+                        );
+                    }
+
+                    //////////// position //////////////
+                    std::vector<Vertex> vertices(
+                        positionAccessor.count
+                    );
 
                     fastgltf::iterateAccessorWithIndex<
-                        fastgltf::math::fvec2>(
+                        fastgltf::math::fvec3>(
                         asset,
-                        texCoordAccessor,
-                        [&vertices](
-                            fastgltf::math::fvec2 uv,
+                        positionAccessor,
+                        [&vertices](fastgltf::math::fvec3 position,
                             std::size_t index)
                         {
-                            vertices[index].texCoord = {
-                                uv.x(),
-                                uv.y()
-                            };
+                            vertices[index].position =
+                                Eigen::Vector3f(
+                                    position.x(),
+                                    position.y(),
+                                    position.z()
+                                );
                         }
                     );
+
+
+                    //////////// normals //////////////
+                    fastgltf::iterateAccessorWithIndex<
+                        fastgltf::math::fvec3>(
+                        asset,
+                        normalAccessor,
+                        [&vertices](fastgltf::math::fvec3 normal,
+                            std::size_t index)
+                        {
+                            vertices[index].normal =
+                                Eigen::Vector3f(
+                                    normal.x(),
+                                    normal.y(),
+                                    normal.z()
+                                );
+                        }
+                    );
+
+                    //////////// texCoord //////////////
+                    if (texCoordIt != primitive.attributes.end()) {
+                        const auto& texCoordAccessor =
+                            asset.accessors.at(
+                                texCoordIt->accessorIndex
+                            );
+
+                        if (texCoordAccessor.count != positionAccessor.count) {
+                            throw std::runtime_error(
+                                "Texture coordinate count does not match position count"
+                            );
+                        }
+
+                        fastgltf::iterateAccessorWithIndex<
+                            fastgltf::math::fvec2>(
+                            asset,
+                            texCoordAccessor,
+                            [&vertices](
+                                fastgltf::math::fvec2 uv,
+                                std::size_t index)
+                            {
+                                vertices[index].texCoord = {
+                                    uv.x(),
+                                    uv.y()
+                                };
+                            }
+                        );
+                    }
+
+                    //////////// indices //////////////
+                    std::vector<std::uint32_t> indices(
+                        indexAccessor.count
+                    );
+
+                    fastgltf::iterateAccessorWithIndex<
+                        std::uint32_t>(
+                        asset,
+                        indexAccessor,
+                        [&indices](std::uint32_t value,
+                            std::size_t index)
+                        {
+                            indices[index] = value;
+                        }
+                    );
+
+                    meshPtr = std::make_shared<const Mesh>(std::move(vertices), std::move(indices));
                 }
 
-                std::vector<std::uint32_t> indices(
-                    indexAccessor.count
-                );
-
-                fastgltf::iterateAccessorWithIndex<
-                    std::uint32_t>(
-                    asset,
-                    indexAccessor,
-                    [&indices](std::uint32_t value,
-                        std::size_t index)
-                    {
-                        indices[index] = value;
-                    }
-                );
-
-                Mesh mesh(
-                    std::move(vertices),
-                    std::move(indices)
-                );
+                ///////////////////////////////////
 
                 Material material;
 
@@ -418,20 +445,30 @@ std::vector<LoadedObject> loadGltfObjects(const std::filesystem::path& path)
                             asset.textures.at(textureInfo.textureIndex);
 
                         if (texture.imageIndex) {
-                            const auto& gltfImage =
-                                asset.images.at(*texture.imageIndex);
+                            const std::size_t imageIndex =
+                                *texture.imageIndex;
 
-                        auto encodedBytes =
-                            bytesFromDataSource(
-                                asset,
-                                gltfImage.data
-                            );
+                            auto& imagePtr =
+                                imageCache.at(imageIndex);
+                            
+                            if (!imagePtr) {
+                                const auto& gltfImage =
+                                    asset.images.at(imageIndex);
 
-                        material.baseColorImage =
-                            std::make_shared<const Image>(
-                                loadImage(encodedBytes)
-                            );
-                        }
+                                auto encodedBytes =
+                                    bytesFromDataSource(
+                                        asset,
+                                        gltfImage.data
+                                    );
+
+                                imagePtr =
+                                    std::make_shared<const Image>(
+                                        loadImage(encodedBytes)
+                                    );
+                            }
+
+                            material.baseColorImage = imagePtr;
+                        }                        
                     }
                 }
                 if (material.baseColorImage &&
@@ -439,9 +476,7 @@ std::vector<LoadedObject> loadGltfObjects(const std::filesystem::path& path)
                     throw std::runtime_error(
                         "Textured primitive has no TEXCOORD_0 attribute"
                     );
-                }
-                
-                Transform transform = transformFromGltfMatrix(matrix);
+                }                
 
                 std::string name(
                     node.name.data(),
@@ -465,9 +500,9 @@ std::vector<LoadedObject> loadGltfObjects(const std::filesystem::path& path)
                 }
 
                 loaded.push_back({
-                    std::make_shared<const Mesh>(std::move(mesh)), 
+                    meshPtr, 
                     std::move(material), 
-                    std::move(transform), 
+                    transformFromGltfMatrix(matrix), 
                     std::move(name)
                 });
 
