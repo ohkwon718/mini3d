@@ -15,11 +15,13 @@
 #include "Scene/DirectionalLight.hpp"
 #include "Scene/Material.hpp"
 #include "Camera/Camera.hpp"
+#include "Camera/CameraIntrinsics.hpp"
 #include "Geometry/PrimitiveMeshes.hpp"
 #include "core/Image.hpp"
 #include "core/ImageLoader.hpp"
 #include "Assets/GltfLoader.hpp"
 #include <iostream>
+
 
 int main()
 {
@@ -131,14 +133,27 @@ int main()
             ShaderProgram::fromFiles(   "assets/shaders/lit.vert",
                                         "assets/shaders/lit.frag");
     
+                                        
+    ///////////////////////////////////////////
+
+    CameraIntrinsics intrinsics{
+        800,
+        600,
+        724.264f,
+        724.264f,
+        400.0f,
+        300.0f
+    };
+
     Camera camera(
-        std::numbers::pi_v<float> / 4.0f,
-        800.0f / 600.0f,
+        intrinsics,
         0.1f,
         100.0f
     );
 
-    camera.setPosition(Eigen::Vector3f(0.0f, 0.0f, 3.0f));
+    camera.setPosition({0.0f, 0.0f, 3.0f});
+
+    ///////////////////////////////////////////
 
     RenderTarget target(640, 480);
     target.bind();    

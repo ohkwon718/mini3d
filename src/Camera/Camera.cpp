@@ -7,9 +7,7 @@ Camera::Camera(float verticalFov,
     float aspectRatio,
     float nearPlane,
     float farPlane)
-    : position_(Eigen::Vector3f::Zero()),
-      orientation_(Eigen::Quaternionf::Identity()),
-      verticalFov_(verticalFov),
+    : verticalFov_(verticalFov),
       aspectRatio_(aspectRatio),
       nearPlane_(nearPlane),
       farPlane_(farPlane)
@@ -27,6 +25,17 @@ Camera::Camera(float verticalFov,
         throw std::invalid_argument( "received invalid far plane" );
     }
 
+}
+
+
+Camera::Camera(
+    const CameraIntrinsics& intrinsics,
+    float nearPlane,
+    float farPlane)
+    : intrinsics_(intrinsics),
+      nearPlane_(nearPlane),
+      farPlane_(farPlane)
+{
 }
 
 Eigen::Vector3f Camera::position() const
@@ -73,12 +82,21 @@ Eigen::Matrix4f Camera::viewMatrix() const
 
 Eigen::Matrix4f Camera::projectionMatrix() const
 {
-    float f = 1.0f / std::tan(verticalFov_ / 2.0f);
+    const float width = static_cast<float>(intrinsics_.width);
+    const float height =static_cast<float>(intrinsics_.height);
+
+    const float n = nearPlane_;
+    const float f = farPlane_;
+
     Eigen::Matrix4f proj = Eigen::Matrix4f::Zero();
-    proj(0, 0) = f / aspectRatio_;
-    proj(1, 1) = f;
-    proj(2, 2) = (farPlane_ + nearPlane_) / (nearPlane_ - farPlane_);
-    proj(2, 3) = (2.0f * farPlane_ * nearPlane_) / (nearPlane_ - farPlane_);
+
+    proj(0, 0) = 2.0f * intrinsics_.fx / width;
+    proj(1, 1) = 2.0f * intrinsics_.fy / height;
+    proj(0, 2) = 1.0f - 2.0f * intrinsics_.cx / width;
+    proj(1, 2) = 2.0f * intrinsics_.cy / height - 1.0f;
+    proj(2, 2) = (f + n) / (n - f);
+    proj(2, 3) = 2.0f * f * n / (n - f);
     proj(3, 2) = -1.0f;
+
     return proj;
 }

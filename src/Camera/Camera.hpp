@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <Camera/CameraIntrinsics.hpp>
 
 class Camera 
 {
@@ -9,6 +10,12 @@ public:
         float aspectRatio,
         float nearPlane,
         float farPlane);
+    
+    Camera(
+        const CameraIntrinsics& intrinsics,
+        float nearPlane,
+        float farPlane
+    );
 
     Eigen::Vector3f position() const;
     Eigen::Quaternionf rotation() const;
@@ -22,11 +29,12 @@ public:
     Eigen::Matrix4f projectionMatrix() const;
 
 private:
-    Eigen::Vector3f position_;
-    Eigen::Quaternionf orientation_;
+    Eigen::Vector3f position_{Eigen::Vector3f::Zero()};
+    Eigen::Quaternionf orientation_{Eigen::Quaternionf::Identity()};
     float verticalFov_;
     float aspectRatio_;
     float nearPlane_;
     float farPlane_;
 
+    CameraIntrinsics intrinsics_;
 };
