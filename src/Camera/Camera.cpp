@@ -79,11 +79,10 @@ Eigen::Matrix4f Camera::viewMatrix() const
     return view;
 }
 
-
 Eigen::Matrix4f Camera::projectionMatrix() const
 {
     const float width = static_cast<float>(intrinsics_.width);
-    const float height =static_cast<float>(intrinsics_.height);
+    const float height = static_cast<float>(intrinsics_.height);
 
     const float n = nearPlane_;
     const float f = farPlane_;
@@ -99,4 +98,9 @@ Eigen::Matrix4f Camera::projectionMatrix() const
     proj(3, 2) = -1.0f;
 
     return proj;
+}
+
+const CameraIntrinsics &Camera::intrinsics() const noexcept
+{
+    return intrinsics_;
 }

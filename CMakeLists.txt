@@ -95,6 +95,7 @@ add_library(
     src/Render/Renderer.cpp
     src/Render/RenderTarget.cpp
     src/Render/Texture2D.cpp
+    src/Render/Viewport.cpp
 )
 target_compile_features(mini3d_render PRIVATE cxx_std_20)
 target_include_directories(

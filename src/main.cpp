@@ -10,6 +10,7 @@
 #include "Render/ShaderProgram.hpp"
 #include "Render/Renderer.hpp"
 #include "Render/RenderTarget.hpp"
+#include "Render/Viewport.hpp"
 #include "Scene/SceneObject.hpp"
 #include "Scene/Scene.hpp"
 #include "Scene/DirectionalLight.hpp"
@@ -185,10 +186,22 @@ int main()
         );
 
         if (framebufferWidth > 0 && framebufferHeight > 0) {
-            RenderTarget::bindDefault(framebufferWidth, framebufferHeight);
-            camera.setAspectRatio(
-                static_cast<float>(framebufferWidth) / 
-                static_cast<float>(framebufferHeight)
+            RenderTarget::bindDefault(framebufferWidth, framebufferHeight);            
+
+            const auto& intrinsics = camera.intrinsics();
+
+            const Viewport viewport = fitViewport(
+                framebufferWidth,
+                framebufferHeight,
+                intrinsics.width,
+                intrinsics.height
+            );
+            
+            glViewport(
+                viewport.x,
+                viewport.y,
+                viewport.width,
+                viewport.height
             );
         }
 

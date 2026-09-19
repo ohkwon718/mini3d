@@ -27,6 +27,7 @@ public:
 
     Eigen::Matrix4f viewMatrix() const;
     Eigen::Matrix4f projectionMatrix() const;
+    const CameraIntrinsics& intrinsics() const noexcept;
 
 private:
     Eigen::Vector3f position_{Eigen::Vector3f::Zero()};
