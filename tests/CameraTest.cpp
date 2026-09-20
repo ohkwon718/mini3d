@@ -28,7 +28,10 @@ int main() {
     catch (const std::invalid_argument&) {
         threw = true;
     }
-    assert(threw);    
+    assert(threw);
+
+    assert(std::abs(camera.depthToMetric(0.0f) - 0.1f) < 1e-5f);
+    assert(std::abs(camera.depthToMetric(1.0f) - 100.0f) < 1e-3f);
 
     return 0;
 }

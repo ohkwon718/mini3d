@@ -82,3 +82,16 @@ const CameraIntrinsics &Camera::intrinsics() const noexcept
 {
     return intrinsics_;
 }
+
+float Camera::depthToMetric(float depth) const
+{    
+    const double d = static_cast<double>(depth);
+    const double n = static_cast<double>(nearPlane_);
+    const double f = static_cast<double>(farPlane_);
+    const double zNdc = 2.0 * d - 1.0;
+
+    const double z = (2.0f * n * f) / 
+        (f + n - zNdc * (f - n));
+
+    return static_cast<float>(z);
+}

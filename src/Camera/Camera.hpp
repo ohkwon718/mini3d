@@ -22,6 +22,8 @@ public:
     Eigen::Matrix4f projectionMatrix() const;
     const CameraIntrinsics& intrinsics() const noexcept;
 
+    float depthToMetric(float depth) const;
+
 private:
     Eigen::Vector3f position_{Eigen::Vector3f::Zero()};
     Eigen::Quaternionf orientation_{Eigen::Quaternionf::Identity()};    
