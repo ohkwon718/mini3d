@@ -168,10 +168,24 @@ std::vector<float> RenderTarget::readDepth() const
     return depth;
 }
 
+
 void RenderTarget::bindDefault(int width, int height)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, width, height);
+    
+}
+
+
+void RenderTarget::bindDefault(const Viewport& viewport)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(
+        viewport.x,
+        viewport.y,
+        viewport.width,
+        viewport.height
+    );
 }
 
 

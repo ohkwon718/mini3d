@@ -185,24 +185,16 @@ int main()
             &framebufferHeight
         );
 
-        if (framebufferWidth > 0 && framebufferHeight > 0) {
-            RenderTarget::bindDefault(framebufferWidth, framebufferHeight);            
+        if (framebufferWidth > 0 && framebufferHeight > 0) {            
 
             const auto& intrinsics = camera.intrinsics();
-
             const Viewport viewport = fitViewport(
                 framebufferWidth,
                 framebufferHeight,
                 intrinsics.width,
                 intrinsics.height
-            );
-            
-            glViewport(
-                viewport.x,
-                viewport.y,
-                viewport.width,
-                viewport.height
-            );
+            );            
+            RenderTarget::bindDefault(viewport);
         }
 
         double currentTime = glfwGetTime();

@@ -3,6 +3,7 @@
 #include <glad/gl.h>
 #include <vector>
 #include <cstdint>
+#include <Render/Viewport.hpp>
 
 class RenderTarget
 {
@@ -21,6 +22,8 @@ public:
     std::vector<float> readDepth() const;
 
     static void bindDefault(int width, int height);
+    static void bindDefault(const Viewport& viewport);
+
     
 private:
     void release() noexcept;
