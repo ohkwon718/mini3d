@@ -3,30 +3,6 @@
 #include <cmath>
 #include <numbers>
 
-Camera::Camera(float verticalFov,
-    float aspectRatio,
-    float nearPlane,
-    float farPlane)
-    : verticalFov_(verticalFov),
-      aspectRatio_(aspectRatio),
-      nearPlane_(nearPlane),
-      farPlane_(farPlane)
-{    
-    if ( verticalFov <= 0.0f || verticalFov >= std::numbers::pi_v<float> ) {
-        throw std::invalid_argument( "received invalid vertical field of view" );
-    }
-    if ( aspectRatio <= 0.0f ) {
-        throw std::invalid_argument( "received invalid aspect ratio" );
-    }
-    if ( nearPlane <= 0.0f ) {
-        throw std::invalid_argument( "received invalid near plane" );
-    }
-    if ( farPlane <= nearPlane ) {
-        throw std::invalid_argument( "received invalid far plane" );
-    }
-
-}
-
 
 Camera::Camera(
     const CameraIntrinsics& intrinsics,
@@ -36,6 +12,12 @@ Camera::Camera(
       nearPlane_(nearPlane),
       farPlane_(farPlane)
 {
+    if ( nearPlane <= 0.0f ) {
+        throw std::invalid_argument( "received invalid near plane" );
+    }
+    if ( farPlane <= nearPlane ) {
+        throw std::invalid_argument( "received invalid far plane" );
+    }
 }
 
 Eigen::Vector3f Camera::position() const
@@ -60,14 +42,6 @@ void Camera::setRotation(const Eigen::Quaternionf& rotation)
         throw std::invalid_argument("Quaternion must have a non-zero finite norm");
     }
     orientation_ = rotation.normalized();
-}
-
-void Camera::setAspectRatio(float aspectRatio)
-{
-    if ( aspectRatio <= 0.0f ) {
-        throw std::invalid_argument( "received invalid aspect ratio" );
-    }
-    aspectRatio_ = aspectRatio;
 }
 
 Eigen::Matrix4f Camera::viewMatrix() const

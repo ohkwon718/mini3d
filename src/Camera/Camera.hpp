@@ -6,11 +6,6 @@
 class Camera 
 {
 public:
-    Camera(float verticalFovRadians,
-        float aspectRatio,
-        float nearPlane,
-        float farPlane);
-    
     Camera(
         const CameraIntrinsics& intrinsics,
         float nearPlane,
@@ -23,19 +18,15 @@ public:
     void setPosition(const Eigen::Vector3f&);
     void setRotation(const Eigen::Quaternionf&);
 
-    void setAspectRatio(float aspectRatio);
-
     Eigen::Matrix4f viewMatrix() const;
     Eigen::Matrix4f projectionMatrix() const;
     const CameraIntrinsics& intrinsics() const noexcept;
 
 private:
     Eigen::Vector3f position_{Eigen::Vector3f::Zero()};
-    Eigen::Quaternionf orientation_{Eigen::Quaternionf::Identity()};
-    float verticalFov_;
-    float aspectRatio_;
-    float nearPlane_;
-    float farPlane_;
+    Eigen::Quaternionf orientation_{Eigen::Quaternionf::Identity()};    
 
     CameraIntrinsics intrinsics_;
+    float nearPlane_;
+    float farPlane_;
 };

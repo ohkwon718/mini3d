@@ -212,6 +212,5 @@ int main()
         glfwSwapBuffers(window.get());
     }
 
-
     return 0;
 }
