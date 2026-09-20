@@ -12,6 +12,10 @@ Camera::Camera(
       nearPlane_(nearPlane),
       farPlane_(farPlane)
 {
+    if (intrinsics.width <= 0 || intrinsics.height <= 0 ||
+        intrinsics.fx <= 0.0f || intrinsics.fy <= 0.0f) {
+        throw std::invalid_argument("Invalid camera intrinsics");
+    }
     if ( nearPlane <= 0.0f ) {
         throw std::invalid_argument( "received invalid near plane" );
     }

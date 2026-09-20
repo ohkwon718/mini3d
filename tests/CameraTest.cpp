@@ -15,20 +15,20 @@ int main() {
     expected << 1.0f, 0.0f, 0.0f, -1.0f,
                 0.0f, 1.0f, 0.0f, -2.0f,
                 0.0f, 0.0f, 1.0f, -3.0f,
-                0.0f, 0.0f, 0.0f, 1.0f;
-    
+                0.0f, 0.0f, 0.0f, 1.0f;    
     assert(camera.viewMatrix().isApprox(expected));
+    
 
-
+    CameraIntrinsics badIntrinsics = intrinsics;
+    badIntrinsics.fx = 0.0f;
     bool threw = false;
     try {
-        Camera badCamera(intrinsics, 10.0f, 1.0f);
+        Camera badCamera(badIntrinsics, 10.0f, 1.0f);
     }
     catch (const std::invalid_argument&) {
         threw = true;
     }
-
-    assert(threw);
+    assert(threw);    
 
     return 0;
 }
