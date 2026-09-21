@@ -95,3 +95,20 @@ float Camera::depthToMetric(float depth) const
 
     return static_cast<float>(z);
 }
+
+Eigen::Vector2f Camera::project(const Eigen::Vector3f &worldPoint) const
+{
+    const Eigen::Vector4f homoWorldPoint(
+        worldPoint.x(),
+        worldPoint.y(),
+        worldPoint.z(),
+        1.0f
+    );
+
+    const Eigen::Vector3f cameraPoint = (viewMatrix() * homoWorldPoint).head<3>();
+    const float depth = -cameraPoint.z();
+    return Eigen::Vector2f(
+        intrinsics_.fx * cameraPoint.x() / depth + intrinsics_.cx,  
+        intrinsics_.cy - intrinsics_.fy * cameraPoint.y() / depth
+    );    
+}

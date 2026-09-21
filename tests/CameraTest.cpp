@@ -1,7 +1,10 @@
 #include "Camera/Camera.hpp"
+#include <Eigen/Dense>
 #include <cassert>
 #include <numbers>
 #include <stdexcept>
+
+#include <iostream>
 
 int main() {
     const CameraIntrinsics intrinsics{
@@ -32,6 +35,11 @@ int main() {
 
     assert(std::abs(camera.depthToMetric(0.0f) - 0.1f) < 1e-5f);
     assert(std::abs(camera.depthToMetric(1.0f) - 100.0f) < 1e-3f);
+
+        
+    camera.setPosition(Eigen::Vector3f(0.0f, 0.0f, 0.0f));
+    const Eigen::Vector2f pixel = camera.project(Eigen::Vector3f(0.0f, 0.0f, -2.0f));
+    assert(pixel.isApprox(Eigen::Vector2f(intrinsics.cx, intrinsics.cy)));
 
     return 0;
 }

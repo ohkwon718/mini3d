@@ -23,6 +23,7 @@ public:
     const CameraIntrinsics& intrinsics() const noexcept;
 
     float depthToMetric(float depth) const;
+    Eigen::Vector2f project(const Eigen::Vector3f& worldPoint) const;
 
 private:
     Eigen::Vector3f position_{Eigen::Vector3f::Zero()};
