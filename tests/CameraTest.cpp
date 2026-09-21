@@ -4,8 +4,6 @@
 #include <numbers>
 #include <stdexcept>
 
-#include <iostream>
-
 int main() {
     const CameraIntrinsics intrinsics{
         1280, 720, 869.116f, 869.116f, 640.0f, 360.0f
@@ -35,11 +33,22 @@ int main() {
 
     assert(std::abs(camera.depthToMetric(0.0f) - 0.1f) < 1e-5f);
     assert(std::abs(camera.depthToMetric(1.0f) - 100.0f) < 1e-3f);
-
         
-    camera.setPosition(Eigen::Vector3f(0.0f, 0.0f, 0.0f));
-    const Eigen::Vector2f pixel = camera.project(Eigen::Vector3f(0.0f, 0.0f, -2.0f));
-    assert(pixel.isApprox(Eigen::Vector2f(intrinsics.cx, intrinsics.cy)));
+    Eigen::Vector2f pixel = camera.project(Eigen::Vector3f(1.0f, 2.0f, 1.0f));
+    assert(pixel.isApprox(
+        Eigen::Vector2f(intrinsics.cx, intrinsics.cy)
+    ));
+
+
+    const Eigen::Vector3f worldPoint(1.5f, 2.3f, -4.0f);
+    pixel = camera.project(worldPoint);
+
+    const float depth = -(camera.viewMatrix() * 
+        Eigen::Vector4f(worldPoint.x(), worldPoint.y(), worldPoint.z(), 1.0f)
+    ).z();
+
+    const Eigen::Vector3f reconstructed = camera.unproject(pixel, depth);
+    assert(reconstructed.isApprox(worldPoint, 1e-5f));
 
     return 0;
 }

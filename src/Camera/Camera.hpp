@@ -24,6 +24,7 @@ public:
 
     float depthToMetric(float depth) const;
     Eigen::Vector2f project(const Eigen::Vector3f& worldPoint) const;
+    Eigen::Vector3f unproject(const Eigen::Vector2f& pixel, float depth) const;
 
 private:
     Eigen::Vector3f position_{Eigen::Vector3f::Zero()};
