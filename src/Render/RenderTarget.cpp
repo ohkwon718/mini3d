@@ -189,7 +189,6 @@ void RenderTarget::bindDefault(const Viewport& viewport)
 }
 
 
-
 void RenderTarget::release() noexcept
 {
     if (depthTexture_ != 0) glDeleteTextures(1, &depthTexture_);
@@ -198,4 +197,15 @@ void RenderTarget::release() noexcept
     framebuffer_ = 0;
     colorTexture_ = 0;
     depthTexture_ = 0;
+}
+
+
+const int RenderTarget::width() const
+{
+    return width_;
+}
+
+const int RenderTarget::height() const
+{
+    return height_;
 }

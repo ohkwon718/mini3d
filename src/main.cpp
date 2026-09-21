@@ -24,6 +24,80 @@
 #include <iostream>
 
 
+#include <algorithm>
+#include <fstream>
+#include <vector>
+
+namespace {
+
+void saveDepthPreview(
+    const std::vector<float>& rawDepth,
+    int width,
+    int height,
+    const Camera& camera,
+    const std::string& path)
+{
+    constexpr float maxVisualDepth = 10.0f;
+
+    std::vector<unsigned char> pixels(
+        static_cast<std::size_t>(width) *
+        static_cast<std::size_t>(height)
+    );
+
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+
+            // OpenGL readback is bottom-up, image files are normally viewed top-down.
+            const int srcY = height - 1 - y;
+
+            const std::size_t srcIndex =
+                static_cast<std::size_t>(srcY) *
+                static_cast<std::size_t>(width) +
+                static_cast<std::size_t>(x);
+
+            const std::size_t dstIndex =
+                static_cast<std::size_t>(y) *
+                static_cast<std::size_t>(width) +
+                static_cast<std::size_t>(x);
+
+            const float raw = rawDepth[srcIndex];
+
+            // Background / far plane.
+            if (raw >= 1.0f) {
+                pixels[dstIndex] = 0;
+                continue;
+            }
+
+            const float depth = camera.depthToMetric(raw);
+
+            const float normalized =
+                1.0f - std::clamp(
+                    depth / maxVisualDepth,
+                    0.0f,
+                    1.0f
+                );
+
+            pixels[dstIndex] =
+                static_cast<unsigned char>(
+                    normalized * 255.0f
+                );
+        }
+    }
+
+    std::ofstream file(path, std::ios::binary);
+
+    file << "P5\n"
+         << width << ' ' << height << "\n255\n";
+
+    file.write(
+        reinterpret_cast<const char*>(pixels.data()),
+        static_cast<std::streamsize>(pixels.size())
+    );
+}
+
+}
+
+
 int main()
 {
     GlfwRuntime glfw;
@@ -166,6 +240,14 @@ int main()
     auto depth = target.readDepth();
     assert(rgb.size() == 640 * 480 * 3);
     assert(depth.size() == 640 * 480);
+
+    saveDepthPreview(
+        depth,
+        target.width(),
+        target.height(),
+        camera,
+        "depth_preview.pgm"
+    );
 
     RenderTarget::bindDefault(800, 600);
     FreeCameraController controller(5.0f, 0.002f);

@@ -24,6 +24,8 @@ public:
     static void bindDefault(int width, int height);
     static void bindDefault(const Viewport& viewport);
 
+    const int width() const;
+    const int height() const;
     
 private:
     void release() noexcept;
