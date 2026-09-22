@@ -95,6 +95,65 @@ void saveDepthPreview(
     );
 }
 
+std::vector<Eigen::Vector3f> makePointCloud(
+    const std::vector<float>& rawDepth,
+    int width,
+    int height,
+    const Camera& camera)
+{
+    std::vector<Eigen::Vector3f> points;
+
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            const std::size_t index = static_cast<std::size_t>(y) * width + x;
+            const float raw = rawDepth[index];
+
+            if (raw >= 1.0f) {
+                continue;
+            }
+
+            const float depth = camera.depthToMetric(raw);
+            const float u = static_cast<float>(x);
+            const float v = static_cast<float>(height - 1 - y);
+
+            const Eigen::Vector3f point =
+                camera.unproject({u, v}, depth);
+
+            points.push_back(point);
+        }
+    }
+    return points;
+}
+
+void savePointCloudPly(
+    const std::vector<Eigen::Vector3f>& points,
+    const std::string& path)
+{
+    std::ofstream file(path);
+
+    if (!file) {
+        throw std::runtime_error(
+            "Failed to open point cloud file: " + path
+        );
+    }
+
+    file << "ply\n";
+    file << "format ascii 1.0\n";
+    file << "element vertex " << points.size() << '\n';
+    file << "property float x\n";
+    file << "property float y\n";
+    file << "property float z\n";
+    file << "end_header\n";
+
+    for (const auto& point : points) {
+        file << point.x() << ' '
+             << point.y() << ' '
+             << point.z() << '\n';
+    }
+
+
+}
+
 }
 
 
@@ -240,6 +299,16 @@ int main()
     auto depth = target.readDepth();
     assert(rgb.size() == 640 * 480 * 3);
     assert(depth.size() == 640 * 480);
+
+    // const auto rawDepth = target.readDepth();
+    const auto points = makePointCloud(
+        depth,
+        target.width(),
+        target.height(),
+        camera
+    );
+
+    savePointCloudPly(points, "pointcloud.ply");
 
     saveDepthPreview(
         depth,

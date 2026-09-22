@@ -116,8 +116,8 @@ Eigen::Vector2f Camera::project(const Eigen::Vector3f &worldPoint) const
 Eigen::Vector3f Camera::unproject(const Eigen::Vector2f& pixel, float depth) const
 {
     const Eigen::Vector3f cameraPoint(
-        depth * (pixel.x()- intrinsics_.cx) / intrinsics_.fx,
-        -depth * (pixel.y()- intrinsics_.cy) / intrinsics_.fy,
+        depth * (pixel.x() - intrinsics_.cx) / intrinsics_.fx,
+        -depth * (pixel.y() - intrinsics_.cy) / intrinsics_.fy,
         -depth
     );
     return position_ + orientation_ * cameraPoint;
