@@ -21,6 +21,7 @@
 #include "core/Image.hpp"
 #include "core/ImageLoader.hpp"
 #include "CV/PointCloud.hpp"
+#include "CV/RgbImage.hpp"
 #include "Assets/GltfLoader.hpp"
 #include <iostream>
 
@@ -240,12 +241,15 @@ int main()
     auto rgb = target.readRgb();
     auto depth = target.readDepth();
     assert(rgb.size() == 640 * 480 * 3);
-    assert(depth.size() == 640 * 480);
-        
-    auto pcd = PointCloud::fromDepth(
+    assert(depth.size() == 640 * 480);       
+    
+    RgbImage rgbImage;
+    rgbImage.width = 640;
+    rgbImage.height = 480;
+    rgbImage.data = std::move(rgb);
+    auto pcd = PointCloud::fromRgbd(
         depth,
-        target.width(),
-        target.height(),
+        rgbImage,
         camera
     );     
     pcd.savePointCloudPly("pointcloud.ply");
