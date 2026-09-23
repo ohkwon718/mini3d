@@ -96,36 +96,6 @@ void saveDepthPreview(
     );
 }
 
-std::vector<Eigen::Vector3f> makePointCloud(
-    const std::vector<float>& rawDepth,
-    int width,
-    int height,
-    const Camera& camera)
-{
-    std::vector<Eigen::Vector3f> points;
-
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            const std::size_t index = static_cast<std::size_t>(y) * width + x;
-            const float raw = rawDepth[index];
-
-            if (raw >= 1.0f) {
-                continue;
-            }
-
-            const float depth = camera.depthToMetric(raw);
-            const float u = static_cast<float>(x);
-            const float v = static_cast<float>(height - 1 - y);
-
-            const Eigen::Vector3f point =
-                camera.unproject({u, v}, depth);
-
-            points.push_back(point);
-        }
-    }
-    return points;
-}
-
 }
 
 
@@ -271,17 +241,13 @@ int main()
     auto depth = target.readDepth();
     assert(rgb.size() == 640 * 480 * 3);
     assert(depth.size() == 640 * 480);
-
-    // const auto rawDepth = target.readDepth();
-    const auto points = makePointCloud(
+        
+    auto pcd = PointCloud::fromDepth(
         depth,
         target.width(),
         target.height(),
         camera
-    );
-
-    PointCloud pcd(std::move(points));
-
+    );     
     pcd.savePointCloudPly("pointcloud.ply");
 
     saveDepthPreview(

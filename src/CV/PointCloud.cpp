@@ -1,5 +1,6 @@
 #include "PointCloud.hpp"
 
+#include <utility>
 #include <fstream>
 
 PointCloud::PointCloud(std::vector<Eigen::Vector3f> positions)
@@ -7,8 +8,39 @@ PointCloud::PointCloud(std::vector<Eigen::Vector3f> positions)
 {
 }
 
+PointCloud PointCloud::fromDepth(
+        const std::vector<float>& depth,
+        int width,
+        int height,
+        const Camera& camera)
+{
+    std::vector<Eigen::Vector3f> points;
 
-void PointCloud::savePointCloudPly(const std::string& path)
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            const std::size_t index = static_cast<std::size_t>(y) * width + x;
+            const float raw = depth[index];
+
+            if (raw >= 1.0f) {
+                continue;
+            }
+
+            const float depth = camera.depthToMetric(raw);
+            const float u = static_cast<float>(x);
+            const float v = static_cast<float>(height - 1 - y);
+
+            const Eigen::Vector3f point =
+                camera.unproject({u, v}, depth);
+
+            points.push_back(point);
+        }
+    }
+    return PointCloud(std::move(points));
+}
+
+
+
+void PointCloud::savePointCloudPly(const std::string& path) const
 {
     std::ofstream file(path);
 
