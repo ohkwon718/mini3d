@@ -20,6 +20,7 @@
 #include "Geometry/PrimitiveMeshes.hpp"
 #include "core/Image.hpp"
 #include "core/ImageLoader.hpp"
+#include "CV/PointCloud.hpp"
 #include "Assets/GltfLoader.hpp"
 #include <iostream>
 
@@ -123,35 +124,6 @@ std::vector<Eigen::Vector3f> makePointCloud(
         }
     }
     return points;
-}
-
-void savePointCloudPly(
-    const std::vector<Eigen::Vector3f>& points,
-    const std::string& path)
-{
-    std::ofstream file(path);
-
-    if (!file) {
-        throw std::runtime_error(
-            "Failed to open point cloud file: " + path
-        );
-    }
-
-    file << "ply\n";
-    file << "format ascii 1.0\n";
-    file << "element vertex " << points.size() << '\n';
-    file << "property float x\n";
-    file << "property float y\n";
-    file << "property float z\n";
-    file << "end_header\n";
-
-    for (const auto& point : points) {
-        file << point.x() << ' '
-             << point.y() << ' '
-             << point.z() << '\n';
-    }
-
-
 }
 
 }
@@ -308,7 +280,9 @@ int main()
         camera
     );
 
-    savePointCloudPly(points, "pointcloud.ply");
+    PointCloud pcd(std::move(points));
+
+    pcd.savePointCloudPly("pointcloud.ply");
 
     saveDepthPreview(
         depth,

@@ -60,6 +60,7 @@ add_library(
     src/Geometry/PrimitiveMeshes.cpp
     src/core/Image.cpp
     src/core/ImageLoader.cpp
+    src/CV/PointCloud.cpp
 )
 target_compile_features(mini3d_core PUBLIC cxx_std_20)
 target_include_directories(
@@ -154,7 +155,7 @@ add_executable(
     mini3d
     src/main.cpp
     src/Platform/GlfwRuntime.cpp 
-    src/Platform/FreeCameraController.cpp
+    src/Platform/FreeCameraController.cpp    
 )
 target_compile_features(mini3d PRIVATE cxx_std_20)
 target_link_libraries(
