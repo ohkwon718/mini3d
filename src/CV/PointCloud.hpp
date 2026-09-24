@@ -5,12 +5,14 @@
 #include <Camera/Camera.hpp>
 #include <CV/RgbImage.hpp>
 
+using Color3u = std::array<std::uint8_t, 3>;
+
 class PointCloud
 {
 public:
     explicit PointCloud(
         std::vector<Eigen::Vector3f> positions, 
-        std::vector<Eigen::Vector3f> color = {}
+        std::vector<Color3u> colors = {}
     );
     
     static PointCloud fromDepth(
@@ -30,6 +32,7 @@ public:
     void savePointCloudPly(const std::string& path) const;
 
 private:
-    std::vector<Eigen::Vector3f> positions_;
-    std::vector<Eigen::Vector3f> colors_;
+    std::vector<Eigen::Vector3f> positions_;    
+    std::vector<Color3u> colors_;    
+    
 };

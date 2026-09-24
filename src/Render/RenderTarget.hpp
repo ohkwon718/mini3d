@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdint>
 #include <Render/Viewport.hpp>
+#include <CV/RgbImage.hpp>
 
 class RenderTarget
 {
@@ -18,7 +19,7 @@ public:
     RenderTarget& operator=(RenderTarget&& other) noexcept;
 
     void bind() const;    
-    std::vector<std::uint8_t> readRgb() const;
+    RgbImage readRgb() const;
     std::vector<float> readDepth() const;
 
     static void bindDefault(int width, int height);

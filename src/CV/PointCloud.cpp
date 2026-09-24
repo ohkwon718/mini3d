@@ -5,7 +5,7 @@
 
 PointCloud::PointCloud(
     std::vector<Eigen::Vector3f> positions,
-    std::vector<Eigen::Vector3f> colors)
+    std::vector<Color3u> colors)
     : positions_(std::move(positions)),
       colors_(std::move(colors))
 {
@@ -23,22 +23,33 @@ PointCloud PointCloud::fromDepth(
         int height,
         const Camera& camera)
 {
+    if ( width <= 0 or height <= 0) {
+        throw std::invalid_argument( "width and height must be positive" );
+    }
+    if ( depth.size() != static_cast<std::size_t>(width)*static_cast<std::size_t>(height)) {
+        throw std::invalid_argument( "depth sizes is not matched" );
+    }
+    if (camera.intrinsics().width != width || camera.intrinsics().height != height)
+    {
+        throw std::invalid_argument( "camera intrinsics info and the size are unmatched" );
+    }
+
     std::vector<Eigen::Vector3f> points;
 
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
-            const std::size_t index = static_cast<std::size_t>(y) * width + x;
+            const std::size_t index = static_cast<std::size_t>(y) * static_cast<std::size_t>(width) + static_cast<std::size_t>(x);
             const float raw = depth[index];
 
             if (raw >= 1.0f) {
                 continue;
             }
 
-            const float depth = camera.depthToMetric(raw);
+            const float metricDepth = camera.depthToMetric(raw);
             const float u = static_cast<float>(x);
             const float v = static_cast<float>(height - 1 - y);
 
-            const Eigen::Vector3f point = camera.unproject({u, v}, depth);
+            const Eigen::Vector3f point = camera.unproject({u, v}, metricDepth);
 
             points.push_back(point);
         }
@@ -53,16 +64,26 @@ PointCloud PointCloud::fromRgbd(
     const RgbImage& rgb,
     const Camera& camera)
 {   
-    if ( depth.size() != rgb.width*rgb.height || rgb.data.size() != 3*rgb.width*rgb.height) {
+    if ( rgb.width <= 0 or rgb.height <= 0 ) {
+        throw std::invalid_argument( "width and height must be positive" );
+    }
+    const std::size_t width = static_cast<std::size_t>(rgb.width);
+    const std::size_t height = static_cast<std::size_t>(rgb.height);
+    const std::size_t pixelCount = width * height;
+    if ( depth.size() != pixelCount || rgb.data.size() != 3*pixelCount ) {
         throw std::invalid_argument( "image and depth sizes are unmatched" );
+    }
+    if ( camera.intrinsics().width != rgb.width || camera.intrinsics().height != rgb.height )
+    {
+        throw std::invalid_argument( "camera intrinsics info and rgb size are unmatched" );
     }
 
     std::vector<Eigen::Vector3f> points;
-    std::vector<Eigen::Vector3f> rgbs;
+    std::vector<Color3u> colors;
 
-    for (int y = 0; y < rgb.height; ++y) {
-        for (int x = 0; x < rgb.width; ++x) {
-            const std::size_t index = static_cast<std::size_t>(y) * rgb.width + x;
+    for (std::size_t y = 0; y < height; ++y) {
+        for (std::size_t x = 0; x < width; ++x) {
+            const std::size_t index = y * width + x;
             const float raw = depth[index];
 
             if (raw >= 1.0f) {
@@ -71,16 +92,16 @@ PointCloud PointCloud::fromRgbd(
 
             const float depth = camera.depthToMetric(raw);
             const float u = static_cast<float>(x);
-            const float v = static_cast<float>(rgb.height - 1 - y);
+            const float v = static_cast<float>(height - 1 - y);
 
             const Eigen::Vector3f point = camera.unproject({u, v}, depth);
 
             points.push_back(point);
             
-            rgbs.push_back({rgb.data[index*3], rgb.data[index*3+1], rgb.data[index*3+2]});
+            colors.push_back({rgb.data[index*3], rgb.data[index*3+1], rgb.data[index*3+2]});
         }
     }
-    return PointCloud(std::move(points), std::move(rgbs));
+    return PointCloud(std::move(points), std::move(colors));
 
 }
 
@@ -95,14 +116,7 @@ void PointCloud::savePointCloudPly(const std::string& path) const
         );
     }
 
-    bool isRGB = colors_.size() > 0;
-    if (isRGB) {
-        if(positions_.size() != colors_.size()) {
-            throw std::runtime_error(
-                "The sizes of postions and colors are not equal"
-            );
-        }
-    }
+    const bool hasColors = !colors_.empty();
 
     file << "ply\n";
     file << "format ascii 1.0\n";
@@ -110,7 +124,7 @@ void PointCloud::savePointCloudPly(const std::string& path) const
     file << "property float x\n";
     file << "property float y\n";
     file << "property float z\n";
-    if (isRGB) {
+    if (hasColors) {
         file << "property uchar red\n";
         file << "property uchar green\n";
         file << "property uchar blue\n";
@@ -118,15 +132,15 @@ void PointCloud::savePointCloudPly(const std::string& path) const
     file << "end_header\n";
 
     for (size_t i = 0 ; i < positions_.size() ; ++i) {
-        auto pos = positions_[i];
+        const auto& pos = positions_[i];
         file << pos.x() << ' '
              << pos.y() << ' '
              << pos.z();
-        if (isRGB) {
-            auto col = colors_[i];
-            file << ' ' << col.x();
-            file << ' ' << col.y();
-            file << ' ' << col.z();
+        if (hasColors) {
+            const auto& col = colors_[i];
+            file << ' ' << static_cast<unsigned int>(col[0]);
+            file << ' ' << static_cast<unsigned int>(col[1]);
+            file << ' ' << static_cast<unsigned int>(col[2]);
         }
         file << '\n';
     }    

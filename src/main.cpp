@@ -231,8 +231,11 @@ int main()
     camera.setPosition({0.0f, 0.0f, 3.0f});
 
     ///////////////////////////////////////////
-
-    RenderTarget target(640, 480);
+    
+    RenderTarget target(
+        camera.intrinsics().width,
+        camera.intrinsics().height
+    );
     target.bind();    
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -240,16 +243,12 @@ int main()
 
     auto rgb = target.readRgb();
     auto depth = target.readDepth();
-    assert(rgb.size() == 640 * 480 * 3);
-    assert(depth.size() == 640 * 480);       
-    
-    RgbImage rgbImage;
-    rgbImage.width = 640;
-    rgbImage.height = 480;
-    rgbImage.data = std::move(rgb);
+    assert(rgb.data.size() == camera.intrinsics().width * camera.intrinsics().height * 3);
+    assert(depth.size() == camera.intrinsics().width * camera.intrinsics().height);       
+        
     auto pcd = PointCloud::fromRgbd(
         depth,
-        rgbImage,
+        rgb,
         camera
     );     
     pcd.savePointCloudPly("pointcloud.ply");

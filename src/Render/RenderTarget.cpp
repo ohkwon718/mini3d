@@ -120,7 +120,7 @@ void RenderTarget::bind() const
     glViewport(0, 0, width_, height_);
 }
 
-std::vector<std::uint8_t> RenderTarget::readRgb() const
+RgbImage RenderTarget::readRgb() const
 {
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_);
     std::vector<std::uint8_t> pixels(
@@ -144,8 +144,8 @@ std::vector<std::uint8_t> RenderTarget::readRgb() const
     );
 
     glPixelStorei(GL_PACK_ALIGNMENT, previousAlignment);
-
-    return pixels;
+    
+    return RgbImage{width_, height_, std::move(pixels)};
 }
 
 std::vector<float> RenderTarget::readDepth() const
