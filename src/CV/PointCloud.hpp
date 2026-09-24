@@ -17,8 +17,8 @@ public:
     
     static PointCloud fromDepth(
         const std::vector<float>& depth,
-        int width,
-        int height,
+        int depth_width,
+        int depth_height,
         const Camera& camera
     );
 

@@ -200,12 +200,12 @@ void RenderTarget::release() noexcept
 }
 
 
-const int RenderTarget::width() const
+int RenderTarget::width() const
 {
     return width_;
 }
 
-const int RenderTarget::height() const
+int RenderTarget::height() const
 {
     return height_;
 }

@@ -19,26 +19,30 @@ PointCloud::PointCloud(
 
 PointCloud PointCloud::fromDepth(
         const std::vector<float>& depth,
-        int width,
-        int height,
+        int depth_width,
+        int depth_height,
         const Camera& camera)
 {
-    if ( width <= 0 or height <= 0) {
+    if ( depth_width <= 0 or depth_height <= 0) {
         throw std::invalid_argument( "width and height must be positive" );
     }
-    if ( depth.size() != static_cast<std::size_t>(width)*static_cast<std::size_t>(height)) {
-        throw std::invalid_argument( "depth sizes is not matched" );
-    }
-    if (camera.intrinsics().width != width || camera.intrinsics().height != height)
+    if (camera.intrinsics().width != depth_width || camera.intrinsics().height != depth_height)
     {
         throw std::invalid_argument( "camera intrinsics info and the size are unmatched" );
     }
 
+    const std::size_t width = static_cast<std::size_t>(depth_width);
+    const std::size_t height = static_cast<std::size_t>(depth_height);    
+    if ( depth.size() != width * height) {
+        throw std::invalid_argument( "depth sizes is not matched" );
+    }
+    
+
     std::vector<Eigen::Vector3f> points;
 
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            const std::size_t index = static_cast<std::size_t>(y) * static_cast<std::size_t>(width) + static_cast<std::size_t>(x);
+    for (std::size_t y = 0; y < height; ++y) {
+        for (std::size_t x = 0; x < width; ++x) {
+            const std::size_t index = y * width + x;
             const float raw = depth[index];
 
             if (raw >= 1.0f) {
@@ -67,16 +71,17 @@ PointCloud PointCloud::fromRgbd(
     if ( rgb.width <= 0 or rgb.height <= 0 ) {
         throw std::invalid_argument( "width and height must be positive" );
     }
+    if ( camera.intrinsics().width != rgb.width || camera.intrinsics().height != rgb.height )
+    {
+        throw std::invalid_argument( "camera intrinsics info and rgb size are unmatched" );
+    }
+
     const std::size_t width = static_cast<std::size_t>(rgb.width);
     const std::size_t height = static_cast<std::size_t>(rgb.height);
     const std::size_t pixelCount = width * height;
     if ( depth.size() != pixelCount || rgb.data.size() != 3*pixelCount ) {
         throw std::invalid_argument( "image and depth sizes are unmatched" );
-    }
-    if ( camera.intrinsics().width != rgb.width || camera.intrinsics().height != rgb.height )
-    {
-        throw std::invalid_argument( "camera intrinsics info and rgb size are unmatched" );
-    }
+    }    
 
     std::vector<Eigen::Vector3f> points;
     std::vector<Color3u> colors;
