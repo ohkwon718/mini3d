@@ -95,11 +95,11 @@ PointCloud PointCloud::fromRgbd(
                 continue;
             }
 
-            const float depth = camera.depthToMetric(raw);
+            const float metricDepth = camera.depthToMetric(raw);
             const float u = static_cast<float>(x);
             const float v = static_cast<float>(height - 1 - y);
 
-            const Eigen::Vector3f point = camera.unproject({u, v}, depth);
+            const Eigen::Vector3f point = camera.unproject({u, v}, metricDepth);
 
             points.push_back(point);
             

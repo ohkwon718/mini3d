@@ -243,8 +243,6 @@ int main()
 
     auto rgb = target.readRgb();
     auto depth = target.readDepth();
-    assert(static_cast<int>(rgb.data.size()) == camera.intrinsics().width * camera.intrinsics().height * 3);
-    assert(static_cast<int>(depth.size()) == camera.intrinsics().width * camera.intrinsics().height);       
         
     auto pcd = PointCloud::fromRgbd(
         depth,

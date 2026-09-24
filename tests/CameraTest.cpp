@@ -3,6 +3,7 @@
 #include <cassert>
 #include <numbers>
 #include <stdexcept>
+#include <iostream>
 
 int main() {
     const CameraIntrinsics intrinsics{
@@ -43,13 +44,19 @@ int main() {
     const Eigen::Vector3f worldPoint(1.5f, 2.3f, -4.0f);
     pixel = camera.project(worldPoint);
 
-    const float depth = -(camera.viewMatrix() * 
-        Eigen::Vector4f(worldPoint.x(), worldPoint.y(), worldPoint.z(), 1.0f)
-    ).z();
-
+    const auto veiwMatrix = camera.viewMatrix();
+    const Eigen::Vector4f homoWorldPoint = Eigen::Vector4f(worldPoint.x(), worldPoint.y(), worldPoint.z(), 1.0f);
+    const Eigen::Vector4f homoCamCoord = veiwMatrix * homoWorldPoint;   
+    const float depth = -homoCamCoord.z();
     const Eigen::Vector3f reconstructed = camera.unproject(pixel, depth);
-    assert(reconstructed.isApprox(worldPoint, 1e-5f));
-
+    assert(reconstructed.isApprox(worldPoint, 1e-5f));    
+    
+    Eigen::Vector4f homoNDC = camera.projectionMatrix() * homoCamCoord;
+    homoNDC /= homoNDC.w();
+    float u2 = (homoNDC.x() + 1.0f) * static_cast<float>(camera.intrinsics().width) * 0.5f - 0.5f;
+    float v2 = (1.0f - homoNDC.y()) * static_cast<float>(camera.intrinsics().height) * 0.5f - 0.5f;    
+    assert(pixel.isApprox(Eigen::Vector2f(u2, v2)));
+    
     return 0;
 }
 
