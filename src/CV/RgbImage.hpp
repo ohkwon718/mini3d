@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <utility>
 #include <vector>
+#include <cstdint>
 
 class RgbImage
 {
@@ -15,7 +16,7 @@ public:
         int width,
         int height,
         ImageOrigin origin,
-        std::vector<uint8_t> data)
+        std::vector<std::uint8_t> data)
         : width_(width),
           height_(height),
           origin_(origin),
@@ -44,7 +45,7 @@ public:
             rowStride_ = rowSize_;
         }
         else {
-            firstRowOffset_ = static_cast<std::ptrdiff_t>((heightSize - 1) * widthSize);
+            firstRowOffset_ = static_cast<std::ptrdiff_t>((heightSize - 1) * rowSize);
             rowStride_ = -rowSize_;
         }
     }
@@ -53,13 +54,13 @@ public:
     int height() const noexcept { return height_; }
     ImageOrigin origin() const noexcept { return origin_; }
 
-    std::span<const uint8_t> row(std::size_t y) const noexcept
+    std::span<const std::uint8_t> row(std::size_t y) const noexcept
     {
         const std::ptrdiff_t offset = firstRowOffset_ + static_cast<std::ptrdiff_t>(y) * rowStride_;
 
         return {
             data_.data() + offset,
-            static_cast<std::size_t>(width_)
+            static_cast<std::size_t>(rowSize_)
         };
     }
 
@@ -68,7 +69,7 @@ private:
     int height_;
     ImageOrigin origin_;
 
-    std::vector<uint8_t> data_;
+    std::vector<std::uint8_t> data_;
 
     std::ptrdiff_t firstRowOffset_{0};
     std::ptrdiff_t rowStride_{0};

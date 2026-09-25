@@ -66,10 +66,16 @@ PointCloud PointCloud::fromRgbd(
     if ( rgb.width() <= 0 or rgb.height() <= 0 ) {
         throw std::invalid_argument( "width and height must be positive" );
     }
+    if (depth.width() != rgb.width() || depth.height() != rgb.height()) {
+        throw std::invalid_argument(
+            "RGB and depth dimensions must match"
+        );
+    }
     if ( camera.intrinsics().width != rgb.width() || camera.intrinsics().height != rgb.height() )
     {
         throw std::invalid_argument( "camera intrinsics info and rgb size are unmatched" );
     }
+    
 
     const std::size_t width = static_cast<std::size_t>(rgb.width());
     const std::size_t height = static_cast<std::size_t>(rgb.height());
@@ -129,7 +135,7 @@ void PointCloud::savePointCloudPly(const std::string& path) const
     }
     file << "end_header\n";
 
-    for (size_t i = 0 ; i < positions_.size() ; ++i) {
+    for (std::size_t i = 0 ; i < positions_.size() ; ++i) {
         const auto& pos = positions_[i];
         file << pos.x() << ' '
              << pos.y() << ' '

@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <cstdint>
 #include <Eigen/Dense>
 #include <Camera/Camera.hpp>
 #include <CV/RgbImage.hpp>
