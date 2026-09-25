@@ -1,9 +1,14 @@
 #pragma once
 
+#include <array>
+#include <string>
 #include <vector>
 #include <Eigen/Dense>
 #include <Camera/Camera.hpp>
 #include <CV/RgbImage.hpp>
+#include <CV/DepthImage.hpp>
+
+
 
 using Color3u = std::array<std::uint8_t, 3>;
 
@@ -16,14 +21,12 @@ public:
     );
     
     static PointCloud fromDepth(
-        const std::vector<float>& depth,
-        int depth_width,
-        int depth_height,
+        const DepthImage& depth,
         const Camera& camera
     );
 
     static PointCloud fromRgbd(
-        const std::vector<float>& depth,
+        const DepthImage& depth,
         const RgbImage& rgb,        
         const Camera& camera
     );

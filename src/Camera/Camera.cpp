@@ -67,10 +67,13 @@ Eigen::Matrix4f Camera::projectionMatrix() const
 
     Eigen::Matrix4f proj = Eigen::Matrix4f::Zero();
 
+    const float cx = intrinsics_.cx + 0.5f;
+    const float cy = intrinsics_.cy + 0.5f;
+
     proj(0, 0) = 2.0f * intrinsics_.fx / width;
     proj(1, 1) = 2.0f * intrinsics_.fy / height;
-    proj(0, 2) = 1.0f - 2.0f * intrinsics_.cx / width;
-    proj(1, 2) = 2.0f * intrinsics_.cy / height - 1.0f;
+    proj(0, 2) = 1.0f - 2.0f * cx / width;
+    proj(1, 2) = 2.0f * cy / height - 1.0f;
     proj(2, 2) = (f + n) / (n - f);
     proj(2, 3) = 2.0f * f * n / (n - f);
     proj(3, 2) = -1.0f;

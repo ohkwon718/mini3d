@@ -33,58 +33,51 @@
 namespace {
 
 void saveDepthPreview(
-    const std::vector<float>& rawDepth,
-    int width,
-    int height,
+    const DepthImage& depth,
     const Camera& camera,
     const std::string& path)
 {
     constexpr float maxVisualDepth = 10.0f;
 
-    std::vector<unsigned char> pixels(
-        static_cast<std::size_t>(width) *
-        static_cast<std::size_t>(height)
-    );
+    const std::size_t width =
+        static_cast<std::size_t>(depth.width());
 
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
+    const std::size_t height =
+        static_cast<std::size_t>(depth.height());
 
-            // OpenGL readback is bottom-up, image files are normally viewed top-down.
-            const int srcY = height - 1 - y;
+    std::vector<std::uint8_t> pixels(width * height);
 
-            const std::size_t srcIndex =
-                static_cast<std::size_t>(srcY) *
-                static_cast<std::size_t>(width) +
-                static_cast<std::size_t>(x);
+    for (std::size_t y = 0; y < height; ++y) {
 
-            const std::size_t dstIndex =
-                static_cast<std::size_t>(y) *
-                static_cast<std::size_t>(width) +
-                static_cast<std::size_t>(x);
+        const auto depthRow = depth.row(y);
 
-            const float raw = rawDepth[srcIndex];
+        for (std::size_t x = 0; x < width; ++x) {
 
-            // Background / far plane.
+            const float raw = depthRow[x];
+            const std::size_t index = y * width + x;
+
             if (raw >= 1.0f) {
-                pixels[dstIndex] = 0;
+                pixels[index] = 0;
                 continue;
             }
 
-            const float depth = camera.depthToMetric(raw);
+            const float metricDepth =
+                camera.depthToMetric(raw);
 
             const float normalized =
                 1.0f - std::clamp(
-                    depth / maxVisualDepth,
+                    metricDepth / maxVisualDepth,
                     0.0f,
                     1.0f
                 );
 
-            pixels[dstIndex] =
-                static_cast<unsigned char>(
+            pixels[index] =
+                static_cast<std::uint8_t>(
                     normalized * 255.0f
                 );
         }
     }
+
 
     std::ofstream file(path, std::ios::binary);
 
@@ -253,13 +246,10 @@ int main()
 
     saveDepthPreview(
         depth,
-        target.width(),
-        target.height(),
         camera,
         "depth_preview.pgm"
     );
-
-    RenderTarget::bindDefault(800, 600);
+    
     FreeCameraController controller(5.0f, 0.002f);
 
     double previousTime = glfwGetTime();

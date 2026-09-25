@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <Render/Viewport.hpp>
 #include <CV/RgbImage.hpp>
+#include <CV/DepthImage.hpp>
 
 class RenderTarget
 {
@@ -20,9 +21,8 @@ public:
 
     void bind() const;    
     RgbImage readRgb() const;
-    std::vector<float> readDepth() const;
+    DepthImage readDepth() const;
 
-    static void bindDefault(int width, int height);
     static void bindDefault(const Viewport& viewport);
 
     int width() const;

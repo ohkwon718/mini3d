@@ -145,10 +145,10 @@ RgbImage RenderTarget::readRgb() const
 
     glPixelStorei(GL_PACK_ALIGNMENT, previousAlignment);
     
-    return RgbImage{width_, height_, std::move(pixels)};
+    return RgbImage{width_, height_, ImageOrigin::BottomLeft, std::move(pixels)};
 }
 
-std::vector<float> RenderTarget::readDepth() const
+DepthImage RenderTarget::readDepth() const
 {
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_);    
     std::vector<float> depth(
@@ -164,16 +164,8 @@ std::vector<float> RenderTarget::readDepth() const
         GL_FLOAT,
         depth.data()
     );
-
-    return depth;
-}
-
-
-void RenderTarget::bindDefault(int width, int height)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, width, height);
     
+    return DepthImage{width_, height_, ImageOrigin::BottomLeft, std::move(depth)};
 }
 
 

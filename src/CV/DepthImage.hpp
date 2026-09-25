@@ -8,14 +8,14 @@
 #include <utility>
 #include <vector>
 
-class RgbImage
+class DepthImage
 {
 public:
-    RgbImage(
+    DepthImage(
         int width,
         int height,
         ImageOrigin origin,
-        std::vector<uint8_t> data)
+        std::vector<float> data)
         : width_(width),
           height_(height),
           origin_(origin),
@@ -23,21 +23,20 @@ public:
     {
         if (width_ <= 0 || height_ <= 0) {
             throw std::invalid_argument(
-                "RgbImage dimensions must be positive"
+                "DepthImage dimensions must be positive"
             );
         }
 
         const std::size_t widthSize = static_cast<std::size_t>(width_);
         const std::size_t heightSize = static_cast<std::size_t>(height_);
 
-        if (data_.size() != widthSize * heightSize * 3) {
+        if (data_.size() != widthSize * heightSize) {
             throw std::invalid_argument(
-                "RgbImage data size does not match dimensions"
+                "DepthImage data size does not match dimensions"
             );
         }
 
-        const std::size_t rowSize = widthSize * 3;
-        rowSize_ = static_cast<std::ptrdiff_t>(rowSize);
+        rowSize_ = static_cast<std::ptrdiff_t>(widthSize);
 
         if (origin_ == ImageOrigin::TopLeft) {
             firstRowOffset_ = 0;
@@ -53,7 +52,7 @@ public:
     int height() const noexcept { return height_; }
     ImageOrigin origin() const noexcept { return origin_; }
 
-    std::span<const uint8_t> row(std::size_t y) const noexcept
+    std::span<const float> row(std::size_t y) const noexcept
     {
         const std::ptrdiff_t offset = firstRowOffset_ + static_cast<std::ptrdiff_t>(y) * rowStride_;
 
@@ -68,7 +67,7 @@ private:
     int height_;
     ImageOrigin origin_;
 
-    std::vector<uint8_t> data_;
+    std::vector<float> data_;
 
     std::ptrdiff_t firstRowOffset_{0};
     std::ptrdiff_t rowStride_{0};
