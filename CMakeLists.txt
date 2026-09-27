@@ -20,6 +20,11 @@ add_test(
     NAME scene_test
     COMMAND scene_test
 )
+add_test(
+    NAME triangulation_test
+    COMMAND triangulation_test
+)
+
 
 find_package (Eigen3 REQUIRED NO_MODULE)
 find_package (OpenGL REQUIRED)
@@ -216,7 +221,6 @@ target_compile_options(
         -Wsign-conversion
 )
 
-
 add_executable(
     scene_test
     tests/SceneTest.cpp    
@@ -235,6 +239,26 @@ target_compile_options(
         -Wconversion
         -Wsign-conversion
 )
+
+add_executable(
+    triangulation_test
+    tests/TriangulationTest.cpp    
+)
+target_compile_features(triangulation_test PRIVATE cxx_std_20)
+target_link_libraries(
+    triangulation_test    
+    PRIVATE mini3d_core
+)
+target_compile_options(       
+    triangulation_test 
+    PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wconversion
+        -Wsign-conversion
+)
+
 
 add_custom_target(copy_assets ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
