@@ -220,8 +220,30 @@ int main()
         0.1f,
         100.0f
     );
-
     camera.setPosition({0.0f, 0.0f, 3.0f});
+
+
+    Camera cameraA(
+        intrinsics,
+        0.1f,
+        100.0f
+    );
+    cameraA.setPosition({-0.5f, 0.0f, 3.0f});
+
+    Camera cameraB(
+        intrinsics,
+        0.1f,
+        100.0f
+    );
+    cameraB.setPosition({ 0.5f, 0.0f, 3.0f});
+    const Eigen::Vector3f worldPoint(1.5f, 2.3f, -4.0f);
+
+    Eigen::Vector2f pixelA = cameraA.project(worldPoint);
+    Eigen::Vector2f pixelB = cameraB.project(worldPoint);
+    
+    std::cout << pixelA << std::endl;
+    std::cout << pixelB << std::endl;
+    
 
     ///////////////////////////////////////////
     

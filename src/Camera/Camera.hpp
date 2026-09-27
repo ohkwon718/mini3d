@@ -20,6 +20,7 @@ public:
 
     Eigen::Matrix4f viewMatrix() const;
     Eigen::Matrix4f projectionMatrix() const;
+    Eigen::Matrix<float, 3, 4> cameraMatrix() const;
     const CameraIntrinsics& intrinsics() const noexcept;
 
     float depthToMetric(float depth) const;

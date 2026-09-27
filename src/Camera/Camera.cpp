@@ -81,6 +81,31 @@ Eigen::Matrix4f Camera::projectionMatrix() const
     return proj;
 }
 
+
+
+Eigen::Matrix<float, 3, 4> Camera::cameraMatrix() const
+{
+    Eigen::Matrix<float, 3, 4> viewMatrix3x4;
+
+    Eigen::Matrix3f rotationMatrix = orientation_.toRotationMatrix();
+    viewMatrix3x4.block<3, 3>(0, 0) = rotationMatrix.transpose();
+    viewMatrix3x4.block<3, 1>(0, 3) = -rotationMatrix.transpose() * position_;
+
+    Eigen::Matrix3f glToCv = Eigen::Matrix3f::Identity();
+    glToCv(1, 1) = -1.0f;
+    glToCv(2, 2) = -1.0f;
+
+    Eigen::Matrix3f K = Eigen::Matrix3f::Zero();
+    K(0, 0) = intrinsics_.fx;
+    K(1, 1) = intrinsics_.fy;
+    K(0, 2) = intrinsics_.cx;
+    K(1, 2) = intrinsics_.cy;
+    K(2, 2) = 1.0f;
+
+    return K * glToCv * viewMatrix3x4;
+}
+
+
 const CameraIntrinsics &Camera::intrinsics() const noexcept
 {
     return intrinsics_;

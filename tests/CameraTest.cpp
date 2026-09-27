@@ -56,6 +56,17 @@ int main() {
     float u2 = (homoNDC.x() + 1.0f) * static_cast<float>(camera.intrinsics().width) * 0.5f - 0.5f;
     float v2 = (1.0f - homoNDC.y()) * static_cast<float>(camera.intrinsics().height) * 0.5f - 0.5f;    
     assert(pixel.isApprox(Eigen::Vector2f(u2, v2)));
+
+
+    Eigen::Vector4f X;
+    X << worldPoint, 1.0f;
+    Eigen::Vector3f homoProjected = camera.cameraMatrix() * X;
+    const Eigen::Vector2f projected(
+        homoProjected.x() / homoProjected.z(),
+        homoProjected.y() / homoProjected.z()
+    );
+    assert(pixel.isApprox(projected, 1e-4f));
+
     
     return 0;
 }
