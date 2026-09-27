@@ -34,18 +34,24 @@ int main() {
     Eigen::Vector2f pixelA = cameraA.project(worldPoint);
     Eigen::Vector2f pixelB = cameraB.project(worldPoint);
     
-    Eigen::Vector3f reconstructed = triangulateLinearSvd(cameraA, pixelA, cameraB, pixelB);
-    
+    Eigen::Vector3f reconstructed = triangulateLinearSvd(cameraA, pixelA, cameraB, pixelB);    
     assert(reconstructed.isApprox(worldPoint, 1e-4f));
+    
+    reconstructed = triangulateClosestRays(cameraA, pixelA, cameraB, pixelB);
+    assert(reconstructed.isApprox(worldPoint, 1e-4f));
+
 
     cameraA.setRotation(Eigen::Quaternionf(Eigen::AngleAxisf(-0.1f, Eigen::Vector3f::UnitY())));
     cameraB.setRotation(Eigen::Quaternionf(Eigen::AngleAxisf(0.1f, Eigen::Vector3f::UnitY())));
-
     pixelA = cameraA.project(worldPoint);
     pixelB = cameraB.project(worldPoint);    
-    reconstructed = triangulateLinearSvd(cameraA, pixelA, cameraB, pixelB);
-    
+
+    reconstructed = triangulateLinearSvd(cameraA, pixelA, cameraB, pixelB);    
     assert(reconstructed.isApprox(worldPoint, 1e-4f));
+
+    reconstructed = triangulateClosestRays(cameraA, pixelA, cameraB, pixelB);
+    assert(reconstructed.isApprox(worldPoint, 1e-4f));
+
 
     return 0;
 }

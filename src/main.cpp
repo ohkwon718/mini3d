@@ -246,6 +246,8 @@ int main()
     // std::cout << pixelB << std::endl;
     
     Eigen::Vector3f triangulated = triangulateLinearSvd(cameraA, pixelA, cameraB, pixelB);
+    // Eigen::Vector3f triangulated = triangulateClosestRays(cameraA, pixelA, cameraB, pixelB);
+    
     std::cout << worldPoint << std::endl;
     std::cout << triangulated << std::endl;
     
