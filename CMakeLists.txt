@@ -61,6 +61,7 @@ add_library(
     src/core/Image.cpp
     src/core/ImageLoader.cpp
     src/CV/PointCloud.cpp
+    src/CV/Triangulation.cpp
 )
 target_compile_features(mini3d_core PUBLIC cxx_std_20)
 target_include_directories(

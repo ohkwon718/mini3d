@@ -1,10 +1,10 @@
 #pragma once
 
-Eigen::Vector3f triangulate(
+#include <Eigen/Dense>
+#include <Camera/Camera.hpp>
+
+Eigen::Vector3f triangulateLinearSvd(
     const Camera& cameraA,
     const Eigen::Vector2f& pixelA,
     const Camera& cameraB,
-    const Eigen::Vector2f& pixelB)
-{
-
-}
+    const Eigen::Vector2f& pixelB);

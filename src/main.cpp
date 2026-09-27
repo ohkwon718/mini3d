@@ -22,6 +22,7 @@
 #include "core/ImageLoader.hpp"
 #include "CV/PointCloud.hpp"
 #include "CV/RgbImage.hpp"
+#include "CV/Triangulation.hpp"
 #include "Assets/GltfLoader.hpp"
 #include <iostream>
 
@@ -241,8 +242,12 @@ int main()
     Eigen::Vector2f pixelA = cameraA.project(worldPoint);
     Eigen::Vector2f pixelB = cameraB.project(worldPoint);
     
-    std::cout << pixelA << std::endl;
-    std::cout << pixelB << std::endl;
+    // std::cout << pixelA << std::endl;
+    // std::cout << pixelB << std::endl;
+    
+    Eigen::Vector3f triangulated = triangulateLinearSvd(cameraA, pixelA, cameraB, pixelB);
+    std::cout << worldPoint << std::endl;
+    std::cout << triangulated << std::endl;
     
 
     ///////////////////////////////////////////
