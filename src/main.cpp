@@ -242,14 +242,15 @@ int main()
     Eigen::Vector2f pixelA = cameraA.project(worldPoint);
     Eigen::Vector2f pixelB = cameraB.project(worldPoint);
     
-    // std::cout << pixelA << std::endl;
-    // std::cout << pixelB << std::endl;
+    const Eigen::Vector2f noisyA = pixelA + Eigen::Vector2f(0.4f, -0.2f);
+    const Eigen::Vector2f noisyB = pixelB + Eigen::Vector2f(-0.3f, 0.5f);
     
-    Eigen::Vector3f triangulated = triangulateLinearSvd(cameraA, pixelA, cameraB, pixelB);
-    // Eigen::Vector3f triangulated = triangulateClosestRays(cameraA, pixelA, cameraB, pixelB);
+    Eigen::Vector3f linearSvd = triangulateLinearSvd(cameraA, noisyA, cameraB, noisyB);
+    Eigen::Vector3f closestRays = triangulateClosestRays(cameraA, noisyA, cameraB, noisyB);
     
     std::cout << worldPoint << std::endl;
-    std::cout << triangulated << std::endl;
+    std::cout << linearSvd << std::endl;
+    std::cout << closestRays << std::endl;
     
 
     ///////////////////////////////////////////

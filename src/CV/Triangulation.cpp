@@ -34,24 +34,16 @@ Eigen::Vector3f triangulateClosestRays(
     const Camera& cameraB,
     const Eigen::Vector2f& pixelB)
 {    
-    const auto posA = cameraA.position().cast<double>();;
-    const auto posB = cameraB.position().cast<double>();;
-    const auto dirA = (cameraA.unproject(pixelA, 1).cast<double>() - posA).normalized();
-    const auto dirB = (cameraB.unproject(pixelB, 1).cast<double>() - posB).normalized();
+    const Eigen::Vector3d posA = cameraA.position().cast<double>();;
+    const Eigen::Vector3d posB = cameraB.position().cast<double>();;
+    const Eigen::Vector3d dirA = (cameraA.unproject(pixelA, 1).cast<double>() - posA).normalized();
+    const Eigen::Vector3d dirB = (cameraB.unproject(pixelB, 1).cast<double>() - posB).normalized();
     double dAdB = dirA.dot(dirB);
     const Eigen::Vector3d vecAB = posB - posA;
     double b1 = vecAB.dot(dirA);
     double b2 = vecAB.dot(dirB);
     double denom = 1-dAdB*dAdB;
-    if (std::abs(denom) < 1e-12) {
-        throw std::runtime_error(
-            "Cannot triangulate nearly parallel rays"
-        );
-    }
     double tA = (b1 - dAdB*b2)/denom;
     double tB = (dAdB*b1 - b2)/denom;
-    const Eigen::Vector3d pointA = posA + tA * dirA;
-    const Eigen::Vector3d pointB = posB + tB * dirB;
-
-    return (0.5 * (pointA + pointB)).cast<float>();    
+    return 0.5f * (posA + tA*dirA + posB + tB*dirB).cast<float>();;
 }
