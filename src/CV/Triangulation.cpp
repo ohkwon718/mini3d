@@ -1,30 +1,39 @@
 #include "Triangulation.hpp"
 
-#include <iostream>
+
 
 Eigen::Vector3f triangulateLinearSvd(
-    const Camera& cameraA,
-    const Eigen::Vector2f& pixelA,
-    const Camera& cameraB,
-    const Eigen::Vector2f& pixelB)
+    std::span<const CameraObservation> observations)
 {
-    const auto P1 = cameraA.cameraMatrix();
-    const auto P2 = cameraB.cameraMatrix();
+    if (observations.size() < 2) {
+        throw std::invalid_argument(
+            "Triangulation requires at least two observations"
+        );
+    }
+    const Eigen::Index numObservations = static_cast<Eigen::Index>(observations.size());
+    Eigen::MatrixXf A(2 * numObservations, 4);    
     
-    Eigen::Matrix4f A;
-    
-    A.row(0) = pixelA.x() * P1.row(2) - P1.row(0);    
-    A.row(1) = pixelA.y() * P1.row(2) - P1.row(1);
-    A.row(2) = pixelB.x() * P2.row(2) - P2.row(0);
-    A.row(3) = pixelB.y() * P2.row(2) - P2.row(1);
-    
-    Eigen::JacobiSVD<Eigen::Matrix4f> svd(A, Eigen::ComputeFullV);
+    for (Eigen::Index i = 0; i < numObservations; ++i) {
+        const auto& obs = observations[static_cast<std::size_t>(i)];
+        if (obs.camera == nullptr) {
+            throw std::invalid_argument(
+                "Camera observation contains null camera"
+            );
+        }
+        const auto& P = obs.camera->cameraMatrix();
+        const auto& pixel = obs.pixel;
+        
+        A.row(2*i  ) = pixel.x() * P.row(2) - P.row(0);    
+        A.row(2*i+1) = pixel.y() * P.row(2) - P.row(1);
+    }
+
+    Eigen::JacobiSVD<Eigen::MatrixXf> svd(A, Eigen::ComputeFullV);
     Eigen::Vector4f res = svd.matrixV().col(3);    
     if (std::abs(res.w()) < 1e-6f) {
         throw std::runtime_error("Triangulation produced point at infinity");
     }
 
-    return res.head(3) / res(3);
+    return res.head(3) / res(3);   
 }
 
 
@@ -47,3 +56,4 @@ Eigen::Vector3f triangulateClosestRays(
     double tB = (dAdB*b1 - b2)/denom;
     return 0.5f * (posA + tA*dirA + posB + tB*dirB).cast<float>();;
 }
+

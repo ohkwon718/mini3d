@@ -1,13 +1,19 @@
 #pragma once
 
+#include <span>
 #include <Eigen/Dense>
 #include <Camera/Camera.hpp>
 
+
+struct CameraObservation
+{
+    const Camera* camera;
+    Eigen::Vector2f pixel;
+};
+
+
 Eigen::Vector3f triangulateLinearSvd(
-    const Camera& cameraA,
-    const Eigen::Vector2f& pixelA,
-    const Camera& cameraB,
-    const Eigen::Vector2f& pixelB
+    std::span<const CameraObservation> observations    
 );
 
 

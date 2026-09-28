@@ -237,20 +237,38 @@ int main()
         100.0f
     );
     cameraB.setPosition({ 0.5f, 0.0f, 3.0f});
+    
+    Camera cameraC(
+        intrinsics,
+        0.1f,
+        100.0f
+    );
+    cameraC.setPosition({ 0.0f, 0.5f, 3.0f});
     const Eigen::Vector3f worldPoint(1.5f, 2.3f, -4.0f);
+
+
 
     Eigen::Vector2f pixelA = cameraA.project(worldPoint);
     Eigen::Vector2f pixelB = cameraB.project(worldPoint);
+    Eigen::Vector2f pixelC = cameraC.project(worldPoint);    
     
     const Eigen::Vector2f noisyA = pixelA + Eigen::Vector2f(0.4f, -0.2f);
     const Eigen::Vector2f noisyB = pixelB + Eigen::Vector2f(-0.3f, 0.5f);
     
-    Eigen::Vector3f linearSvd = triangulateLinearSvd(cameraA, noisyA, cameraB, noisyB);
-    Eigen::Vector3f closestRays = triangulateClosestRays(cameraA, noisyA, cameraB, noisyB);
-    
+    const std::array<CameraObservation, 3> observations{{
+        {&cameraA, noisyA},
+        {&cameraB, noisyB},
+        {&cameraC, pixelC}
+    }};
+    const Eigen::Vector3f linearSvd = triangulateLinearSvd(observations);    
+
     std::cout << worldPoint << std::endl;
     std::cout << linearSvd << std::endl;
-    std::cout << closestRays << std::endl;
+    // std::cout << closestRays << std::endl;
+    
+    
+    // Eigen::Vector3f linearSvd = triangulateLinearSvd(cameraA, noisyA, cameraB, noisyB);
+    // Eigen::Vector3f closestRays = triangulateClosestRays(cameraA, noisyA, cameraB, noisyB);
     
 
     ///////////////////////////////////////////
