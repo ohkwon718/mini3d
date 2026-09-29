@@ -21,13 +21,16 @@
 #include "core/Image.hpp"
 #include "core/ImageLoader.hpp"
 #include "CV/PointCloud.hpp"
-#include "CV/RgbImage.hpp"
+#include "core/RgbImage.hpp"
 #include "CV/Triangulation.hpp"
 #include "CV/OpenCvInterop.hpp"
 #include "Assets/GltfLoader.hpp"
 #include <iostream>
 
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/features2d.hpp>
 
 
 
@@ -283,6 +286,25 @@ int main()
     );
     target.bind();    
 
+    {
+        target.bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        renderer.draw(scene, cameraA, shader, light);
+
+        RgbImage rgbA = target.readRgb();
+        cv::Mat imageA = toCvMatCopy(rgbA);
+        
+        target.bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        renderer.draw(scene, cameraB, shader, light);
+
+        RgbImage rgbB = target.readRgb();
+        cv::Mat imageB = toCvMatCopy(rgbB);
+
+
+    }
+
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderer.draw(scene, camera, shader, light);
 
@@ -291,7 +313,7 @@ int main()
     
     cv::Mat mat = toCvMatCopy(rgb);    
     std::cout << mat.size() << std::endl;    
-    cv::imwrite("./cv.jpg", mat);
+    cv::imwrite("./cvmat.png", mat);
     
 
 

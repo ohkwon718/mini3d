@@ -65,10 +65,7 @@ add_library(
     src/Geometry/Mesh.cpp
     src/Geometry/PrimitiveMeshes.cpp
     src/core/Image.cpp
-    src/core/ImageLoader.cpp
-    src/CV/PointCloud.cpp
-    src/CV/Triangulation.cpp
-    src/CV/OpenCvInterop.cpp
+    src/core/ImageLoader.cpp    
 )
 target_compile_features(mini3d_core PUBLIC cxx_std_20)
 target_include_directories(
@@ -83,9 +80,7 @@ target_include_directories(
 target_link_libraries(
     mini3d_core
     PUBLIC 
-        Eigen3::Eigen    
-        opencv_core
-        opencv_imgcodecs
+        Eigen3::Eigen          
 )
 target_compile_options(
     mini3d_core
@@ -96,6 +91,7 @@ target_compile_options(
         -Wconversion
         -Wsign-conversion
 )
+
 
 add_library(
     mini3d_render
@@ -133,6 +129,41 @@ target_compile_options(
         -Wconversion
         -Wsign-conversion        
 )
+
+
+add_library(
+    mini3d_cv    
+    src/CV/PointCloud.cpp
+    src/CV/Triangulation.cpp
+    src/CV/OpenCvInterop.cpp
+)
+target_compile_features(mini3d_cv PUBLIC cxx_std_20)
+target_include_directories(
+    mini3d_cv 
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_include_directories(
+    mini3d_cv
+    SYSTEM PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb
+)
+target_link_libraries(
+    mini3d_cv
+    PUBLIC 
+        Eigen3::Eigen    
+        opencv_core
+        opencv_imgcodecs        
+)
+target_compile_options(
+    mini3d_cv
+    PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wconversion
+        -Wsign-conversion
+)
+
 
 add_library(
     mini3d_assets
@@ -174,6 +205,7 @@ target_link_libraries(
     PRIVATE 
         mini3d_render
         mini3d_assets
+        mini3d_cv
         glfw
         OpenGL::GL
         glad_gl_core_33
@@ -252,7 +284,9 @@ add_executable(
 target_compile_features(triangulation_test PRIVATE cxx_std_20)
 target_link_libraries(
     triangulation_test    
-    PRIVATE mini3d_core
+    PRIVATE 
+        mini3d_core
+        mini3d_cv
 )
 target_compile_options(       
     triangulation_test 

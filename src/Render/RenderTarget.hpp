@@ -3,9 +3,9 @@
 #include <glad/gl.h>
 #include <vector>
 #include <cstdint>
-#include <Render/Viewport.hpp>
-#include <CV/RgbImage.hpp>
-#include <CV/DepthImage.hpp>
+#include "Render/Viewport.hpp"
+#include "core/RgbImage.hpp"
+#include "core/DepthImage.hpp"
 
 class RenderTarget
 {

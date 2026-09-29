@@ -5,9 +5,9 @@
 #include <vector>
 #include <cstdint>
 #include <Eigen/Dense>
-#include <Camera/Camera.hpp>
-#include <CV/RgbImage.hpp>
-#include <CV/DepthImage.hpp>
+#include "Camera/Camera.hpp"
+#include "core/RgbImage.hpp"
+#include "core/DepthImage.hpp"
 
 
 
