@@ -23,13 +23,17 @@
 #include "CV/PointCloud.hpp"
 #include "CV/RgbImage.hpp"
 #include "CV/Triangulation.hpp"
+#include "CV/OpenCvInterop.hpp"
 #include "Assets/GltfLoader.hpp"
 #include <iostream>
+
+#include <opencv2/imgcodecs.hpp>
+
 
 
 #include <algorithm>
 #include <fstream>
-#include <vector>
+
 
 namespace {
 
@@ -282,9 +286,15 @@ int main()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderer.draw(scene, camera, shader, light);
 
-    auto rgb = target.readRgb();
-    auto depth = target.readDepth();
-        
+    RgbImage rgb = target.readRgb();
+    DepthImage depth = target.readDepth();
+    
+    cv::Mat mat = toCvMatCopy(rgb);    
+    std::cout << mat.size() << std::endl;    
+    cv::imwrite("./cv.jpg", mat);
+    
+
+
     auto pcd = PointCloud::fromRgbd(
         depth,
         rgb,

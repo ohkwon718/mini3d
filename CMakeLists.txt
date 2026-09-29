@@ -29,7 +29,7 @@ add_test(
 find_package (Eigen3 REQUIRED NO_MODULE)
 find_package (OpenGL REQUIRED)
 find_package (glfw3 REQUIRED)
-find_package(OpenCV REQUIRED COMPONENTS core)
+find_package(OpenCV REQUIRED COMPONENTS core imgcodecs)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -83,9 +83,9 @@ target_include_directories(
 target_link_libraries(
     mini3d_core
     PUBLIC 
-        Eigen3::Eigen
-    PRIVATE
+        Eigen3::Eigen    
         opencv_core
+        opencv_imgcodecs
 )
 target_compile_options(
     mini3d_core

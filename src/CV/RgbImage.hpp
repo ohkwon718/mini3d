@@ -52,6 +52,7 @@ public:
 
     int width() const noexcept { return width_; }
     int height() const noexcept { return height_; }
+    std::vector<std::uint8_t> data() const noexcept { return data_;}
     ImageOrigin origin() const noexcept { return origin_; }
 
     std::span<const std::uint8_t> row(std::size_t y) const noexcept
