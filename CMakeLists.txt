@@ -65,7 +65,9 @@ add_library(
     src/Geometry/Mesh.cpp
     src/Geometry/PrimitiveMeshes.cpp
     src/core/Image.cpp
-    src/core/ImageLoader.cpp    
+    src/core/ImageLoader.cpp
+    src/core/RgbImage.cpp
+    src/core/DepthImage.cpp
 )
 target_compile_features(mini3d_core PUBLIC cxx_std_20)
 target_include_directories(
@@ -149,10 +151,9 @@ target_include_directories(
 )
 target_link_libraries(
     mini3d_cv
-    PUBLIC 
-        Eigen3::Eigen    
+    PUBLIC
+        mini3d_core         
         opencv_core
-        opencv_imgcodecs        
 )
 target_compile_options(
     mini3d_cv

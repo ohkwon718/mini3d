@@ -40,63 +40,6 @@
 
 namespace {
 
-void saveDepthPreview(
-    const DepthImage& depth,
-    const Camera& camera,
-    const std::string& path)
-{
-    constexpr float maxVisualDepth = 10.0f;
-
-    const std::size_t width =
-        static_cast<std::size_t>(depth.width());
-
-    const std::size_t height =
-        static_cast<std::size_t>(depth.height());
-
-    std::vector<std::uint8_t> pixels(width * height);
-
-    for (std::size_t y = 0; y < height; ++y) {
-
-        const auto depthRow = depth.row(y);
-
-        for (std::size_t x = 0; x < width; ++x) {
-
-            const float raw = depthRow[x];
-            const std::size_t index = y * width + x;
-
-            if (raw >= 1.0f) {
-                pixels[index] = 0;
-                continue;
-            }
-
-            const float metricDepth =
-                camera.depthToMetric(raw);
-
-            const float normalized =
-                1.0f - std::clamp(
-                    metricDepth / maxVisualDepth,
-                    0.0f,
-                    1.0f
-                );
-
-            pixels[index] =
-                static_cast<std::uint8_t>(
-                    normalized * 255.0f
-                );
-        }
-    }
-
-
-    std::ofstream file(path, std::ios::binary);
-
-    file << "P5\n"
-         << width << ' ' << height << "\n255\n";
-
-    file.write(
-        reinterpret_cast<const char*>(pixels.data()),
-        static_cast<std::streamsize>(pixels.size())
-    );
-}
 
 }
 
@@ -310,10 +253,6 @@ int main()
 
     RgbImage rgb = target.readRgb();
     DepthImage depth = target.readDepth();
-    
-    cv::Mat mat = toCvMatCopy(rgb);    
-    std::cout << mat.size() << std::endl;    
-    cv::imwrite("./cvmat.png", mat);
     
 
 
