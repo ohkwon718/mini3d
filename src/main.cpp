@@ -1,10 +1,6 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
-#include <vector>
-#include <numbers>
-#include <cstdint>
 #include <memory>
-#include <cassert>
 #include "Platform/GlfwRuntime.hpp"
 #include "Platform/FreeCameraController.hpp"
 #include "Render/ShaderProgram.hpp"
@@ -20,28 +16,7 @@
 #include "Geometry/PrimitiveMeshes.hpp"
 #include "core/Image.hpp"
 #include "core/ImageLoader.hpp"
-#include "CV/PointCloud.hpp"
-#include "core/RgbImage.hpp"
-#include "CV/Triangulation.hpp"
-#include "CV/OpenCvInterop.hpp"
 #include "Assets/GltfLoader.hpp"
-#include <iostream>
-
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/features2d.hpp>
-
-
-
-#include <algorithm>
-#include <fstream>
-
-
-namespace {
-
-
-}
 
 
 int main()
@@ -173,102 +148,6 @@ int main()
     );
     camera.setPosition({0.0f, 0.0f, 3.0f});
 
-
-    Camera cameraA(
-        intrinsics,
-        0.1f,
-        100.0f
-    );
-    cameraA.setPosition({-0.5f, 0.0f, 3.0f});
-
-    Camera cameraB(
-        intrinsics,
-        0.1f,
-        100.0f
-    );
-    cameraB.setPosition({ 0.5f, 0.0f, 3.0f});
-    
-    Camera cameraC(
-        intrinsics,
-        0.1f,
-        100.0f
-    );
-    cameraC.setPosition({ 0.0f, 0.5f, 3.0f});
-    const Eigen::Vector3f worldPoint(1.5f, 2.3f, -4.0f);
-
-
-
-    Eigen::Vector2f pixelA = cameraA.project(worldPoint);
-    Eigen::Vector2f pixelB = cameraB.project(worldPoint);
-    Eigen::Vector2f pixelC = cameraC.project(worldPoint);    
-    
-    const Eigen::Vector2f noisyA = pixelA + Eigen::Vector2f(0.4f, -0.2f);
-    const Eigen::Vector2f noisyB = pixelB + Eigen::Vector2f(-0.3f, 0.5f);
-    
-    const std::array<CameraObservation, 3> observations{{
-        {&cameraA, noisyA},
-        {&cameraB, noisyB},
-        {&cameraC, pixelC}
-    }};
-    const Eigen::Vector3f linearSvd = triangulateLinearSvd(observations);    
-
-    std::cout << worldPoint << std::endl;
-    std::cout << linearSvd << std::endl;
-    // std::cout << closestRays << std::endl;
-    
-    
-    // Eigen::Vector3f linearSvd = triangulateLinearSvd(cameraA, noisyA, cameraB, noisyB);
-    // Eigen::Vector3f closestRays = triangulateClosestRays(cameraA, noisyA, cameraB, noisyB);
-    
-
-    ///////////////////////////////////////////
-    
-    RenderTarget target(
-        camera.intrinsics().width,
-        camera.intrinsics().height
-    );
-    target.bind();    
-
-    {
-        target.bind();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        renderer.draw(scene, cameraA, shader, light);
-
-        RgbImage rgbA = target.readRgb();
-        cv::Mat imageA = toCvMatCopy(rgbA);
-        
-        target.bind();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        renderer.draw(scene, cameraB, shader, light);
-
-        RgbImage rgbB = target.readRgb();
-        cv::Mat imageB = toCvMatCopy(rgbB);
-
-
-    }
-
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    renderer.draw(scene, camera, shader, light);
-
-    RgbImage rgb = target.readRgb();
-    DepthImage depth = target.readDepth();
-    
-
-
-    auto pcd = PointCloud::fromRgbd(
-        depth,
-        rgb,
-        camera
-    );     
-    pcd.savePointCloudPly("pointcloud.ply");
-
-    saveDepthPreview(
-        depth,
-        camera,
-        "depth_preview.pgm"
-    );
-    
     FreeCameraController controller(5.0f, 0.002f);
 
     double previousTime = glfwGetTime();
