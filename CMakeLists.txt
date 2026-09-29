@@ -29,6 +29,7 @@ add_test(
 find_package (Eigen3 REQUIRED NO_MODULE)
 find_package (OpenGL REQUIRED)
 find_package (glfw3 REQUIRED)
+find_package(OpenCV REQUIRED COMPONENTS core)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -67,6 +68,7 @@ add_library(
     src/core/ImageLoader.cpp
     src/CV/PointCloud.cpp
     src/CV/Triangulation.cpp
+    src/CV/OpenCvInterop.cpp
 )
 target_compile_features(mini3d_core PUBLIC cxx_std_20)
 target_include_directories(
@@ -80,7 +82,10 @@ target_include_directories(
 )
 target_link_libraries(
     mini3d_core
-    PUBLIC Eigen3::Eigen
+    PUBLIC 
+        Eigen3::Eigen
+    PRIVATE
+        opencv_core
 )
 target_compile_options(
     mini3d_core
