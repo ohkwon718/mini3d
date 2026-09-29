@@ -39,7 +39,6 @@ fastgltf::Asset loadAsset(
     constexpr auto options =
         fastgltf::Options::LoadExternalBuffers |
         fastgltf::Options::LoadExternalImages |
-        fastgltf::Options::LoadGLBBuffers |
         fastgltf::Options::GenerateMeshIndices;
 
     auto result = parser.loadGltf(
@@ -513,4 +512,23 @@ std::vector<LoadedObject> loadGltfObjects(const std::filesystem::path& path)
     
     return loaded;
 
+}
+
+
+Scene loadGltfScene(const std::filesystem::path& path)
+{
+    Scene scene;
+    auto loadedObjects = loadGltfObjects(path);
+    for (auto& loaded : loadedObjects) {
+        scene.addObject(
+            SceneObject(
+                std::move(loaded.name),
+                std::move(loaded.mesh),
+                std::move(loaded.material),
+                std::move(loaded.transform)
+            )
+        );
+    }
+
+    return scene;    
 }

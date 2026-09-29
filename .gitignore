@@ -68,3 +68,6 @@ vcpkg_installed/
 Testing/
 .cache/
 .vscode
+
+assets/models/*
+assets/worlds/*

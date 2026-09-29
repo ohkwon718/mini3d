@@ -3,6 +3,7 @@
 #include "Geometry/Mesh.hpp"
 #include "Transform/Transform.hpp"
 #include "Scene/Material.hpp"
+#include "Scene/Scene.hpp"
 
 #include <cstddef>
 #include <filesystem>
@@ -32,5 +33,9 @@ GltfSummary inspectGltf(
 );
 
 std::vector<LoadedObject>  loadGltfObjects(
+    const std::filesystem::path& path
+);
+
+Scene loadGltfScene(
     const std::filesystem::path& path
 );
