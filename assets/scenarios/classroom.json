@@ -1,0 +1,24 @@
+{
+    "world": "assets/worlds/classroom.glb",
+
+    "cameras": [
+        {
+            "name": "main_camera",
+
+            "intrinsics": {
+                "width": 800,
+                "height": 600,
+                "fx": 724.264,
+                "fy": 724.264,
+                "cx": 400.0,
+                "cy": 300.0
+            },
+
+            "near": 0.1,
+            "far": 100.0,
+
+            "position": [0.0, 1.6, 3.0],
+            "orientation": [1.0, 0.0, 0.0, 0.0]
+        }
+    ]
+}

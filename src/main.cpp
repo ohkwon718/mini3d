@@ -17,6 +17,7 @@
 #include "core/Image.hpp"
 #include "core/ImageLoader.hpp"
 #include "Assets/GltfLoader.hpp"
+#include "Simulation/Scenario.hpp"
 
 
 int main()
@@ -53,9 +54,10 @@ int main()
         {1.0f, 1.0f, 1.0f},
         0.5f
     };
-    Scene scene = loadGltfScene("assets/worlds/indoor.glb");    
+    // Scene scene = loadGltfScene("assets/worlds/indoor.glb");    
+    // // Scene scene = loadGltfScene("assets/worlds/duplex.glb"); 
 
-    ///////////////////////////////////////////
+    // ///////////////////////////////////////////
 
 
     Renderer renderer;
@@ -65,23 +67,28 @@ int main()
                                         "assets/shaders/lit.frag");
     
                                         
-    ///////////////////////////////////////////
+    // ///////////////////////////////////////////
 
-    CameraIntrinsics intrinsics{
-        800,
-        600,
-        724.264f,
-        724.264f,
-        400.0f,
-        300.0f
-    };
+    // CameraIntrinsics intrinsics{
+    //     800,
+    //     600,
+    //     724.264f,
+    //     724.264f,
+    //     400.0f,
+    //     300.0f
+    // };
 
-    Camera camera(
-        intrinsics,
-        0.1f,
-        100.0f
-    );
-    camera.setPosition({0.0f, 0.0f, 3.0f});
+    // Camera camera(
+    //     intrinsics,
+    //     0.1f,
+    //     100.0f
+    // );
+    // camera.setPosition({0.0f, 0.0f, 3.0f});
+
+    const Scenario scenario = loadScenario("assets/scenarios/classroom.json");
+    Scene scene = loadGltfScene(scenario.worldPath());
+    Camera camera = scenario.camera("main_camera");
+
 
     FreeCameraController controller(5.0f, 0.002f);
 

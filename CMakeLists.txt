@@ -54,6 +54,12 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(fastgltf)
 
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.11.3
+)
+FetchContent_MakeAvailable(nlohmann_json)
 
 
 add_library(
@@ -134,6 +140,34 @@ target_compile_options(
 
 
 add_library(
+    mini3d_assets
+    src/Assets/GltfLoader.cpp    
+)
+target_compile_features(mini3d_assets PRIVATE cxx_std_20)
+target_include_directories(
+    mini3d_assets 
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src    
+)
+target_link_libraries(
+    mini3d_assets
+    PUBLIC
+        mini3d_core        
+    PRIVATE
+        fastgltf::fastgltf
+)
+target_compile_options(
+    mini3d_assets
+    PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wconversion
+        -Wsign-conversion        
+)
+
+
+add_library(
     mini3d_cv    
     src/CV/PointCloud.cpp
     src/CV/Triangulation.cpp
@@ -167,24 +201,24 @@ target_compile_options(
 
 
 add_library(
-    mini3d_assets
-    src/Assets/GltfLoader.cpp    
+    mini3d_sim
+    src/Simulation/Scenario.cpp
 )
-target_compile_features(mini3d_assets PRIVATE cxx_std_20)
+target_compile_features(mini3d_sim PRIVATE cxx_std_20)
 target_include_directories(
-    mini3d_assets 
+    mini3d_sim 
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src    
 )
 target_link_libraries(
-    mini3d_assets
+    mini3d_sim
     PUBLIC
-        mini3d_core        
+        mini3d_core
     PRIVATE
-        fastgltf::fastgltf
+        nlohmann_json::nlohmann_json
 )
 target_compile_options(
-    mini3d_assets
+    mini3d_sim
     PRIVATE
         -Wall
         -Wextra
@@ -203,10 +237,12 @@ add_executable(
 target_compile_features(mini3d PRIVATE cxx_std_20)
 target_link_libraries(
     mini3d    
-    PRIVATE 
+    PRIVATE
+        mini3d_core
         mini3d_render
         mini3d_assets
         mini3d_cv
+        mini3d_sim
         glfw
         OpenGL::GL
         glad_gl_core_33
