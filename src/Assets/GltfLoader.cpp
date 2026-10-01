@@ -29,10 +29,10 @@ fastgltf::Asset loadAsset(
 
     if (data.error() != fastgltf::Error::None) {
         throw std::runtime_error(
-            "Failed to open glTF: " +
+            "Failed to open glTF " + path.string() + " : " +
             std::string(
                 fastgltf::getErrorMessage(data.error())
-            )
+            ) 
         );
     }
 
