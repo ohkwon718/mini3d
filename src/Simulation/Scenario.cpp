@@ -48,6 +48,42 @@ Camera readCamera(const nlohmann::json& value)
     return camera;
 }
 
+SensorRig readRig(const nlohmann::json& value)
+{
+    const auto& pose = value.at("pose");
+    SensorRig rig(        
+        readVector3(pose.at("position")),
+        readQuaternion(pose.at("orientation"))
+    );
+    for (auto& camJson: value.at("cameras")) {
+        const auto& intrinsics = camJson.at("intrinsics");
+        const auto& localPose = value.at("pose");
+
+        Camera camera(
+        {
+                intrinsics.at("width").get<int>(),
+                intrinsics.at("height").get<int>(),
+                intrinsics.at("fx").get<float>(),
+                intrinsics.at("fy").get<float>(),
+                intrinsics.at("cx").get<float>(),
+                intrinsics.at("cy").get<float>()
+            },
+            camJson.at("near").get<float>(),
+            camJson.at("far").get<float>()
+        );
+        
+        rig.addCamera(
+            camJson.at("name").get<std::string>(),
+            {
+                camera,
+                readVector3(localPose.at("position")),
+                readQuaternion(localPose.at("orientation"))
+            }
+        );
+    }
+    return rig;
+}
+
 }
 
 
@@ -57,15 +93,27 @@ const std::filesystem::path& Scenario::worldPath() const noexcept
 }
 
 
-const Camera& Scenario::camera(const std::string& name) const
+// const Camera& Scenario::camera(const std::string& name) const
+// {
+//     auto it = cameras_.find(name);    
+//     if (it == cameras_.end()) {
+//         throw std::runtime_error("No camera name: " + name);
+//     }
+
+//     return it->second;
+// }
+
+const SensorRig& Scenario::rig(const std::string& name) const
 {
-    auto it = cameras_.find(name);    
-    if (it == cameras_.end()) {
-        throw std::runtime_error("No camera name: " + name);
+    auto it = rigs_.find(name);    
+    if (it == rigs_.end()) {
+        throw std::runtime_error("No rig name: " + name);
     }
 
     return it->second;
+
 }
+
 
 
 Scenario loadScenario(const std::filesystem::path& path)
@@ -81,12 +129,11 @@ Scenario loadScenario(const std::filesystem::path& path)
 
     Scenario scenario;
 
-    scenario.worldPath_ =
-        json.at("world").get<std::string>();
+    scenario.worldPath_ = json.at("rigs").get<std::string>();
 
-    for (const auto& cameraJson : json.at("cameras")) {
-        std::string name = cameraJson.at("name").get<std::string>();
-        auto [it, inserted] = scenario.cameras_.emplace(std::move(name), readCamera(cameraJson));  
+    for (const auto& rigJson : json.at("cameras")) {
+        std::string name = rigJson.at("name").get<std::string>();
+        auto [it, inserted] = scenario.rigs_.emplace(std::move(name), readRig(rigJson));  
         if (!inserted) {
             throw std::runtime_error("Duplicate camera name: " + it->first);
         }

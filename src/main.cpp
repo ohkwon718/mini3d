@@ -56,7 +56,7 @@ int main()
     };
 
     // ///////////////////////////////////////////
-    
+
     Renderer renderer;
 
     ShaderProgram shader = 
@@ -67,7 +67,11 @@ int main()
 
     const Scenario scenario = loadScenario("assets/scenarios/classroom.json");
     Scene scene = loadGltfScene(scenario.worldPath());
-    Camera camera = scenario.camera("main_camera");
+    // Camera camera = scenario.camera("main_camera");
+        
+    const SensorRig& rig = scenario.rig("robot");
+    Camera camera = rig.camera("front_camera");
+
 
 
     FreeCameraController controller(5.0f, 0.002f);

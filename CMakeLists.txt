@@ -203,6 +203,7 @@ target_compile_options(
 add_library(
     mini3d_sim
     src/Simulation/Scenario.cpp
+    src/Simulation/SensorRig.cpp
 )
 target_compile_features(mini3d_sim PRIVATE cxx_std_20)
 target_include_directories(
