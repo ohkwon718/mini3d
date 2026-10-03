@@ -20,8 +20,15 @@ public:
         Eigen::Vector3f position,
         Eigen::Quaternionf orientation
     );
+
+    Eigen::Vector3f position() const;
+    Eigen::Quaternionf rotation() const;
+
+    void setPosition(const Eigen::Vector3f&);
+    void setRotation(const Eigen::Quaternionf&);
+
     void addCamera(const std::string& name, MountedCamera camera);
-    const Camera& camera(const std::string& name) const;
+    Camera camera(const std::string& name) const;
 
 private:    
     std::unordered_map<std::string, MountedCamera> cameras_;

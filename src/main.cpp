@@ -19,6 +19,7 @@
 #include "Assets/GltfLoader.hpp"
 #include "Simulation/Scenario.hpp"
 
+#include <iostream>
 
 int main()
 {
@@ -71,7 +72,8 @@ int main()
         
     const SensorRig& rig = scenario.rig("robot");
     Camera camera = rig.camera("front_camera");
-
+    std::cout << camera.position() << std::endl;
+    std::cout << camera.rotation() << std::endl;
 
 
     FreeCameraController controller(5.0f, 0.002f);

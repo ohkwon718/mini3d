@@ -57,7 +57,7 @@ SensorRig readRig(const nlohmann::json& value)
     );
     for (auto& camJson: value.at("cameras")) {
         const auto& intrinsics = camJson.at("intrinsics");
-        const auto& localPose = value.at("pose");
+        const auto& localPose = camJson.at("pose");
 
         Camera camera(
         {
@@ -129,9 +129,9 @@ Scenario loadScenario(const std::filesystem::path& path)
 
     Scenario scenario;
 
-    scenario.worldPath_ = json.at("rigs").get<std::string>();
+    scenario.worldPath_ = json.at("world").get<std::string>();
 
-    for (const auto& rigJson : json.at("cameras")) {
+    for (const auto& rigJson : json.at("rigs")) {
         std::string name = rigJson.at("name").get<std::string>();
         auto [it, inserted] = scenario.rigs_.emplace(std::move(name), readRig(rigJson));  
         if (!inserted) {

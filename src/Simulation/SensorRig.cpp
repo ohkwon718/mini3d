@@ -10,6 +10,32 @@ SensorRig::SensorRig(
 
 }
 
+
+Eigen::Vector3f SensorRig::position() const
+{
+    return position_;
+}
+
+Eigen::Quaternionf SensorRig::rotation() const
+{
+    return orientation_;
+}
+
+void SensorRig::setPosition(const Eigen::Vector3f& position)
+{
+    position_ = position;
+}
+
+void SensorRig::setRotation(const Eigen::Quaternionf& rotation)
+{
+    const float norm = rotation.norm();
+    if (!std::isfinite(norm) || norm < 1e-6f) {
+        throw std::invalid_argument("Quaternion must have a non-zero finite norm");
+    }
+    orientation_ = rotation.normalized();
+}
+
+
 void SensorRig::addCamera(const std::string& name, MountedCamera camera)
 {
     auto [it, inserted] = cameras_.emplace(std::move(name), std::move(camera));
@@ -18,7 +44,7 @@ void SensorRig::addCamera(const std::string& name, MountedCamera camera)
     }
 }
 
-const Camera& SensorRig::camera(const std::string& name) const
+Camera SensorRig::camera(const std::string& name) const
 {
     auto it = cameras_.find(name);    
     if (it == cameras_.end()) {
