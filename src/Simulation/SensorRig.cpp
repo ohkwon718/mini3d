@@ -41,7 +41,7 @@ void SensorRig::setPose(const Pose& pose)
     setRotation(pose.orientation);
 }
 
-void SensorRig::addCamera(const std::string name, MountedCamera camera)
+void SensorRig::addCamera(std::string name, MountedCamera camera)
 {
     auto [it, inserted] = cameras_.emplace(std::move(name), std::move(camera));
     if (!inserted) {

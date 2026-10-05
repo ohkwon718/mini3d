@@ -73,13 +73,9 @@ int main()
     // const SensorRig& rig = scenario.rig("robot");
 
     const Trajectory& trajectory = scenario.trajectory("robot_path");
-    SensorRig rig = scenario.rig(trajectory.rigName());
-    float time = 1.5;
-    const Pose pose = trajectory.sample(time);
-    rig.setPose(pose);
-    Camera camera = rig.camera("front_camera");
+    SensorRig rig = scenario.rig(trajectory.rigName());    
+    Camera camera = rig.camera("front_camera");    
     
-    std::cout << pose.position << std::endl;
 
     FreeCameraController controller(5.0f, 0.002f);
 

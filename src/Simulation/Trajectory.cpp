@@ -19,9 +19,7 @@ const std::string& Trajectory::rigName() const
 }
 
 const Pose Trajectory::sample(float time) const
-{
-    std::size_t index = 0;
-    
+{    
     if (time <= keyframes_.front().time) {
         return Pose{
             keyframes_.front().position,
@@ -35,9 +33,11 @@ const Pose Trajectory::sample(float time) const
         };
     }
 
-    while (keyframes_[index].time > time && index < keyframes_.size()-1){
+    std::size_t index = 1;
+    while (keyframes_[index].time < time && index < keyframes_.size()){
         index++;
     }
+    index--;    
     
     float alpha = (time - keyframes_[index].time)/(keyframes_[index+1].time - keyframes_[index].time);
     return Pose{

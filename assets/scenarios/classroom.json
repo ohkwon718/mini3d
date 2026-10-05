@@ -1,78 +1,76 @@
 {
-    "world": "assets/worlds/classroom.glb",
+  "world": "assets/worlds/classroom.glb",
 
-    "rigs": [
+  "rigs": [
+    {
+      "name": "robot",
+
+      "pose": {
+        "position": [0.0, 0.0, 0.0],
+        "orientation": [1.0, 0.0, 0.0, 0.0]
+      },
+
+      "cameras": [
         {
-            "name": "robot",
+          "name": "front_camera",
 
-            "pose": {
-                "position": [0.0, 0.0, 0.0],
-                "orientation": [1.0, 0.0, 0.0, 0.0]
-            },
+          "intrinsics": {
+            "width": 800,
+            "height": 600,
+            "fx": 724.264,
+            "fy": 724.264,
+            "cx": 400.0,
+            "cy": 300.0
+          },
 
-            "cameras": [
-                {
-                    "name": "front_camera",
+          "near": 0.1,
+          "far": 100.0,
 
-                    "intrinsics": {
-                        "width": 800,
-                        "height": 600,
-                        "fx": 724.264,
-                        "fy": 724.264,
-                        "cx": 400.0,
-                        "cy": 300.0
-                    },
-
-                    "near": 0.1,
-                    "far": 100.0,
-
-                    "pose": {
-                        "position": [0.0, 1.2, 0.2],
-                        "orientation": [1.0, 0.0, 0.0, 0.0]
-                    }
-                },
-
-                {
-                    "name": "left_camera",
-
-                    "intrinsics": {
-                        "width": 800,
-                        "height": 600,
-                        "fx": 724.264,
-                        "fy": 724.264,
-                        "cx": 400.0,
-                        "cy": 300.0
-                    },
-
-                    "near": 0.1,
-                    "far": 100.0,
-
-                    "pose": {
-                        "position": [-0.3, 1.2, 0.2],
-                        "orientation": [1.0, 0.0, 0.0, 0.0]
-                    }
-                }
-            ]
+          "pose": {
+            "position": [0.0, 1.2, 0.2],
+            "orientation": [1.0, 0.0, 0.0, 0.0]
+          }
         }
-    ],
+      ]
+    }
+  ],
 
-    "trajectories": [
+  "trajectories": [
+    {
+      "name": "robot_path",
+      "rig": "robot",
+
+      "keyframes": [
         {
-            "name": "robot_path",
-            "rig": "robot",
-            "keyframes": [
-                {
-                    "time": 0.0,
-                    "position": [0.0, 0.0, 0.0],
-                    "orientation": [1.0, 0.0, 0.0, 0.0]
-                },
-                {
-                    "time": 3.0,
-                    "position": [0.0, 0.0, -3.0],
-                    "orientation": [1.0, 0.0, 0.0, 0.0]
-                }
-            ]
+          "time": 0.0,
+          "position": [0.0, 0.0, 0.0],
+          "orientation": [1.0, 0.0, 0.0, 0.0]
+        },
+
+        {
+          "time": 2.0,
+          "position": [0.0, 0.0, -2.0],
+          "orientation": [1.0, 0.0, 0.0, 0.0]
+        },
+
+        {
+          "time": 4.0,
+          "position": [2.0, 0.0, -4.0],
+          "orientation": [0.9238795, 0.0, 0.3826834, 0.0]
+        },
+
+        {
+          "time": 6.0,
+          "position": [4.0, 0.0, -4.0],
+          "orientation": [0.7071068, 0.0, 0.7071068, 0.0]
+        },
+
+        {
+          "time": 8.0,
+          "position": [4.0, 0.0, -1.0],
+          "orientation": [1.0, 0.0, 0.0, 0.0]
         }
-    ]
-  
+      ]
+    }
+  ]
 }
