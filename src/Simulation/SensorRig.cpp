@@ -35,6 +35,11 @@ void SensorRig::setRotation(const Eigen::Quaternionf& rotation)
     orientation_ = rotation.normalized();
 }
 
+void SensorRig::setPose(const Pose& pose)
+{
+    setPosition(pose.position);
+    setRotation(pose.orientation);
+}
 
 void SensorRig::addCamera(const std::string name, MountedCamera camera)
 {

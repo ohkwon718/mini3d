@@ -21,12 +21,22 @@ const std::string& Trajectory::rigName() const
 const Pose Trajectory::sample(float time) const
 {
     std::size_t index = 0;
-    while (keyframes_[index].time > time && index < keyframes_.size()){
-        index++;
+    
+    if (time <= keyframes_.front().time) {
+        return Pose{
+            keyframes_.front().position,
+            keyframes_.front().orientation,
+        };
+    }
+    if (time >= keyframes_.back().time) {
+        return Pose{
+            keyframes_.back().position,
+            keyframes_.back().orientation,
+        };
     }
 
-    if (index >= keyframes_.size()-1) {
-        throw std::invalid_argument("The input time is not in the keyframe range");
+    while (keyframes_[index].time > time && index < keyframes_.size()-1){
+        index++;
     }
     
     float alpha = (time - keyframes_[index].time)/(keyframes_[index+1].time - keyframes_[index].time);

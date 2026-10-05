@@ -76,13 +76,14 @@ int main()
     SensorRig rig = scenario.rig(trajectory.rigName());
     float time = 1.5;
     const Pose pose = trajectory.sample(time);
-    
+    rig.setPose(pose);
     Camera camera = rig.camera("front_camera");
-    camera.setPose(pose);
+    
     std::cout << pose.position << std::endl;
 
     FreeCameraController controller(5.0f, 0.002f);
 
+    double simulationTime = 0.0;
     double previousTime = glfwGetTime();
     while (!glfwWindowShouldClose(window.get())) {        
         glfwPollEvents();
@@ -118,6 +119,12 @@ int main()
             camera,
             static_cast<float>(deltaTime)
         );
+
+        simulationTime += deltaTime;
+        const Pose pose = trajectory.sample(simulationTime);
+        rig.setPose(pose);
+        // Camera sensorCamera = rig.camera("front_camera");
+        camera = rig.camera("front_camera");
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderer.draw(scene, camera, shader, light);

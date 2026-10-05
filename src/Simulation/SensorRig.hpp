@@ -25,6 +25,7 @@ public:
 
     void setPosition(const Eigen::Vector3f&);
     void setRotation(const Eigen::Quaternionf&);
+    void setPose(const Pose& pose);
 
     void addCamera(const std::string name, MountedCamera camera);
     Camera camera(const std::string& name) const;
