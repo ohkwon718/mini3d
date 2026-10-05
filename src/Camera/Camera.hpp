@@ -2,6 +2,7 @@
 
 #include <Eigen/Dense>
 #include <Camera/CameraIntrinsics.hpp>
+#include <Transform/Pose.hpp>
 
 class Camera 
 {
@@ -15,8 +16,9 @@ public:
     Eigen::Vector3f position() const;
     Eigen::Quaternionf rotation() const;
 
-    void setPosition(const Eigen::Vector3f&);
-    void setRotation(const Eigen::Quaternionf&);
+    void setPosition(const Eigen::Vector3f& position);
+    void setRotation(const Eigen::Quaternionf& rotation);
+    void setPose(const Pose& pose);
 
     Eigen::Matrix4f viewMatrix() const;
     Eigen::Matrix4f projectionMatrix() const;

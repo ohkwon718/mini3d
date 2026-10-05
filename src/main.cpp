@@ -18,6 +18,7 @@
 #include "core/ImageLoader.hpp"
 #include "Assets/GltfLoader.hpp"
 #include "Simulation/Scenario.hpp"
+#include "Transform/Pose.hpp"
 
 #include <iostream>
 
@@ -69,13 +70,18 @@ int main()
     const Scenario scenario = loadScenario("assets/scenarios/classroom.json");
     Scene scene = loadGltfScene(scenario.worldPath());    
         
-    const SensorRig& rig = scenario.rig("robot");
-    const Trajectory& trajectory = scenario.trajectory("robot_path");
+    // const SensorRig& rig = scenario.rig("robot");
 
-    Camera camera = rig.camera("front_camera");    
+    const Trajectory& trajectory = scenario.trajectory("robot_path");
+    SensorRig rig = scenario.rig(trajectory.rigName());
+    float time = 1.5;
+    const Pose pose = trajectory.sample(time);
+    
+    Camera camera = rig.camera("front_camera");
+    camera.setPose(pose);
+    std::cout << pose.position << std::endl;
 
     FreeCameraController controller(5.0f, 0.002f);
-    
 
     double previousTime = glfwGetTime();
     while (!glfwWindowShouldClose(window.get())) {        

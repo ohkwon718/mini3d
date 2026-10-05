@@ -4,6 +4,7 @@
 #include <vector>
 #include "Simulation/SensorRig.hpp"
 #include "Camera/Camera.hpp"
+#include "Transform/Pose.hpp"
 
 struct KeyFrame
 {
@@ -12,12 +13,14 @@ struct KeyFrame
     Eigen::Quaternionf orientation;
 };
 
+
 class Trajectory
 {
 public:    
     Trajectory(std::string rigName);    
     void addKeyframe(KeyFrame keyframe);
     const std::string& rigName() const;
+    const Pose sample(float time) const;
 
 private:
     std::string rigName_;

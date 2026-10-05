@@ -48,6 +48,13 @@ void Camera::setRotation(const Eigen::Quaternionf& rotation)
     orientation_ = rotation.normalized();
 }
 
+void Camera::setPose(const Pose& pose)
+{
+    setPosition(pose.position);
+    setRotation(pose.orientation);
+}
+
+
 Eigen::Matrix4f Camera::viewMatrix() const
 {
     Eigen::Matrix4f view = Eigen::Matrix4f::Identity();

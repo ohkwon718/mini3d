@@ -3,6 +3,7 @@
 #include "Camera/Camera.hpp"
 #include "Simulation/SensorRig.hpp"
 #include "Simulation/Trajectory.hpp"
+#include "Transform/Pose.hpp"
 
 #include <filesystem>
 #include <string>
