@@ -67,16 +67,15 @@ int main()
     // ///////////////////////////////////////////
 
     const Scenario scenario = loadScenario("assets/scenarios/classroom.json");
-    Scene scene = loadGltfScene(scenario.worldPath());
-    // Camera camera = scenario.camera("main_camera");
+    Scene scene = loadGltfScene(scenario.worldPath());    
         
     const SensorRig& rig = scenario.rig("robot");
-    Camera camera = rig.camera("front_camera");
-    std::cout << camera.position() << std::endl;
-    std::cout << camera.rotation() << std::endl;
+    const Trajectory& trajectory = scenario.trajectory("robot_path");
 
+    Camera camera = rig.camera("front_camera");    
 
     FreeCameraController controller(5.0f, 0.002f);
+    
 
     double previousTime = glfwGetTime();
     while (!glfwWindowShouldClose(window.get())) {        

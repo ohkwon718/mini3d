@@ -3,7 +3,6 @@
 #include <string>
 #include <unordered_map>
 #include "Camera/Camera.hpp"
-#include "Transform/Transform.hpp"
 
 struct MountedCamera
 {
@@ -27,7 +26,7 @@ public:
     void setPosition(const Eigen::Vector3f&);
     void setRotation(const Eigen::Quaternionf&);
 
-    void addCamera(const std::string& name, MountedCamera camera);
+    void addCamera(const std::string name, MountedCamera camera);
     Camera camera(const std::string& name) const;
 
 private:    

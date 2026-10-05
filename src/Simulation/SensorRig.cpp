@@ -1,13 +1,13 @@
 #include "SensorRig.hpp"
-
+#include <cmath>
 #include <stdexcept>
 
 SensorRig::SensorRig(
     Eigen::Vector3f position,
     Eigen::Quaternionf orientation)
-: position_{position}, orientation_{orientation}
+: position_{position}
 {
-
+    setRotation(orientation);
 }
 
 
@@ -36,7 +36,7 @@ void SensorRig::setRotation(const Eigen::Quaternionf& rotation)
 }
 
 
-void SensorRig::addCamera(const std::string& name, MountedCamera camera)
+void SensorRig::addCamera(const std::string name, MountedCamera camera)
 {
     auto [it, inserted] = cameras_.emplace(std::move(name), std::move(camera));
     if (!inserted) {

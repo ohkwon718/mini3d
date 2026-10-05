@@ -1,58 +1,78 @@
 {
-  "world": "assets/worlds/classroom.glb",
+    "world": "assets/worlds/classroom.glb",
 
-  "rigs": [
-    {
-      "name": "robot",
-
-      "pose": {
-        "position": [0.0, 0.0, 0.0],
-        "orientation": [1.0, 0.0, 0.0, 0.0]
-      },
-
-      "cameras": [
+    "rigs": [
         {
-          "name": "front_camera",
+            "name": "robot",
 
-          "intrinsics": {
-            "width": 800,
-            "height": 600,
-            "fx": 724.264,
-            "fy": 724.264,
-            "cx": 400.0,
-            "cy": 300.0
-          },
+            "pose": {
+                "position": [0.0, 0.0, 0.0],
+                "orientation": [1.0, 0.0, 0.0, 0.0]
+            },
 
-          "near": 0.1,
-          "far": 100.0,
+            "cameras": [
+                {
+                    "name": "front_camera",
 
-          "pose": {
-            "position": [0.0, 1.2, 0.2],
-            "orientation": [1.0, 0.0, 0.0, 0.0]
-          }
-        },
+                    "intrinsics": {
+                        "width": 800,
+                        "height": 600,
+                        "fx": 724.264,
+                        "fy": 724.264,
+                        "cx": 400.0,
+                        "cy": 300.0
+                    },
 
-        {
-          "name": "left_camera",
+                    "near": 0.1,
+                    "far": 100.0,
 
-          "intrinsics": {
-            "width": 800,
-            "height": 600,
-            "fx": 724.264,
-            "fy": 724.264,
-            "cx": 400.0,
-            "cy": 300.0
-          },
+                    "pose": {
+                        "position": [0.0, 1.2, 0.2],
+                        "orientation": [1.0, 0.0, 0.0, 0.0]
+                    }
+                },
 
-          "near": 0.1,
-          "far": 100.0,
+                {
+                    "name": "left_camera",
 
-          "pose": {
-            "position": [-0.3, 1.2, 0.2],
-            "orientation": [1.0, 0.0, 0.0, 0.0]
-          }
+                    "intrinsics": {
+                        "width": 800,
+                        "height": 600,
+                        "fx": 724.264,
+                        "fy": 724.264,
+                        "cx": 400.0,
+                        "cy": 300.0
+                    },
+
+                    "near": 0.1,
+                    "far": 100.0,
+
+                    "pose": {
+                        "position": [-0.3, 1.2, 0.2],
+                        "orientation": [1.0, 0.0, 0.0, 0.0]
+                    }
+                }
+            ]
         }
-      ]
-    }
-  ]
+    ],
+
+    "trajectories": [
+        {
+            "name": "robot_path",
+            "rig": "robot",
+            "keyframes": [
+                {
+                    "time": 0.0,
+                    "position": [0.0, 0.0, 0.0],
+                    "orientation": [1.0, 0.0, 0.0, 0.0]
+                },
+                {
+                    "time": 3.0,
+                    "position": [0.0, 0.0, -3.0],
+                    "orientation": [1.0, 0.0, 0.0, 0.0]
+                }
+            ]
+        }
+    ]
+  
 }

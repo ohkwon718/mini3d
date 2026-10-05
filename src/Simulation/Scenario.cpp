@@ -27,27 +27,6 @@ Eigen::Quaternionf readQuaternion(const nlohmann::json& value)
     };
 }
 
-Camera readCamera(const nlohmann::json& value)
-{
-    const auto& intrinsics = value.at("intrinsics");
-    Camera camera(
-        {
-            intrinsics.at("width").get<int>(),
-            intrinsics.at("height").get<int>(),
-            intrinsics.at("fx").get<float>(),
-            intrinsics.at("fy").get<float>(),
-            intrinsics.at("cx").get<float>(),
-            intrinsics.at("cy").get<float>()
-        },
-        value.at("near").get<float>(),
-        value.at("far").get<float>()
-    );
-    camera.setPosition(readVector3(value.at("position")));
-    camera.setRotation(readQuaternion(value.at("orientation")));
-
-    return camera;
-}
-
 SensorRig readRig(const nlohmann::json& value)
 {
     const auto& pose = value.at("pose");
@@ -84,6 +63,21 @@ SensorRig readRig(const nlohmann::json& value)
     return rig;
 }
 
+
+Trajectory readTrajectory(const nlohmann::json& value)
+{
+    Trajectory traj(value.at("rig").get<std::string>());
+
+    for (auto& kfJson: value.at("keyframes")) {         
+        traj.addKeyframe({
+            kfJson.at("time").get<float>(),
+            readVector3(kfJson.at("position")),
+            readQuaternion(kfJson.at("orientation"))
+        });
+    }
+    return traj;
+}
+
 }
 
 
@@ -93,21 +87,23 @@ const std::filesystem::path& Scenario::worldPath() const noexcept
 }
 
 
-// const Camera& Scenario::camera(const std::string& name) const
-// {
-//     auto it = cameras_.find(name);    
-//     if (it == cameras_.end()) {
-//         throw std::runtime_error("No camera name: " + name);
-//     }
-
-//     return it->second;
-// }
-
 const SensorRig& Scenario::rig(const std::string& name) const
 {
     auto it = rigs_.find(name);    
     if (it == rigs_.end()) {
         throw std::runtime_error("No rig name: " + name);
+    }
+
+    return it->second;
+
+}
+
+
+const Trajectory& Scenario::trajectory(const std::string& name) const
+{
+    auto it = trajs_.find(name);    
+    if (it == trajs_.end()) {
+        throw std::runtime_error("No trajectory name: " + name);
     }
 
     return it->second;
@@ -135,7 +131,15 @@ Scenario loadScenario(const std::filesystem::path& path)
         std::string name = rigJson.at("name").get<std::string>();
         auto [it, inserted] = scenario.rigs_.emplace(std::move(name), readRig(rigJson));  
         if (!inserted) {
-            throw std::runtime_error("Duplicate camera name: " + it->first);
+            throw std::runtime_error("Duplicate rig name: " + it->first);
+        }
+    }
+
+    for (const auto& trajJson : json.at("trajectories")) {
+        std::string name = trajJson.at("name").get<std::string>();
+        auto [it, inserted] = scenario.trajs_.emplace(std::move(name), readTrajectory(trajJson));
+        if (!inserted) {
+            throw std::runtime_error("Duplicate trajectory name: " + it->first);
         }
     }
 

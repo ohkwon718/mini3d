@@ -171,7 +171,7 @@ add_library(
     mini3d_cv    
     src/CV/PointCloud.cpp
     src/CV/Triangulation.cpp
-    src/CV/OpenCvInterop.cpp
+    src/CV/OpenCvInterop.cpp    
 )
 target_compile_features(mini3d_cv PUBLIC cxx_std_20)
 target_include_directories(
@@ -204,6 +204,7 @@ add_library(
     mini3d_sim
     src/Simulation/Scenario.cpp
     src/Simulation/SensorRig.cpp
+    src/Simulation/Trajectory.cpp
 )
 target_compile_features(mini3d_sim PRIVATE cxx_std_20)
 target_include_directories(
