@@ -20,6 +20,10 @@
 #include "Simulation/Scenario.hpp"
 #include "Transform/Pose.hpp"
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 #include <iostream>
 
 int main()
@@ -51,6 +55,14 @@ int main()
 
     ///////////////////////////////////////////
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(window.get(), true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+
+    ///////////////////////////////////////////
     const DirectionalLight light{
         {-0.5f, 1.0f, -0.3f},
         {1.0f, 1.0f, 1.0f},
@@ -88,6 +100,15 @@ int main()
     while (!glfwWindowShouldClose(window.get())) {        
 
         glfwPollEvents();
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::Begin("mini3d");
+        ImGui::Text("ImGui works");
+        ImGui::End();
+
         if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             glfwSetWindowShouldClose(window.get(), GLFW_TRUE);
         }
@@ -131,10 +152,18 @@ int main()
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             renderer.draw(scene, viewerCamera, shader, light);
 
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(
+                ImGui::GetDrawData()
+            );
+
             glfwSwapBuffers(window.get());
         }
 
     }
 
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     return 0;
 }

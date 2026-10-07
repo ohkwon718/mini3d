@@ -61,6 +61,35 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(nlohmann_json)
 
+FetchContent_Declare(
+    imgui
+    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    GIT_TAG v1.92.9b
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(imgui)
+
+
+add_library(imgui STATIC
+    ${imgui_SOURCE_DIR}/imgui.cpp
+    ${imgui_SOURCE_DIR}/imgui_draw.cpp
+    ${imgui_SOURCE_DIR}/imgui_tables.cpp
+    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+)
+target_include_directories(imgui
+    PUBLIC
+        ${imgui_SOURCE_DIR}
+        ${imgui_SOURCE_DIR}/backends
+)
+target_link_libraries(imgui
+    PUBLIC
+        glfw
+        OpenGL::GL
+)
+
 
 add_library(
     mini3d_core
@@ -230,6 +259,33 @@ target_compile_options(
 )
 
 
+add_library(mini3d_ui
+    src/UI/SimulationUi.cpp
+)
+target_compile_features(mini3d_ui PRIVATE cxx_std_20)
+target_include_directories(
+    mini3d_sim 
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src    
+)
+target_link_libraries(
+    mini3d_ui
+    PUBLIC
+        mini3d_sim
+    PRIVATE        
+        imgui
+)
+target_compile_options(
+    mini3d_ui
+    PRIVATE
+        -Wall
+        -Wextra
+        -Wpedantic
+        -Wconversion
+        -Wsign-conversion
+)
+
+
 add_executable(
     mini3d
     src/main.cpp
@@ -245,9 +301,11 @@ target_link_libraries(
         mini3d_assets
         mini3d_cv
         mini3d_sim
+        mini3d_ui
         glfw
         OpenGL::GL
         glad_gl_core_33
+        imgui
 )
 target_compile_options(
     mini3d
