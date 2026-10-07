@@ -74,18 +74,41 @@ int main()
 
     const Trajectory& trajectory = scenario.trajectory("robot_path");
     SensorRig rig = scenario.rig(trajectory.rigName());    
-    Camera camera = rig.camera("front_camera");    
-    
+    Camera sensorCamera = rig.camera("front_camera");
+    RenderTarget sensorTarget(
+        sensorCamera.intrinsics().width,
+        sensorCamera.intrinsics().height
+    );
 
+    Camera viewerCamera = rig.camera("front_camera");  // temp
     FreeCameraController controller(5.0f, 0.002f);
 
     double simulationTime = 0.0;
     double previousTime = glfwGetTime();
     while (!glfwWindowShouldClose(window.get())) {        
+
         glfwPollEvents();
         if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             glfwSetWindowShouldClose(window.get(), GLFW_TRUE);
         }
+
+        double currentTime = glfwGetTime();
+        double deltaTime = currentTime - previousTime;
+        previousTime = currentTime;
+        controller.update(
+            window.get(),
+            viewerCamera,
+            static_cast<float>(deltaTime)
+        );
+
+        simulationTime += deltaTime;
+        rig.setPose(trajectory.sample(simulationTime));
+        Camera sensorCamera = rig.camera("front_camera");        
+
+        sensorTarget.bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        renderer.draw(scene, sensorCamera, shader, light);
+        
         int framebufferWidth;
         int framebufferHeight;
         
@@ -95,9 +118,8 @@ int main()
             &framebufferHeight
         );
 
-        if (framebufferWidth > 0 && framebufferHeight > 0) {            
-
-            const auto& intrinsics = camera.intrinsics();
+        if (framebufferWidth > 0 && framebufferHeight > 0) {
+            const auto& intrinsics = viewerCamera.intrinsics();
             const Viewport viewport = fitViewport(
                 framebufferWidth,
                 framebufferHeight,
@@ -105,27 +127,13 @@ int main()
                 intrinsics.height
             );            
             RenderTarget::bindDefault(viewport);
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            renderer.draw(scene, viewerCamera, shader, light);
+
+            glfwSwapBuffers(window.get());
         }
 
-        double currentTime = glfwGetTime();
-        double deltaTime = currentTime - previousTime;
-        previousTime = currentTime;
-        controller.update(
-            window.get(),
-            camera,
-            static_cast<float>(deltaTime)
-        );
-
-        simulationTime += deltaTime;
-        const Pose pose = trajectory.sample(simulationTime);
-        rig.setPose(pose);
-        // Camera sensorCamera = rig.camera("front_camera");
-        camera = rig.camera("front_camera");
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        renderer.draw(scene, camera, shader, light);
-
-        glfwSwapBuffers(window.get());
     }
 
     return 0;
