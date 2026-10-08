@@ -305,7 +305,6 @@ target_link_libraries(
         glfw
         OpenGL::GL
         glad_gl_core_33
-        imgui
 )
 target_compile_options(
     mini3d

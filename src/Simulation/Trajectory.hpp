@@ -7,7 +7,7 @@
 
 struct KeyFrame
 {
-    GL_DOUBLE_MAT3 time;
+    double time;
     Eigen::Vector3f position;
     Eigen::Quaternionf orientation;
 };

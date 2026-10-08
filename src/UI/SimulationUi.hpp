@@ -15,6 +15,7 @@ public:
     void beginFrame();
 
     void drawSimulation(
+        bool& playing,
         double simulationTime,
         const SensorRig& rig
     );

@@ -19,10 +19,7 @@
 #include "Assets/GltfLoader.hpp"
 #include "Simulation/Scenario.hpp"
 #include "Transform/Pose.hpp"
-
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
+#include "UI/SimulationUi.hpp"
 
 #include <iostream>
 
@@ -55,12 +52,7 @@ int main()
 
     ///////////////////////////////////////////
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
-
-    ImGui_ImplGlfw_InitForOpenGL(window.get(), true);
-    ImGui_ImplOpenGL3_Init("#version 330");
+    SimulationUi ui(window.get());
 
     ///////////////////////////////////////////
     const DirectionalLight light{
@@ -82,8 +74,6 @@ int main()
     const Scenario scenario = loadScenario("assets/scenarios/classroom.json");
     Scene scene = loadGltfScene(scenario.worldPath());    
         
-    // const SensorRig& rig = scenario.rig("robot");
-
     const Trajectory& trajectory = scenario.trajectory("robot_path");
     SensorRig rig = scenario.rig(trajectory.rigName());    
     Camera sensorCamera = rig.camera("front_camera");
@@ -96,18 +86,11 @@ int main()
     FreeCameraController controller(5.0f, 0.002f);
 
     double simulationTime = 0.0;
+    bool playing = true;
     double previousTime = glfwGetTime();
     while (!glfwWindowShouldClose(window.get())) {        
-
         glfwPollEvents();
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::Begin("mini3d");
-        ImGui::Text("ImGui works");
-        ImGui::End();
+        ui.beginFrame();
 
         if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             glfwSetWindowShouldClose(window.get(), GLFW_TRUE);
@@ -124,8 +107,13 @@ int main()
 
         simulationTime += deltaTime;
         rig.setPose(trajectory.sample(simulationTime));
-        Camera sensorCamera = rig.camera("front_camera");        
+        ui.drawSimulation(
+            playing,
+            simulationTime,
+            rig
+        );
 
+        Camera sensorCamera = rig.camera("front_camera");
         sensorTarget.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderer.draw(scene, sensorCamera, shader, light);
@@ -151,19 +139,13 @@ int main()
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             renderer.draw(scene, viewerCamera, shader, light);
-
-            ImGui::Render();
-            ImGui_ImplOpenGL3_RenderDrawData(
-                ImGui::GetDrawData()
-            );
+            ui.render();
 
             glfwSwapBuffers(window.get());
         }
+        
 
     }
-
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    
     return 0;
 }
