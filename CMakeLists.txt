@@ -264,7 +264,7 @@ add_library(mini3d_ui
 )
 target_compile_features(mini3d_ui PRIVATE cxx_std_20)
 target_include_directories(
-    mini3d_sim 
+    mini3d_ui 
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src    
 )

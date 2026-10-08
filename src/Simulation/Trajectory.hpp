@@ -4,11 +4,10 @@
 #include <vector>
 #include "Simulation/SensorRig.hpp"
 #include "Camera/Camera.hpp"
-#include "Transform/Pose.hpp"
 
 struct KeyFrame
 {
-    float time;
+    GL_DOUBLE_MAT3 time;
     Eigen::Vector3f position;
     Eigen::Quaternionf orientation;
 };
@@ -20,7 +19,7 @@ public:
     Trajectory(std::string rigName);    
     void addKeyframe(KeyFrame keyframe);
     const std::string& rigName() const;
-    const Pose sample(float time) const;
+    const Pose sample(double time) const;
 
 private:
     std::string rigName_;

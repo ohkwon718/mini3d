@@ -10,7 +10,12 @@ Trajectory::Trajectory(std::string rigName)
 
 void Trajectory::addKeyframe(KeyFrame keyframe)
 {
-    keyframes_.push_back(keyframe);    
+    if (keyframes_.size() > 0 && keyframes_.back().time >= keyframe.time)
+    {
+        throw std::invalid_argument("The new keyframe must have later time than previous keyframes");
+    }
+    keyframes_.push_back(keyframe);
+
 }
 
 const std::string& Trajectory::rigName() const
@@ -18,7 +23,7 @@ const std::string& Trajectory::rigName() const
     return rigName_;
 }
 
-const Pose Trajectory::sample(float time) const
+const Pose Trajectory::sample(double time) const
 {    
     if (time <= keyframes_.front().time) {
         return Pose{
@@ -39,7 +44,7 @@ const Pose Trajectory::sample(float time) const
     }
     index--;    
     
-    float alpha = (time - keyframes_[index].time)/(keyframes_[index+1].time - keyframes_[index].time);
+    float alpha = static_cast<float>((time - keyframes_[index].time)/(keyframes_[index+1].time - keyframes_[index].time));
     return Pose{
         (1-alpha)*keyframes_[index].position + alpha * keyframes_[index+1].position,
         keyframes_[index].orientation.slerp(alpha, keyframes_[index+1].orientation)
