@@ -96,7 +96,7 @@ RenderTarget& RenderTarget::operator=(RenderTarget&& other) noexcept
     if (this == &other)
     {
         return *this;
-    }    
+    }
     release();
     
     framebuffer_ = other.framebuffer_;
@@ -109,7 +109,6 @@ RenderTarget& RenderTarget::operator=(RenderTarget&& other) noexcept
     other.depthTexture_ = 0;
     other.width_ = 0;
     other.height_ = 0;
-    
     
     return *this;
 }
@@ -201,3 +200,9 @@ int RenderTarget::height() const
 {
     return height_;
 }
+
+GLuint RenderTarget::colorTextureId() const noexcept
+{
+    return colorTexture_;
+}
+

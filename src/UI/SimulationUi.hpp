@@ -20,5 +20,11 @@ public:
         const SensorRig& rig
     );
 
+    void drawSensorPreview(
+        unsigned int textureId,
+        int width,
+        int height
+    );
+
     void render();
 };

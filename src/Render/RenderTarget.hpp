@@ -28,6 +28,8 @@ public:
     int width() const;
     int height() const;
     
+    GLuint colorTextureId() const noexcept;
+    
 private:
     void release() noexcept;
 

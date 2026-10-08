@@ -32,7 +32,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWWindowPtr window{
-        glfwCreateWindow(800, 600, "mini3d", nullptr, nullptr)
+        glfwCreateWindow(1200, 800, "mini3d", nullptr, nullptr)
     };
 
     if (!window) {
@@ -104,8 +104,10 @@ int main()
             viewerCamera,
             static_cast<float>(deltaTime)
         );
-
-        simulationTime += deltaTime;
+        
+        if (playing) {
+            simulationTime += deltaTime;
+        }
         rig.setPose(trajectory.sample(simulationTime));
         ui.drawSimulation(
             playing,
@@ -117,6 +119,11 @@ int main()
         sensorTarget.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         renderer.draw(scene, sensorCamera, shader, light);
+        ui.drawSensorPreview(
+            sensorTarget.colorTextureId(),
+            sensorCamera.intrinsics().width,
+            sensorCamera.intrinsics().height
+        );
         
         int framebufferWidth;
         int framebufferHeight;
