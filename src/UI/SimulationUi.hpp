@@ -16,7 +16,8 @@ public:
 
     void drawSimulation(
         bool& playing,
-        double simulationTime,
+        double& simulationTime,
+        double duration,
         const SensorRig& rig
     );
 

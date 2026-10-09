@@ -33,14 +33,26 @@ void SimulationUi::beginFrame()
 
 void SimulationUi::drawSimulation(
         bool& playing,
-        double simulationTime,
+        double& simulationTime,
+        double duration,
         const SensorRig& rig)
 {
     ImGui::Begin("Simulation");
     if (ImGui::Button(playing ? "Pause" : "Play")) {
         playing = !playing;
+    }    
+    float time =
+    static_cast<float>(simulationTime);
+
+    if (ImGui::SliderFloat(
+            "Time",
+            &time,
+            0.0f,
+            static_cast<float>(duration),
+            "%.2f s"))
+    {
+        simulationTime = static_cast<double>(time);
     }
-    ImGui::Text("Time: %.2f s", simulationTime);
     ImGui::End();
 }
 

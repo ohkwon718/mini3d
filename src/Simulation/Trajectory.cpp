@@ -2,11 +2,14 @@
 
 #include <stdexcept>
 #include <iostream>
+
+
 Trajectory::Trajectory(std::string rigName)
 : rigName_(std::move(rigName))
 {
 
 }
+
 
 void Trajectory::addKeyframe(KeyFrame keyframe)
 {
@@ -18,10 +21,12 @@ void Trajectory::addKeyframe(KeyFrame keyframe)
 
 }
 
+
 const std::string& Trajectory::rigName() const
 {
     return rigName_;
 }
+
 
 const Pose Trajectory::sample(double time) const
 {    
@@ -48,6 +53,12 @@ const Pose Trajectory::sample(double time) const
     return Pose{
         (1-alpha)*keyframes_[index].position + alpha * keyframes_[index+1].position,
         keyframes_[index].orientation.slerp(alpha, keyframes_[index+1].orientation)
-    };
-   
+    };   
 }
+
+
+double Trajectory::duration() const
+{
+    return keyframes_.back().time;
+}
+

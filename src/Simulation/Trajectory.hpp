@@ -20,7 +20,8 @@ public:
     void addKeyframe(KeyFrame keyframe);
     const std::string& rigName() const;
     const Pose sample(double time) const;
-
+    double duration() const;
+    
 private:
     std::string rigName_;
     std::vector<KeyFrame> keyframes_;

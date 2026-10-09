@@ -112,6 +112,7 @@ int main()
         ui.drawSimulation(
             playing,
             simulationTime,
+            trajectory.duration(),
             rig
         );
 
