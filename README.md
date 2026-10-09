@@ -6,6 +6,8 @@ A **work-in-progress C++20/OpenGL visual sensor simulator** for computer vision 
 
 The project is being developed as a lightweight and extensible simulator rather than a general-purpose game engine. Its longer-term goal is to provide a practical environment for sensor simulation, computer vision experiments, visualization, recording, and evaluation against known simulator ground truth.
 
+![mini3d simulator](docs/images/mini3d_simulator.png)
+
 > **Status: Work in progress**
 >
 > `mini3d` is under active development. Core rendering, scene loading, calibrated cameras, RGB-D capture, configurable sensor rigs, trajectory replay, and an initial simulator UI are working. Recording, richer UI tools, additional sensor types, and complete CV workflows are still being developed.
