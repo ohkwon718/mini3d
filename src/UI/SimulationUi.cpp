@@ -1,5 +1,8 @@
 #include "SimulationUi.hpp"
 
+#include "Simulation/SensorRig.hpp"
+#include "Camera/Camera.hpp"
+
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -34,8 +37,7 @@ void SimulationUi::beginFrame()
 void SimulationUi::drawSimulation(
         bool& playing,
         double& simulationTime,
-        double duration,
-        const SensorRig& rig)
+        double duration)
 {
     ImGui::Begin("Simulation");
     if (ImGui::Button(playing ? "Pause" : "Play")) {
@@ -105,6 +107,53 @@ void SimulationUi::drawSensorPreview(
     ImGui::End();
 }
 
+
+void SimulationUi::drawSensorInfo(
+    const SensorRig& rig,
+    const Camera& camera)
+{
+    ImGui::Begin("Sensor Info");
+
+    const Eigen::Vector3f rigPosition = rig.position();
+    const Eigen::Vector3f cameraPosition = camera.position();
+    const auto& intrinsics = camera.intrinsics();
+
+    ImGui::Text(
+        "Rig position: %.2f  %.2f  %.2f",
+        rigPosition.x(),
+        rigPosition.y(),
+        rigPosition.z()
+    );
+
+    ImGui::Separator();
+
+    ImGui::Text(
+        "Camera position: %.2f  %.2f  %.2f",
+        cameraPosition.x(),
+        cameraPosition.y(),
+        cameraPosition.z()
+    );
+
+    ImGui::Text(
+        "Resolution: %d x %d",
+        intrinsics.width,
+        intrinsics.height
+    );
+
+    ImGui::Text(
+        "fx / fy: %.2f / %.2f",
+        intrinsics.fx,
+        intrinsics.fy
+    );
+
+    ImGui::Text(
+        "cx / cy: %.2f / %.2f",
+        intrinsics.cx,
+        intrinsics.cy
+    );
+
+    ImGui::End();
+}
 
 
 void SimulationUi::render()

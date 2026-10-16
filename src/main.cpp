@@ -1,6 +1,7 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <memory>
+#include <algorithm>
 #include "Platform/GlfwRuntime.hpp"
 #include "Platform/FreeCameraController.hpp"
 #include "Render/ShaderProgram.hpp"
@@ -89,8 +90,7 @@ int main()
     bool playing = true;
     double previousTime = glfwGetTime();
     while (!glfwWindowShouldClose(window.get())) {        
-        glfwPollEvents();
-        ui.beginFrame();
+        glfwPollEvents();        
 
         if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             glfwSetWindowShouldClose(window.get(), GLFW_TRUE);
@@ -103,32 +103,19 @@ int main()
             window.get(),
             viewerCamera,
             static_cast<float>(deltaTime)
-        );
-        
+        );        
         if (playing) {
             simulationTime += deltaTime;
-        }
-        rig.setPose(trajectory.sample(simulationTime));
-        ui.drawSimulation(
-            playing,
-            simulationTime,
-            trajectory.duration(),
-            rig
-        );
+            if (simulationTime >= trajectory.duration())
+            {
+                simulationTime = trajectory.duration();
+                playing = false;
+            }
+        }                
 
-        Camera sensorCamera = rig.camera("front_camera");
-        sensorTarget.bind();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        renderer.draw(scene, sensorCamera, shader, light);
-        ui.drawSensorPreview(
-            sensorTarget.colorTextureId(),
-            sensorCamera.intrinsics().width,
-            sensorCamera.intrinsics().height
-        );
         
         int framebufferWidth;
-        int framebufferHeight;
-        
+        int framebufferHeight;        
         glfwGetFramebufferSize(
             window.get(),
             &framebufferWidth,
@@ -136,6 +123,27 @@ int main()
         );
 
         if (framebufferWidth > 0 && framebufferHeight > 0) {
+            ///////////////////////////////////////////            
+
+            ui.beginFrame();
+            ui.drawSimulation(
+                playing,
+                simulationTime,
+                trajectory.duration()
+            );        
+            rig.setPose(trajectory.sample(simulationTime));
+            Camera sensorCamera = rig.camera("front_camera");
+            ui.drawSensorInfo(rig, sensorCamera);
+            sensorTarget.bind();
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            renderer.draw(scene, sensorCamera, shader, light);
+            ui.drawSensorPreview(
+                sensorTarget.colorTextureId(),
+                sensorCamera.intrinsics().width,
+                sensorCamera.intrinsics().height
+            );
+
+            ///////////////////////////////////////////
             const auto& intrinsics = viewerCamera.intrinsics();
             const Viewport viewport = fitViewport(
                 framebufferWidth,

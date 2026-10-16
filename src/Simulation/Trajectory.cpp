@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <iostream>
+#include "Transform/Pose.hpp"
 
 
 Trajectory::Trajectory(std::string rigName)
@@ -28,8 +29,11 @@ const std::string& Trajectory::rigName() const
 }
 
 
-const Pose Trajectory::sample(double time) const
-{    
+Pose Trajectory::sample(double time) const
+{
+    if (keyframes_.size() == 0) {
+        throw std::runtime_error("No keyframes in the Trajectory");
+    }
     if (time <= keyframes_.front().time) {
         return Pose{
             keyframes_.front().position,
@@ -44,7 +48,7 @@ const Pose Trajectory::sample(double time) const
     }
 
     std::size_t index = 1;
-    while (keyframes_[index].time < time && index < keyframes_.size()){
+    while (index < keyframes_.size() && keyframes_[index].time < time){
         index++;
     }
     index--;    
@@ -59,6 +63,9 @@ const Pose Trajectory::sample(double time) const
 
 double Trajectory::duration() const
 {
+    if (keyframes_.size() == 0) {
+        throw std::runtime_error("No keyframes in the Trajectory");
+    }
     return keyframes_.back().time;
 }
 

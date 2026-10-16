@@ -2,6 +2,7 @@
 
 struct GLFWwindow;
 class SensorRig;
+class Camera;
 
 class SimulationUi
 {
@@ -17,14 +18,18 @@ public:
     void drawSimulation(
         bool& playing,
         double& simulationTime,
-        double duration,
-        const SensorRig& rig
+        double duration
     );
 
     void drawSensorPreview(
         unsigned int textureId,
         int width,
         int height
+    );
+
+    void drawSensorInfo(
+        const SensorRig& rig,
+        const Camera& camera
     );
 
     void render();

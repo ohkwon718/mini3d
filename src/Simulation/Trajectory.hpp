@@ -2,8 +2,9 @@
 
 #include <string>
 #include <vector>
-#include "Simulation/SensorRig.hpp"
-#include "Camera/Camera.hpp"
+#include <Eigen/Dense>
+
+class Pose;
 
 struct KeyFrame
 {
@@ -19,7 +20,7 @@ public:
     Trajectory(std::string rigName);    
     void addKeyframe(KeyFrame keyframe);
     const std::string& rigName() const;
-    const Pose sample(double time) const;
+    Pose sample(double time) const;
     double duration() const;
     
 private:

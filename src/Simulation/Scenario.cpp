@@ -70,7 +70,7 @@ Trajectory readTrajectory(const nlohmann::json& value)
 
     for (auto& kfJson: value.at("keyframes")) {         
         traj.addKeyframe({
-            kfJson.at("time").get<float>(),
+            kfJson.at("time").get<double>(),
             readVector3(kfJson.at("position")),
             readQuaternion(kfJson.at("orientation"))
         });
@@ -136,10 +136,15 @@ Scenario loadScenario(const std::filesystem::path& path)
     }
 
     for (const auto& trajJson : json.at("trajectories")) {
-        std::string name = trajJson.at("name").get<std::string>();
-        auto [it, inserted] = scenario.trajs_.emplace(std::move(name), readTrajectory(trajJson));
+        std::string name_rig = trajJson.at("rig").get<std::string>();
+        auto it_rigs = scenario.rigs_.find(trajJson.at("rig").get<std::string>());    
+        if (it_rigs == scenario.rigs_.end()) {
+            throw std::runtime_error("No rig available : " + name_rig);
+        }
+        std::string name_traj = trajJson.at("name").get<std::string>();
+        auto [it_trajs, inserted] = scenario.trajs_.emplace(std::move(name_traj), readTrajectory(trajJson));
         if (!inserted) {
-            throw std::runtime_error("Duplicate trajectory name: " + it->first);
+            throw std::runtime_error("Duplicate trajectory name: " + it_trajs->first);
         }
     }
 
