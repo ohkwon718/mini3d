@@ -2,7 +2,6 @@
 
 #include <stdexcept>
 #include <iostream>
-#include "Transform/Pose.hpp"
 
 
 Trajectory::Trajectory(std::string rigName)

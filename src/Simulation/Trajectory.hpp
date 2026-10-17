@@ -3,8 +3,7 @@
 #include <string>
 #include <vector>
 #include <Eigen/Dense>
-
-class Pose;
+#include "Transform/Pose.hpp"
 
 struct KeyFrame
 {

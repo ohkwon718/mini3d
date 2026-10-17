@@ -19,6 +19,7 @@
 #include "core/ImageLoader.hpp"
 #include "Assets/GltfLoader.hpp"
 #include "Simulation/Scenario.hpp"
+#include "Simulation/CameraFrame.hpp"
 #include "Transform/Pose.hpp"
 #include "UI/SimulationUi.hpp"
 
@@ -142,6 +143,13 @@ int main()
                 sensorCamera.intrinsics().width,
                 sensorCamera.intrinsics().height
             );
+
+            // CameraFrame frame = captureCameraFrame(
+            //     sensorTarget,
+            //     sensorCamera,
+            //     frameIndex,
+            //     simulationTime
+            // );
 
             ///////////////////////////////////////////
             const auto& intrinsics = viewerCamera.intrinsics();
