@@ -20,6 +20,7 @@
 #include "Assets/GltfLoader.hpp"
 #include "Simulation/Scenario.hpp"
 #include "Simulation/CameraFrame.hpp"
+#include "Simulation/CameraCapture.hpp"
 #include "Transform/Pose.hpp"
 #include "UI/SimulationUi.hpp"
 

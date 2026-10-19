@@ -58,6 +58,16 @@ ImageOrigin DepthImage::origin() const noexcept
 }
 
 
+std::span<float> DepthImage::row(std::size_t y) noexcept
+{
+    const std::ptrdiff_t offset = firstRowOffset_ + static_cast<std::ptrdiff_t>(y) * rowStride_;
+
+    return {
+        data_.data() + offset,
+        static_cast<std::size_t>(width_)
+    };
+}
+
 std::span<const float> DepthImage::row(std::size_t y) const noexcept
 {
     const std::ptrdiff_t offset = firstRowOffset_ + static_cast<std::ptrdiff_t>(y) * rowStride_;

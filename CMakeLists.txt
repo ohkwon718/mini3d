@@ -234,6 +234,7 @@ add_library(
     src/Simulation/Scenario.cpp
     src/Simulation/SensorRig.cpp
     src/Simulation/Trajectory.cpp
+    src/Simulation/CameraCapture.cpp
 )
 target_compile_features(mini3d_sim PRIVATE cxx_std_20)
 target_include_directories(
@@ -245,6 +246,7 @@ target_link_libraries(
     mini3d_sim
     PUBLIC
         mini3d_core
+        mini3d_render
     PRIVATE
         nlohmann_json::nlohmann_json
 )

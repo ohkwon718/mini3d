@@ -24,6 +24,7 @@ public:
     int height() const noexcept;
     ImageOrigin origin() const noexcept;
 
+    std::span<float> row(std::size_t y) noexcept;
     std::span<const float> row(std::size_t y) const noexcept;
 
 
