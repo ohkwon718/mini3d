@@ -39,15 +39,13 @@ PointCloud PointCloud::fromDepth(
         const float v = static_cast<float>(y);
 
         for (std::size_t x = 0; x < width; ++x) {
-            const float raw = depthRow[x];
+            const float metricDepth = depthRow[x];
 
-            if (raw >= 1.0f) {
+            if (metricDepth >= 1.0f) {
                 continue;
             }
 
-            const float metricDepth = camera.depthToMetric(raw);
-            const float u = static_cast<float>(x);            
-
+            const float u = static_cast<float>(x);
             const Eigen::Vector3f point = camera.unproject({u, v}, metricDepth);
 
             points.push_back(point);

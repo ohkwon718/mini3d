@@ -87,11 +87,8 @@ void saveDepthPreview(
 {
     constexpr float maxVisualDepth = 10.0f;
 
-    const std::size_t width =
-        static_cast<std::size_t>(depth.width());
-
-    const std::size_t height =
-        static_cast<std::size_t>(depth.height());
+    const std::size_t width = static_cast<std::size_t>(depth.width());
+    const std::size_t height = static_cast<std::size_t>(depth.height());
 
     std::vector<std::uint8_t> pixels(width * height);
 
@@ -101,16 +98,13 @@ void saveDepthPreview(
 
         for (std::size_t x = 0; x < width; ++x) {
 
-            const float raw = depthRow[x];
+            const float metricDepth = depthRow[x];
             const std::size_t index = y * width + x;
 
-            if (raw >= 1.0f) {
+            if (metricDepth >= 1.0f) {
                 pixels[index] = 0;
                 continue;
             }
-
-            const float metricDepth =
-                camera.depthToMetric(raw);
 
             const float normalized =
                 1.0f - std::clamp(
@@ -119,10 +113,7 @@ void saveDepthPreview(
                     1.0f
                 );
 
-            pixels[index] =
-                static_cast<std::uint8_t>(
-                    normalized * 255.0f
-                );
+            pixels[index] = static_cast<std::uint8_t>(normalized * 255.0f);
         }
     }
 
