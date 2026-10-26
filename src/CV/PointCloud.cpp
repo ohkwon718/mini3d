@@ -34,17 +34,19 @@ PointCloud PointCloud::fromDepth(
 
     std::vector<Eigen::Vector3f> points;
 
-    for (std::size_t y = 0; y < height; ++y) {                
-        const auto depthRow = depth.row(y);
+    for (std::size_t y = 0; y < height; ++y) {
+        const std::size_t depthY = depth.origin() == ImageOrigin::BottomLeft? height - 1 - y : y;
+        const auto depthRow = depth.row(depthY);
         const float v = static_cast<float>(y);
-
+        
         for (std::size_t x = 0; x < width; ++x) {
-            const float metricDepth = depthRow[x];
+            const float rawDepth = depthRow[x];
 
-            if (metricDepth >= 1.0f) {
+            if (rawDepth >= 1.0f) {
                 continue;
             }
 
+            const float metricDepth = camera.depthToMetric(rawDepth);
             const float u = static_cast<float>(x);
             const Eigen::Vector3f point = camera.unproject({u, v}, metricDepth);
 
@@ -74,7 +76,6 @@ PointCloud PointCloud::fromRgbd(
         throw std::invalid_argument( "camera intrinsics info and rgb size are unmatched" );
     }
     
-
     const std::size_t width = static_cast<std::size_t>(rgb.width());
     const std::size_t height = static_cast<std::size_t>(rgb.height());
     
@@ -83,8 +84,10 @@ PointCloud PointCloud::fromRgbd(
     
 
     for (std::size_t y = 0; y < height; ++y) {
-        const auto depthRow = depth.row(y);
-        const auto rgbRow = rgb.row(y);
+        const std::size_t depthY = depth.origin() == ImageOrigin::BottomLeft? height - 1 - y : y;
+        const std::size_t rgbY = rgb.origin() == ImageOrigin::BottomLeft? height - 1 - y : y;        
+        const auto depthRow = depth.row(depthY);
+        const auto rgbRow = rgb.row(rgbY);
         const float v = static_cast<float>(y);
 
         for (std::size_t x = 0; x < width; ++x) {

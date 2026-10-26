@@ -23,6 +23,7 @@
 #include "Simulation/CameraCapture.hpp"
 #include "Transform/Pose.hpp"
 #include "UI/SimulationUi.hpp"
+#include "CV/PointCloud.hpp"
 
 #include <iostream>
 
@@ -161,6 +162,13 @@ int main()
                     0,
                     simulationTime
                 );
+
+                PointCloud cloud = PointCloud::fromRgbd(
+                    frame.rawDepth,
+                    frame.rgb,
+                    sensorCamera
+                );
+                cloud.savePointCloudPly("test.ply");
 
                 std::cout << "Frame index: " << frame.frameIndex << '\n';
                 std::cout << "Timestamp: " << frame.timestamp << '\n';
