@@ -30,7 +30,4 @@ public:
 
     std::vector<std::uint8_t> data_;
 
-    std::ptrdiff_t firstRowOffset_{0};
-    std::ptrdiff_t rowStride_{0};
-    std::ptrdiff_t rowSize_{0};
 };

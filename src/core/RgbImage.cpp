@@ -25,18 +25,6 @@ RgbImage::RgbImage(
             "RgbImage data size does not match dimensions"
         );
     }
-
-    const std::size_t rowSize = widthSize * 3;
-    rowSize_ = static_cast<std::ptrdiff_t>(rowSize);
-
-    if (origin_ == ImageOrigin::TopLeft) {
-        firstRowOffset_ = 0;
-        rowStride_ = rowSize_;
-    }
-    else {
-        firstRowOffset_ = static_cast<std::ptrdiff_t>((heightSize - 1) * rowSize);
-        rowStride_ = -rowSize_;
-    }
 }
 
 int RgbImage::width() const noexcept 
@@ -56,10 +44,7 @@ ImageOrigin RgbImage::origin() const noexcept
 
 std::span<const std::uint8_t> RgbImage::row(std::size_t y) const noexcept
 {
-    const std::ptrdiff_t offset = firstRowOffset_ + static_cast<std::ptrdiff_t>(y) * rowStride_;
+    const std::size_t rowSize = static_cast<std::size_t>(width_) * 3;
 
-    return {
-        data_.data() + offset,
-        static_cast<std::size_t>(rowSize_)
-    };
+    return {data_.data() + y * rowSize, rowSize};
 }
