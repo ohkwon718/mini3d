@@ -34,15 +34,5 @@ private:
     ImageOrigin origin_;
 
     std::vector<float> data_;
-
-    std::ptrdiff_t firstRowOffset_{0};
-    std::ptrdiff_t rowStride_{0};
-    std::ptrdiff_t rowSize_{0};
 };
 
-
-void saveDepthPreview(
-    const DepthImage& depth,
-    const Camera& camera,
-    const std::string& path
-);

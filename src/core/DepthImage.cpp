@@ -27,16 +27,6 @@ DepthImage::DepthImage(
         );
     }
 
-    rowSize_ = static_cast<std::ptrdiff_t>(widthSize);
-
-    if (origin_ == ImageOrigin::TopLeft) {
-        firstRowOffset_ = 0;
-        rowStride_ = rowSize_;
-    }
-    else {
-        firstRowOffset_ = static_cast<std::ptrdiff_t>((heightSize - 1) * widthSize);
-        rowStride_ = -rowSize_;
-    }
 }
 
 
@@ -60,71 +50,16 @@ ImageOrigin DepthImage::origin() const noexcept
 
 std::span<float> DepthImage::row(std::size_t y) noexcept
 {
-    const std::ptrdiff_t offset = firstRowOffset_ + static_cast<std::ptrdiff_t>(y) * rowStride_;
+    const std::size_t rowSize = static_cast<std::size_t>(width_);
 
-    return {
-        data_.data() + offset,
-        static_cast<std::size_t>(width_)
-    };
+    return {data_.data() + y * rowSize, rowSize};
 }
 
 std::span<const float> DepthImage::row(std::size_t y) const noexcept
 {
-    const std::ptrdiff_t offset = firstRowOffset_ + static_cast<std::ptrdiff_t>(y) * rowStride_;
+    const std::size_t rowSize = static_cast<std::size_t>(width_);
 
-    return {
-        data_.data() + offset,
-        static_cast<std::size_t>(width_)
-    };
+    return {data_.data() + y * rowSize, rowSize};
 }
 
 
-
-void saveDepthPreview(
-    const DepthImage& depth,
-    const Camera& camera,
-    const std::string& path)
-{
-    constexpr float maxVisualDepth = 10.0f;
-
-    const std::size_t width = static_cast<std::size_t>(depth.width());
-    const std::size_t height = static_cast<std::size_t>(depth.height());
-
-    std::vector<std::uint8_t> pixels(width * height);
-
-    for (std::size_t y = 0; y < height; ++y) {
-
-        const auto depthRow = depth.row(y);
-
-        for (std::size_t x = 0; x < width; ++x) {
-
-            const float metricDepth = depthRow[x];
-            const std::size_t index = y * width + x;
-
-            if (metricDepth >= 1.0f) {
-                pixels[index] = 0;
-                continue;
-            }
-
-            const float normalized =
-                1.0f - std::clamp(
-                    metricDepth / maxVisualDepth,
-                    0.0f,
-                    1.0f
-                );
-
-            pixels[index] = static_cast<std::uint8_t>(normalized * 255.0f);
-        }
-    }
-
-
-    std::ofstream file(path, std::ios::binary);
-
-    file << "P5\n"
-         << width << ' ' << height << "\n255\n";
-
-    file.write(
-        reinterpret_cast<const char*>(pixels.data()),
-        static_cast<std::streamsize>(pixels.size())
-    );
-}
