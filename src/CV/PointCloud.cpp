@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <fstream>
+#include <cmath>
 
 PointCloud::PointCloud(
     std::vector<Eigen::Vector3f> positions,
@@ -42,7 +43,7 @@ PointCloud PointCloud::fromDepth(
         for (std::size_t x = 0; x < width; ++x) {
             const float rawDepth = depthRow[x];
 
-            if (rawDepth >= 1.0f) {
+            if (!std::isfinite(rawDepth) || rawDepth < 0.0f || rawDepth >= 1.0f) {
                 continue;
             }
 
@@ -91,13 +92,13 @@ PointCloud PointCloud::fromRgbd(
         const float v = static_cast<float>(y);
 
         for (std::size_t x = 0; x < width; ++x) {
-            const float raw = depthRow[x];
+            const float rawDepth = depthRow[x];
 
-            if (raw >= 1.0f) {
+            if (!std::isfinite(rawDepth) || rawDepth < 0.0f || rawDepth >= 1.0f) {
                 continue;
             }
 
-            const float metricDepth = camera.depthToMetric(raw);
+            const float metricDepth = camera.depthToMetric(rawDepth);
             const float u = static_cast<float>(x);
             const std::size_t rgbX = x * 3;
 

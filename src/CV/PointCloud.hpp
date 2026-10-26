@@ -27,7 +27,7 @@ public:
     );
 
     static PointCloud fromRgbd(
-        const DepthImage& depth,
+        const DepthImage& depth, // raw depth from OpenGL depth buffer
         const RgbImage& rgb,        
         const Camera& camera
     );

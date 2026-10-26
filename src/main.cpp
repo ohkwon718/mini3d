@@ -163,13 +163,6 @@ int main()
                     simulationTime
                 );
 
-                PointCloud cloud = PointCloud::fromRgbd(
-                    frame.rawDepth,
-                    frame.rgb,
-                    sensorCamera
-                );
-                cloud.savePointCloudPly("test.ply");
-
                 std::cout << "Frame index: " << frame.frameIndex << '\n';
                 std::cout << "Timestamp: " << frame.timestamp << '\n';
 
