@@ -13,5 +13,5 @@ struct CameraFrame {
     CameraIntrinsics intrinsics;
 
     RgbImage rgb;
-    DepthImage depth;
+    DepthImage rawDepth; // Raw OpenGL depth buffer values [0, 1]
 };

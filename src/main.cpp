@@ -91,6 +91,7 @@ int main()
     double simulationTime = 0.0;
     bool playing = true;
     double previousTime = glfwGetTime();
+    bool frameChecked = false; // temp
     while (!glfwWindowShouldClose(window.get())) {        
         glfwPollEvents();        
 
@@ -145,12 +146,51 @@ int main()
                 sensorCamera.intrinsics().height
             );
 
-            // CameraFrame frame = captureCameraFrame(
-            //     sensorTarget,
-            //     sensorCamera,
-            //     frameIndex,
-            //     simulationTime
-            // );
+            CameraFrame frame = captureCameraFrame(
+                sensorTarget,
+                sensorCamera,
+                0,
+                simulationTime
+            );
+
+            ///////
+            if (!frameChecked) {
+                CameraFrame frame = captureCameraFrame(
+                    sensorTarget,
+                    sensorCamera,
+                    0,
+                    simulationTime
+                );
+
+                std::cout << "Frame index: " << frame.frameIndex << '\n';
+                std::cout << "Timestamp: " << frame.timestamp << '\n';
+
+                std::cout << "RGB: "
+                        << frame.rgb.width() << " x "
+                        << frame.rgb.height() << '\n';
+
+                std::cout << "Depth: "
+                        << frame.rawDepth.width() << " x "
+                        << frame.rawDepth.height() << '\n';
+
+                std::cout << "Camera resolution: "
+                        << frame.intrinsics.width << " x "
+                        << frame.intrinsics.height << '\n';
+
+                std::cout << "Camera position: "
+                        << frame.pose.position.transpose() << '\n';
+
+                const std::size_t cx = static_cast<std::size_t>(frame.rawDepth.width() / 2);
+                const std::size_t cy = static_cast<std::size_t>(frame.rawDepth.height() / 2);
+                
+                float rawDepth = frame.rawDepth.row(cy)[cx];
+                float metricDepth = sensorCamera.depthToMetric(rawDepth);
+
+                std::cout << "Center depth: " << metricDepth << " m\n";
+
+                frameChecked = true;
+            }
+            ///////
 
             ///////////////////////////////////////////
             const auto& intrinsics = viewerCamera.intrinsics();
