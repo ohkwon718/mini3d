@@ -22,18 +22,18 @@ public:
     );
     
     static PointCloud fromDepth(
-        const DepthImage& depth,
+        const DepthImage& rawDepth, // raw depth from OpenGL depth buffer
         const Camera& camera
     );
 
     static PointCloud fromRgbd(
-        const DepthImage& depth, // raw depth from OpenGL depth buffer
+        const DepthImage& rawDepth, // raw depth from OpenGL depth buffer
         const RgbImage& rgb,        
         const Camera& camera
     );
 
 
-    void savePointCloudPly(const std::string& path) const;
+    void savePointCloudPly(const std::string& path) const; // currently ASCII PLY, todo: binary PLY later
 
 private:
     std::vector<Eigen::Vector3f> positions_;    

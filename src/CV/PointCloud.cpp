@@ -19,37 +19,37 @@ PointCloud::PointCloud(
 }
 
 PointCloud PointCloud::fromDepth(
-        const DepthImage& depth,
+        const DepthImage& rawDepth,
         const Camera& camera)
 {
-    if ( depth.width() <= 0 or depth.height() <= 0) {
+    if ( rawDepth.width() <= 0 or rawDepth.height() <= 0) {
         throw std::invalid_argument( "width and height must be positive" );
     }
-    if (camera.intrinsics().width != depth.width() || camera.intrinsics().height != depth.height())
+    if (camera.intrinsics().width != rawDepth.width() || camera.intrinsics().height != rawDepth.height())
     {
         throw std::invalid_argument( "camera intrinsics info and the size are unmatched" );
     }
 
-    const std::size_t width = static_cast<std::size_t>(depth.width());
-    const std::size_t height = static_cast<std::size_t>(depth.height());    
+    const std::size_t width = static_cast<std::size_t>(rawDepth.width());
+    const std::size_t height = static_cast<std::size_t>(rawDepth.height());    
 
     std::vector<Eigen::Vector3f> points;
 
     for (std::size_t y = 0; y < height; ++y) {
-        const std::size_t depthY = depth.origin() == ImageOrigin::BottomLeft? height - 1 - y : y;
-        const auto depthRow = depth.row(depthY);
+        const std::size_t depthY = rawDepth.origin() == ImageOrigin::BottomLeft? height - 1 - y : y;
+        const auto depthRow = rawDepth.row(depthY);
         const float v = static_cast<float>(y);
         
         for (std::size_t x = 0; x < width; ++x) {
-            const float rawDepth = depthRow[x];
+            const float rawDepthValue = depthRow[x];
 
-            if (!std::isfinite(rawDepth) || rawDepth < 0.0f || rawDepth >= 1.0f) {
+            if (!std::isfinite(rawDepthValue) || rawDepthValue < 0.0f || rawDepthValue >= 1.0f) {
                 continue;
             }
 
-            const float metricDepth = camera.depthToMetric(rawDepth);
+            const float metricDepthValue = camera.depthToMetric(rawDepthValue);
             const float u = static_cast<float>(x);
-            const Eigen::Vector3f point = camera.unproject({u, v}, metricDepth);
+            const Eigen::Vector3f point = camera.unproject({u, v}, metricDepthValue);
 
             points.push_back(point);
         }
@@ -60,14 +60,14 @@ PointCloud PointCloud::fromDepth(
 
 
 PointCloud PointCloud::fromRgbd(
-    const DepthImage& depth,
+    const DepthImage& rawDepth,
     const RgbImage& rgb,
     const Camera& camera)
 {   
     if ( rgb.width() <= 0 or rgb.height() <= 0 ) {
         throw std::invalid_argument( "width and height must be positive" );
     }
-    if (depth.width() != rgb.width() || depth.height() != rgb.height()) {
+    if (rawDepth.width() != rgb.width() || rawDepth.height() != rgb.height()) {
         throw std::invalid_argument(
             "RGB and depth dimensions must match"
         );
@@ -85,24 +85,24 @@ PointCloud PointCloud::fromRgbd(
     
 
     for (std::size_t y = 0; y < height; ++y) {
-        const std::size_t depthY = depth.origin() == ImageOrigin::BottomLeft? height - 1 - y : y;
+        const std::size_t depthY = rawDepth.origin() == ImageOrigin::BottomLeft? height - 1 - y : y;
         const std::size_t rgbY = rgb.origin() == ImageOrigin::BottomLeft? height - 1 - y : y;        
-        const auto depthRow = depth.row(depthY);
+        const auto depthRow = rawDepth.row(depthY);
         const auto rgbRow = rgb.row(rgbY);
         const float v = static_cast<float>(y);
 
         for (std::size_t x = 0; x < width; ++x) {
-            const float rawDepth = depthRow[x];
+            const float rawDepthValue = depthRow[x];
 
-            if (!std::isfinite(rawDepth) || rawDepth < 0.0f || rawDepth >= 1.0f) {
+            if (!std::isfinite(rawDepthValue) || rawDepthValue < 0.0f || rawDepthValue >= 1.0f) {
                 continue;
             }
 
-            const float metricDepth = camera.depthToMetric(rawDepth);
+            const float metricDepthValue = camera.depthToMetric(rawDepthValue);
             const float u = static_cast<float>(x);
             const std::size_t rgbX = x * 3;
 
-            points.push_back(camera.unproject({u, v}, metricDepth));
+            points.push_back(camera.unproject({u, v}, metricDepthValue));
             colors.push_back({rgbRow[rgbX], rgbRow[rgbX + 1], rgbRow[rgbX + 2]});
         }
     }
