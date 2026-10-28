@@ -121,7 +121,7 @@ void RenderTarget::bind() const
 
 RgbImage RenderTarget::readRgb() const
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer_);
     std::vector<std::uint8_t> pixels(
         static_cast<std::size_t>(width_) *
         static_cast<std::size_t>(height_) *
@@ -149,7 +149,7 @@ RgbImage RenderTarget::readRgb() const
 
 DepthImage RenderTarget::readDepth() const
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_);    
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer_); 
     std::vector<float> depth(
         static_cast<std::size_t>(width_) *
         static_cast<std::size_t>(height_)

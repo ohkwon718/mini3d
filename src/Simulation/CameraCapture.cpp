@@ -1,8 +1,5 @@
 #include "CameraCapture.hpp"
-#include <limits>
 #include <utility>
-
-#include "core/DepthImage.hpp"
 
 
 CameraFrame captureCameraFrame(

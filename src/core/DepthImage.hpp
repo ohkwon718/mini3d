@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ImageOrigin.hpp"
-#include "Camera/Camera.hpp"
 
 #include <cstddef>
 #include <span>

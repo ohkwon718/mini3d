@@ -19,7 +19,6 @@
 #include "core/ImageLoader.hpp"
 #include "Assets/GltfLoader.hpp"
 #include "Simulation/Scenario.hpp"
-#include "Simulation/CameraFrame.hpp"
 #include "Simulation/CameraCapture.hpp"
 #include "Transform/Pose.hpp"
 #include "UI/SimulationUi.hpp"
@@ -143,13 +142,6 @@ int main()
                 sensorTarget.colorTextureId(),
                 sensorCamera.intrinsics().width,
                 sensorCamera.intrinsics().height
-            );
-
-            CameraFrame frame = captureCameraFrame(
-                sensorTarget,
-                sensorCamera,
-                0,
-                simulationTime
             );
 
             ///////////////////////////////////////////
