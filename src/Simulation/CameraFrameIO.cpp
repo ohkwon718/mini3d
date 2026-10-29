@@ -17,21 +17,42 @@ void saveCameraFrame(
     auto rgbPath = prefix;
     rgbPath += ".rgb";
 
-    std::ofstream file(rgbPath, std::ios::binary);
-    if (!file) {
+    std::ofstream rgbFile(rgbPath, std::ios::binary);
+    if (!rgbFile) {
         throw std::runtime_error("Failed to open RGB file");
     }
 
     for (int y = 0; y < frame.rgb.height(); ++y) {
         const auto row = frame.rgb.row(static_cast<std::size_t>(y));
 
-        file.write(
+        rgbFile.write(
             reinterpret_cast<const char*>(row.data()),
             static_cast<std::streamsize>(row.size())
         );
     }
 
-    if (!file) {
+    if (!rgbFile) {
+        throw std::runtime_error("Failed to write RGB file");
+    }
+
+    auto depthPath = prefix;
+    depthPath += ".depth";
+
+    std::ofstream depthFile(depthPath, std::ios::binary);
+    if (!depthFile) {
+        throw std::runtime_error("Failed to open depth file");
+    }
+
+    for (int y = 0; y < frame.rawDepth.height(); ++y) {
+        const auto row = frame.rawDepth.row(static_cast<std::size_t>(y));
+
+        depthFile.write(
+            reinterpret_cast<const char*>(row.data()),
+            static_cast<std::streamsize>(row.size_bytes())
+        );
+    }
+
+    if (!depthFile) {
         throw std::runtime_error("Failed to write RGB file");
     }
 }
