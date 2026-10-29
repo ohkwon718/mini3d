@@ -20,8 +20,10 @@
 #include "Assets/GltfLoader.hpp"
 #include "Simulation/Scenario.hpp"
 #include "Simulation/CameraCapture.hpp"
+#include "Simulation/CameraFrameIO.hpp"
 #include "Transform/Pose.hpp"
 #include "UI/SimulationUi.hpp"
+
 
 #include <iostream>
 
@@ -90,6 +92,7 @@ int main()
     double simulationTime = 0.0;
     bool playing = true;
     double previousTime = glfwGetTime();
+    bool captureDone = false;
     while (!glfwWindowShouldClose(window.get())) {        
         glfwPollEvents();        
 
@@ -138,6 +141,17 @@ int main()
             sensorTarget.bind();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             renderer.draw(scene, sensorCamera, shader, light);
+            if (!captureDone) {
+                auto frame = captureCameraFrame(
+                    sensorTarget,
+                    sensorCamera,
+                    0,
+                    simulationTime
+                );
+
+                saveCameraFrame(frame, "captures/frame_000000");
+                captureDone = true;
+            }
             ui.drawSensorPreview(
                 sensorTarget.colorTextureId(),
                 sensorCamera.intrinsics().width,

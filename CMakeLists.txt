@@ -235,6 +235,7 @@ add_library(
     src/Simulation/SensorRig.cpp
     src/Simulation/Trajectory.cpp
     src/Simulation/CameraCapture.cpp
+    src/Simulation/CameraFrameIO.cpp
 )
 target_compile_features(mini3d_sim PRIVATE cxx_std_20)
 target_include_directories(
